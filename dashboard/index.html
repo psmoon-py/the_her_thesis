@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The HER Thesis — Dashboard</title>
+<link rel="icon" type="image/png" href="../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#0a0a0a; --fg:#ffffff; --muted: rgba(255,255,255,.72);
+  --accent:#d4af37; --accent-light: #c9ada7; --glass: rgba(255,255,255,.1);
+  --num-raise: -300%;
+}
+
+*{ box-sizing:border-box }
+html,body{ height:100%; margin:0; overflow-x:hidden; }
+body{
+  background:var(--bg); color:var(--fg);
+  font-family:"Inter", system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, sans-serif;
+  line-height:1.4;
+}
+
+/* === Fundo estelar (canvas fixo) === */
+#space-bg{
+  position:fixed; inset:0; width:100%; height:100%;
+  display:block; z-index:0; pointer-events:none;
+}
+body > *:not(#space-bg){ position:relative; z-index:1; }
+
+/* label */
+.now-showing{
+  position:fixed; top:16px; left:16px; z-index:30; user-select:none;
+  display:flex; align-items:center; gap:8px;
+  color:var(--accent); font-weight:600; font-size:.9rem; letter-spacing:.02em;
+}
+.now-showing::before{ content:""; width:8px; height:8px; border-radius:50%; background:var(--accent) }
+
+/* Logo fixa abaixo do label */
+.site-logo{
+  position: fixed;
+  top: 50px;
+  left: 35px;
+  height: 120px;
+  width: auto;
+  z-index: 30;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, .55));
+  user-select: none;
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--fg);
+  text-decoration: none;
+}
+.site-logo .her {
+  font-style: italic;
+  color: var(--accent-light);
+}
+
+@media (max-width:600px){
+  .site-logo{ height:44px; top:50px; font-size: 1.5rem; }
+}
+
+/* === ACCORDION (estrutura mantida) === */
+.accordion-wrap{ width:min(1280px,95vw); margin:clamp(12px,4vmin,32px) auto; padding-top:120px; }
+.accordion{ display:flex; gap:1em; height:clamp(360px,70vh,720px); transform:skew(5deg); overflow:hidden; }
+.card{
+  position:relative; flex:1 1 0; height:100%; border-radius:12px; overflow:hidden; cursor:pointer;
+  transition:flex-grow 1s ease, filter 1s ease; filter:grayscale(0%);
+  box-shadow:0 30px 60px rgba(0,0,0,.45); text-decoration:none; color:inherit;
+}
+.card:hover{ flex-grow:8; filter:grayscale(0) }
+.card img{ width:100%; height:100%; object-fit:cover; transform:scale(1.04); transition:transform 1s ease }
+.card:hover img{ transform:scale(1.08) }
+.card::after{
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(180deg, transparent 40%, rgba(0,0,0,.65) 86%);
+  pointer-events:none;
+}
+
+/* Background videos for cards */
+.card video {
+  width: 100%; 
+  height: 100%; 
+  object-fit: cover; 
+  transform: scale(1.04); 
+  transition: transform 1s ease;
+}
+.card:hover video { 
+  transform: scale(1.08);
+}
+
+/* Conteúdo à esquerda */
+.card .content{
+  position:absolute;
+  left:clamp(16px,2.6vmin,28px);
+  right:clamp(16px,2.6vmin,28px);
+  bottom:clamp(16px,2.6vmin,28px);
+  z-index:2;
+  transform:skew(-5deg);
+  text-align:left;
+  max-width:min(52ch, 60%);
+}
+
+/* Micro-detalhes */
+.number{ position:absolute; left:0; bottom:0; font-size:clamp(40px,12vmin,100px); font-weight:300; line-height:1; color:rgba(255,255,255,.45); transition:.8s cubic-bezier(.4,0,.2,1) }
+.card:hover .number{ transform:translateY(var(--num-raise)) }
+.title{ font-weight:800; font-size:clamp(22px,3.6vmin,38px); margin:0 0 6px; opacity:0; transform:translateY(26px); transition:.6s cubic-bezier(.4,0,.2,1); font-family: 'Playfair Display', serif; }
+.card:hover .title{ opacity:1; transform:translateY(0); transition-delay:.25s }
+.subtitle{ color:var(--muted); margin:0 0 14px; font-size:clamp(13px,1.6vmin,17px); opacity:0; transform:translateY(26px); transition:.6s cubic-bezier(.4,0,.2,1) }
+.card:hover .subtitle{ opacity:1; transform:translateY(0); transition-delay:.35s }
+.specs{ margin-top:4px }
+.spec-row{ display:flex; align-items:center; gap:8px; font-size:clamp(12px,1.6vmin,14px); opacity:0; transform:translateX(-18px); transition:.45s cubic-bezier(.4,0,.2,1) }
+.card:hover .spec-row{ opacity:1; transform:translateX(0) }
+.card:hover .spec-row:nth-child(1){ transition-delay:.48s }
+.card:hover .spec-row:nth-child(2){ transition-delay:.56s }
+.spec-label{ color:var(--muted) } .spec-value{ color:#fff; font-weight:600 }
+.badges{ display:flex; gap:10px; margin-top:12px; opacity:0; transform:translateY(26px); transition:.6s cubic-bezier(.4,0,.2,1) }
+.card:hover .badges{ opacity:1; transform:translateY(0); transition-delay:.75s }
+.badge{ display:flex; align-items:center; gap:6px; padding:4px 8px; background:var(--glass); border-radius:12px; font-size:12px; font-weight:600; opacity:0; transform:scale(.85); transition:.3s cubic-bezier(.4,0,.2,1); backdrop-filter:blur(6px) }
+.card:hover .badge{ opacity:1; transform:scale(1) }
+.card:hover .badge:nth-child(1){ transition-delay:.82s }
+.card:hover .badge:nth-child(2){ transition-delay:.90s }
+.badge i{ width:8px; height:8px; border-radius:50%; background:var(--accent); display:block }
+.cta-button{ position:absolute; right:clamp(16px,2.6vmin,28px); bottom:clamp(16px,2.6vmin,28px); width:40px; height:40px; border-radius:50%; border:2px solid var(--accent); background:transparent; z-index:3; display:flex; align-items:center; justify-content:center; transition:.35s ease; pointer-events:none }
+.cta-button::before,.cta-button::after{ content:""; position:absolute; transition:.35s ease }
+.cta-button::before{ width:16px; height:2px; background:var(--accent); left:10px; top:50%; transform:translateY(-50%) }
+.cta-button::after{ width:8px; height:8px; border-right:2px solid var(--accent); border-top:2px solid var(--accent); right:10px; top:50%; transform:translateY(-50%) rotate(45deg) }
+.card:hover .cta-button{ transform:translateX(2px) }
+
+/* Features */
+.features{ background:#0a0a0a; margin-top:clamp(28px,6vmin,60px); padding:clamp(40px,7vmin,96px) 16px; border-radius:14px 14px 0 0 }
+.features .container{ width:min(1100px,94vw); margin:0 auto }
+.features .row{ display:flex; flex-wrap:wrap; gap:24px }
+.features .col{ flex:1 1 260px }
+.features .product-box h3{ margin:0 0 10px; font-weight:700; font-size:clamp(18px,2.4vmin,24px); color:#ffffff; font-family: 'Playfair Display', serif; }
+.features .product-box p{ margin:0; color:#a6a6a6; font-size:clamp(14px,1.8vmin,16px) }
+</style>
+</head>
+<body>
+
+<!-- canvas do fundo -->
+<canvas id="space-bg" aria-hidden="true"></canvas>
+<audio id="dash-audio" src="../assets/audio/ambient-lab.mp3" preload="auto" loop></audio>
+
+<div class="now-showing">The HER Thesis — Dashboard</div>
+
+<main class="accordion-wrap" aria-label="Main scientists by field">
+  <a href="../index.html" class="site-logo">The <span class="her">HER</span> Thesis</a>
+  
+  <div class="accordion">
+    <a class="card" href="../physics/marie-curie/" aria-label="Physics Pioneers">
+      <video autoplay muted loop playsinline>
+        <source src="../assets/videos/physics-lab.mp4" type="video/mp4">
+        <img src="../assets/images/physics-fallback.jpg" alt="Physics lab">
+      </video>
+      <div class="content">
+        <div class="number">01</div>
+        <h3 class="title">Physics Pioneers</h3>
+        <p class="subtitle">Revolutionizing our understanding of matter and energy</p>
+        <div class="specs">
+          <div class="spec-row"><span class="spec-label">Scientists:</span><span class="spec-value">Marie Curie, Lise Meitner, Chien-Shiung Wu</span></div>
+          <div class="spec-row"><span class="spec-label">Discoveries:</span><span class="spec-value">Radioactivity, Nuclear fission, Parity violation</span></div>
+        </div>
+        <div class="badges">
+          <span class="badge"><i></i><span>3 Scientists</span></span>
+          <span class="badge"><i></i><span>Nobel snubs</span></span>
+        </div>
+      </div>
+      <div class="cta-button" aria-hidden="true"></div>
+    </a>
+
+    <a class="card" href="../biology/rosalind-franklin/" aria-label="Biology Revolutionaries">
+      <video autoplay muted loop playsinline>
+        <source src="../assets/videos/dna-lab.mp4" type="video/mp4">
+        <img src="../assets/images/biology-fallback.jpg" alt="Biology lab">
+      </video>
+      <div class="content">
+        <div class="number">02</div>
+        <h3 class="title">Biology Revolutionaries</h3>
+        <p class="subtitle">Uncovering the secrets of life itself</p>
+        <div class="specs">
+          <div class="spec-row"><span class="spec-label">Scientists:</span><span class="spec-value">Rosalind Franklin, Barbara McClintock</span></div>
+          <div class="spec-row"><span class="spec-label">Breakthroughs:</span><span class="spec-value">DNA structure, Jumping genes</span></div>
+        </div>
+        <div class="badges">
+          <span class="badge"><i></i><span>2 Scientists</span></span>
+          <span class="badge"><i></i><span>DNA & genetics</span></span>
+        </div>
+      </div>
+      <div class="cta-button" aria-hidden="true"></div>
+    </a>
+
+    <a class="card" href="../chemistry/dorothy-hodgkin/" aria-label="Chemistry Masters">
+      <video autoplay muted loop playsinline>
+        <source src="../assets/videos/chemistry-lab.mp4" type="video/mp4">
+        <img src="../assets/images/chemistry-fallback.jpg" alt="Chemistry lab">
+      </video>
+      <div class="content">
+        <div class="number">03</div>
+        <h3 class="title">Chemistry Masters</h3>
+        <p class="subtitle">Revealing molecular architecture</p>
+        <div class="specs">
+          <div class="spec-row"><span class="spec-label">Scientists:</span><span class="spec-value">Dorothy Hodgkin</span></div>
+          <div class="spec-row"><span class="spec-label">Techniques:</span><span class="spec-value">X-ray crystallography</span></div>
+        </div>
+        <div class="badges">
+          <span class="badge"><i></i><span>1 Scientist</span></span>
+          <span class="badge"><i></i><span>Nobel winner</span></span>
+        </div>
+      </div>
+      <div class="cta-button" aria-hidden="true"></div>
+    </a>
+
+    <a class="card" href="../astronomy/cecilia-payne/" aria-label="Astronomy Trailblazers">
+      <video autoplay muted loop playsinline>
+        <source src="../assets/videos/stars-space.mp4" type="video/mp4">
+        <img src="../assets/images/astronomy-fallback.jpg" alt="Stars and space">
+      </video>
+      <div class="content">
+        <div class="number">04</div>
+        <h3 class="title">Astronomy Trailblazers</h3>
+        <p class="subtitle">Mapping the cosmos and reaching for the stars</p>
+        <div class="specs">
+          <div class="spec-row"><span class="spec-label">Scientists:</span><span class="spec-value">Cecilia Payne</span></div>
+          <div class="spec-row"><span class="spec-label">Achievements:</span><span class="spec-value">Stellar composition</span></div>
+        </div>
+        <div class="badges">
+          <span class="badge"><i></i><span>1 Scientist</span></span>
+          <span class="badge"><i></i><span>Pre-1950</span></span>
+        </div>
+      </div>
+      <div class="cta-button" aria-hidden="true"></div>
+    </a>
+
+    <a class="card" href="../story/" aria-label="Interactive Timeline">
+      <video autoplay muted loop playsinline>
+        <source src="../assets/videos/timeline-viz.mp4" type="video/mp4">
+        <img src="../assets/images/timeline-fallback.jpg" alt="Interactive timeline">
+      </video>
+      <div class="content">
+        <div class="number">05</div>
+        <h3 class="title">Interactive Timeline</h3>
+        <p class="subtitle">Journey through forgotten brilliance</p>
+        <div class="specs">
+          <div class="spec-row"><span class="spec-label">Period:</span><span class="spec-value">1867-1950</span></div>
+          <div class="spec-row"><span class="spec-label">Format:</span><span class="spec-value">Chronological exploration</span></div>
+        </div>
+        <div class="badges">
+          <span class="badge"><i></i><span>7 Scientists</span></span>
+          <span class="badge"><i></i><span>Pre-1950 Only</span></span>
+        </div>
+      </div>
+      <div class="cta-button" aria-hidden="true"></div>
+    </a>
+  </div>
+</main>
+
+<section class="features" aria-label="Project highlights">
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <div class="product-box">
+          <h3>About The HER Thesis</h3>
+          <p>An interactive exploration of seven remarkable women scientists whose contributions fundamentally changed our understanding of physics, chemistry, biology, and astronomy before 1950. Their stories deserve recognition in the annals of scientific history.</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="product-box">
+          <h3>STEMposium 2025</h3>
+          <p>Created for STEMposium 2025 at IISc Bangalore under the theme "History of Science (Mid-20th Century & Before)." This project highlights the hidden figures who shaped modern science through their groundbreaking pre-1950 discoveries.</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="product-box">
+          <h3>Our Mission</h3>
+          <p>To honor and illuminate the forgotten contributions of women in science before 1950, inspire future generations, and ensure their brilliant discoveries are never again relegated to footnotes in history.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======= FUNDO ESTELAR + PARTÍCULAS CIENTÍFICAS ======= -->
+<script>
+(() => {
+  const canvas = document.getElementById('space-bg');
+  const ctx = canvas.getContext('2d');
+
+  let dpr = Math.max(1, window.devicePixelRatio || 1);
+  function resize(){
+    dpr = Math.max(1, window.devicePixelRatio || 1);
+    canvas.width  = Math.floor(innerWidth * dpr);
+    canvas.height = Math.floor(innerHeight * dpr);
+    canvas.style.width  = '100%';
+    canvas.style.height = '100%';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    W = innerWidth; H = innerHeight;
+    rebuildStars();
+  }
+  addEventListener('resize', resize, {passive:true});
+
+  const ACCENT = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#d4af37';
+
+  let W = innerWidth, H = innerHeight;
+  const layers = [
+    { speed:  4,  twinkle:[0.6,1.2], size:[0.6,1.2], alpha:[0.15,0.30], density:0.35 },
+    { speed: 8,  twinkle:[0.8,1.6], size:[0.8,1.6], alpha:[0.20,0.40], density:0.30 },
+    { speed: 16,  twinkle:[1.0,2.2], size:[1.0,2.0], alpha:[0.25,0.50], density:0.20 }
+  ];
+  let stars = [];
+
+  function rnd(a,b){ return a + Math.random()*(b-a); }
+  function rebuildStars(){
+    stars.length = 0;
+    const baseCount = Math.round(Math.min(180, Math.max(60, (W*H)/10000)));
+    for (const [i,lay] of layers.entries()){
+      const n = Math.round(baseCount * lay.density);
+      for (let k=0;k<n;k++){
+        stars.push({
+          x: Math.random()*W,
+          y: Math.random()*H,
+          s: rnd(lay.size[0], lay.size[1]),
+          a0: rnd(lay.alpha[0], lay.alpha[1]),
+          a: 1,
+          tw: rnd(lay.twinkle[0], lay.twinkle[1]),
+          ph: Math.random()*Math.PI*2,
+          layer: i
+        });
+      }
+    }
+  }
+
+  // Partículas científicas flutuantes
+  const particles = [];
+  const maxParticles = 12;
+  
+  const scientificSymbols = ['⚛️', '🧬', '💊', '🌟', '🔬', '⚗️'];
+  
+  let lastParticleSpawn = 0;
+  const particleSpawnDelay = 3000;
+
+  function spawnParticle() {
+    if (particles.length >= maxParticles) return;
+    
+    particles.push({
+      x: Math.random() * W,
+      y: H + 50,
+      vx: rnd(-20, 20),
+      vy: rnd(-60, -30),
+      size: rnd(12, 20),
+      life: 1,
+      maxLife: rnd(8, 15),
+      symbol: scientificSymbols[Math.floor(Math.random() * scientificSymbols.length)],
+      rotation: 0,
+      rotSpeed: rnd(-0.02, 0.02)
+    });
+  }
+
+  function updateParticles(dt) {
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+      p.rotation += p.rotSpeed;
+      
+      // Gentle physics
+      p.vy += 5 * dt; // gravity
+      p.vx *= 0.999; // air resistance
+      
+      p.life -= dt / p.maxLife;
+      
+      if (p.life <= 0 || p.y < -100) {
+        particles.splice(i, 1);
+        continue;
+      }
+    }
+  }
+
+  function drawParticles() {
+    ctx.save();
+    for (const p of particles) {
+      const alpha = p.life * 0.6;
+      ctx.globalAlpha = alpha;
+      ctx.font = `${p.size}px serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rotation);
+      ctx.fillStyle = ACCENT;
+      ctx.fillText(p.symbol, 0, 0);
+      ctx.restore();
+    }
+    ctx.restore();
+  }
+
+  function stepAndPaint(ts){
+    const dt = 0.016; // target 60fps
+    
+    // Spawn particles
+    if (ts - lastParticleSpawn >= particleSpawnDelay) {
+      spawnParticle();
+      lastParticleSpawn = ts;
+    }
+
+    // Background
+    ctx.clearRect(0,0,canvas.width/dpr,canvas.height/dpr);
+    ctx.fillStyle = '#0a0a0a'; 
+    ctx.fillRect(0,0,W,H);
+
+    // Stars with parallax + twinkle
+    ctx.globalCompositeOperation = 'screen';
+    for (const s of stars){
+      const lay = layers[s.layer];
+      s.y += lay.speed * dt;
+      s.x -= lay.speed * dt * 0.2; // gentle drift
+      if (s.y > H+4){ s.y = -4; s.x = Math.random()*W; }
+      if (s.x < -4){ s.x = W + 4; }
+      s.a = s.a0 * (0.7 + 0.3 * Math.sin(s.ph += s.tw * dt));
+      
+      ctx.globalAlpha = s.a;
+      ctx.beginPath(); 
+      ctx.arc(s.x,s.y,s.s,0,Math.PI*2);
+      ctx.fillStyle = 'rgba(212, 175, 55, 0.9)'; 
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = 'source-over';
+
+    // Update and draw particles
+    updateParticles(dt);
+    drawParticles();
+
+    // Subtle vignette
+    const v = ctx.createRadialGradient(W*.5,H*.5, Math.min(W,H)*.2, W*.5,H*.5, Math.max(W,H)*.8);
+    v.addColorStop(0,'rgba(0,0,0,0)'); 
+    v.addColorStop(1,'rgba(0,0,0,0.15)');
+    ctx.fillStyle=v; 
+    ctx.fillRect(0,0,W,H);
+
+    requestAnimationFrame(stepAndPaint);
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) lastParticleSpawn = performance.now();
+  });
+
+  resize(); 
+  lastParticleSpawn = performance.now(); 
+  requestAnimationFrame(stepAndPaint);
+})();
+</script>
+
+<script>
+/* === ÁUDIO AUTOPLAY === */
+(() => {
+  const audio = document.getElementById('dash-audio');
+  if (!audio) return;
+  
+  audio.volume = 0.05;
+
+  function tryPlay(){
+    audio.play().catch(()=> {
+      // Will try again on user interaction
+    });
+  }
+
+  // Try on load (some browsers allow)
+  document.addEventListener('DOMContentLoaded', () => {
+    tryPlay();
+  });
+
+  // First user interaction enables audio
+  const once = () => {
+    tryPlay();
+    events.forEach(e => window.removeEventListener(e, once));
+  };
+  const events = ['click','pointerdown','touchstart','keydown'];
+  events.forEach(e => window.addEventListener(e, once, { once:true }));
+})();
+</script>
+</body>
+</html>

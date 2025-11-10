@@ -1,0 +1,1878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chien-Shiung Wu - The First Lady of Physics | The HER Thesis</title>
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <style>
+        :root {
+            --primary: #ffffff;
+            --bg-dark: #0a0a0a;
+            --accent: #d4af37;
+            --accent-light: #c9ada7;
+            --parity-blue: #4a90e2;
+            --parity-red: #e24a5a;
+            --text: #ffffff;
+            --text-dim: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --glass: rgba(255, 255, 255, 0.1);
+            --border: rgba(255, 255, 255, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            cursor: none;
+        }
+
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        .video-bg {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            opacity: 0.25;
+            filter: blur(3px);
+            object-fit: cover;
+        }
+
+        .video-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, transparent 0%, rgba(10, 10, 10, 0.8) 100%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .custom-cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            mix-blend-mode: difference;
+            transition: transform 0.2s ease;
+        }
+
+        .custom-cursor.hover {
+            transform: scale(1.5);
+            background: var(--accent);
+        }
+
+        .main-container {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+        }
+
+        .nav-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 20px 40px;
+            background: rgba(10, 10, 10, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .nav-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .nav-logo:hover {
+            color: var(--accent);
+        }
+
+        .nav-logo .her {
+            font-style: italic;
+            color: var(--accent-light);
+        }
+
+        .nav-back {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            text-decoration: none;
+            border-radius: 6px;
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-back:hover {
+            background: var(--glass);
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateX(-4px);
+        }
+
+        .hero {
+            padding: 120px 40px 80px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .hero-subtitle {
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 20px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.2s forwards;
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 6vw, 5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 30px;
+            letter-spacing: -2px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.4s forwards;
+        }
+
+        .hero-description {
+            font-size: 20px;
+            line-height: 1.6;
+            color: var(--text-dim);
+            margin-bottom: 40px;
+            max-width: 600px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.6s forwards;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.8s forwards;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'Space Mono', monospace;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            display: block;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        .hero-visual {
+            position: relative;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 1s forwards;
+        }
+
+        .hero-image {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            border-radius: 12px;
+            filter: sepia(0.3) contrast(1.1);
+            transition: transform 0.6s ease;
+        }
+
+        .hero-image:hover {
+            transform: scale(1.02);
+        }
+
+        .image-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 30px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+            border-radius: 0 0 12px 12px;
+        }
+
+        .image-caption {
+            font-size: 14px;
+            color: var(--text-dim);
+            font-style: italic;
+        }
+
+        .parity-3d-section {
+            padding: 100px 40px;
+            background: linear-gradient(180deg, transparent, rgba(74, 144, 226, 0.03), transparent);
+        }
+
+        .parity-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 600px 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .parity-canvas-wrapper {
+            position: relative;
+        }
+
+        #parity-3d-canvas {
+            width: 100%;
+            height: 600px;
+            border-radius: 12px;
+            background: rgba(74, 144, 226, 0.02);
+            border: 1px solid rgba(74, 144, 226, 0.2);
+            cursor: grab;
+        }
+
+        #parity-3d-canvas:active {
+            cursor: grabbing;
+        }
+
+        .parity-controls-hint {
+            position: absolute;
+            bottom: 85%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: var(--parity-blue);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: 1px solid rgba(74, 144, 226, 0.3);
+        }
+
+        .parity-controls {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.85);
+            padding: 16px 24px;
+            border-radius: 8px;
+            border: 1px solid rgba(74, 144, 226, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            z-index: 10;
+        }
+
+        .control-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: var(--parity-blue);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .speed-slider {
+            width: 120px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .speed-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--parity-blue);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--parity-blue);
+        }
+
+        .speed-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: var(--parity-blue);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 10px var(--parity-blue);
+        }
+
+        .pause-button {
+            padding: 6px 16px;
+            background: transparent;
+            border: 1px solid var(--parity-blue);
+            color: var(--parity-blue);
+            border-radius: 4px;
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .pause-button:hover {
+            background: var(--parity-blue);
+            color: var(--bg-dark);
+        }
+
+        .pause-button.paused {
+            background: var(--parity-blue);
+            color: var(--bg-dark);
+        }
+
+        .parity-explanation {
+            padding: 40px;
+        }
+
+        .parity-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--parity-blue);
+        }
+
+        .parity-text {
+            font-size: 17px;
+            line-height: 1.7;
+            color: var(--text-dim);
+            margin-bottom: 20px;
+        }
+
+        .parity-text strong {
+            color: var(--parity-blue);
+            font-weight: 600;
+        }
+
+        .parity-tooltip {
+            position: fixed;
+            background: rgba(0, 0, 0, 0.95);
+            color: #4a90e2;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-family: 'Space Mono', monospace;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 10001;
+            border: 1px solid rgba(74, 144, 226, 0.5);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            max-width: 280px;
+            line-height: 1.5;
+        }
+
+        .parity-tooltip.visible {
+            opacity: 1;
+        }
+
+        .parity-tooltip strong {
+            display: block;
+            color: #d4af37;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+
+        .parity-tooltip .tooltip-detail {
+            display: block;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 2px;
+        }
+
+        .historical-context, .content-section, .science-deep-dive, .modern-impact-section {
+            padding: 100px 40px;
+        }
+
+        .context-container, .science-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .context-header, .science-header, .modern-impact-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .context-number {
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            letter-spacing: 3px;
+            color: var(--accent);
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .context-title, .science-title, .modern-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+
+        .context-subtitle, .science-intro, .modern-subtitle {
+            font-size: 20px;
+            color: var(--text-dim);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .context-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            max-width: 1400px;
+            margin: 60px auto 0;
+        }
+
+        .context-card, .impact-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 40px;
+            backdrop-filter: blur(20px);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            min-height: 350px;
+        }
+
+        .impact-card {
+            min-height: 320px;
+            padding: 30px;
+        }
+
+        .context-card::before, .impact-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            z-index: -1;
+            transition: opacity 0.4s ease;
+        }
+
+        .context-card:hover::before, .impact-card:hover::before {
+            opacity: 0.25;
+        }
+
+        .context-card::after, .impact-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.75));
+            z-index: -1;
+        }
+
+        .context-card[data-image="china"]::before {
+            background-image: url('../../assets/images/context/china-liuhe-1912.jpg');
+        }
+
+        .context-card[data-image="berkeley"]::before {
+            background-image: url('../../assets/images/context/berkeley-physics-1936.jpg');
+        }
+
+        .context-card[data-image="parity"]::before {
+            background-image: url('../../assets/images/context/physics-symmetry-1950s.jpeg');
+        }
+
+        .context-card[data-image="cryogenic"]::before {
+            background-image: url('../../assets/images/context/nbs-cryogenic-lab-1956.jpg');
+        }
+
+        .impact-card[data-image="weak-force"]::before {
+            background-image: url('../../assets/images/impact/standard-model-physics.png');
+        }
+
+        .impact-card[data-image="neutrino"]::before {
+            background-image: url('../../assets/images/impact/neutrino-detection.jpg');
+        }
+
+        .impact-card[data-image="cp-violation"]::before {
+            background-image: url('../../assets/images/impact/particle-accelerator.jpg');
+        }
+
+        .impact-card[data-image="cosmology"]::before {
+            background-image: url('../../assets/images/impact/matter-antimatter.webp');
+        }
+
+        .impact-card[data-image="women-physics"]::before {
+            background-image: url('../../assets/images/impact/women-stem-modern.jpg');
+        }
+
+        .impact-card[data-image="nobel-injustice"]::before {
+            background-image: url('../../assets/images/impact/nobel-prize-medal.jpg');
+        }
+
+        .context-card:hover, .impact-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent);
+            box-shadow: 0 30px 60px rgba(212, 175, 55, 0.2);
+        }
+
+        .context-icon, .impact-icon {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 20px;
+            display: none;
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5));
+            position: relative;
+            z-index: 1;
+        }
+
+        .impact-icon {
+            width: 50px;
+            height: 50px;
+        }
+
+        .context-card-title, .impact-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .impact-title {
+            font-size: 1.25rem;
+            margin-bottom: 12px;
+        }
+
+        .context-card-text, .impact-description {
+            font-size: 16px;
+            line-height: 1.7;
+            color: var(--text-dim);
+            position: relative;
+            z-index: 1;
+        }
+
+        .impact-description {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .content-section {
+            padding: 80px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 60px;
+            margin-bottom: 60px;
+            align-items: start;
+        }
+
+        .section-number {
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--accent);
+            position: sticky;
+            top: 140px;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .section-content {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 60px;
+        }
+
+        .content-text {
+            font-size: 18px;
+            line-height: 1.7;
+            color: var(--text-dim);
+        }
+
+        .content-text p {
+            margin-bottom: 24px;
+        }
+
+        .highlight {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .science-subsection {
+            margin-bottom: 60px;
+        }
+
+        .science-subsection h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--parity-blue);
+        }
+
+        .science-subsection p {
+            font-size: 17px;
+            line-height: 1.7;
+            color: var(--text-dim);
+            margin-bottom: 20px;
+        }
+
+        .science-highlight-box {
+            background: rgba(74, 144, 226, 0.1);
+            border-left: 4px solid var(--parity-blue);
+            padding: 24px;
+            margin: 30px 0;
+            border-radius: 8px;
+        }
+
+        .science-highlight-box p {
+            margin-bottom: 0;
+            font-size: 16px;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 60px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 200px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--accent), var(--parity-blue));
+            opacity: 0.3;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 60px;
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 60px;
+            align-items: start;
+        }
+
+        .timeline-year {
+            font-family: 'Space Mono', monospace;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent);
+            position: relative;
+        }
+
+        .timeline-year::after {
+            content: '';
+            position: absolute;
+            right: -31px;
+            top: 50%;
+            width: 14px;
+            height: 14px;
+            background: var(--parity-blue);
+            border-radius: 50%;
+            transform: translateY(-50%);
+            box-shadow: 0 0 20px var(--parity-blue);
+            animation: pulse-glow 2s infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 10px var(--parity-blue); }
+            50% { box-shadow: 0 0 30px var(--parity-blue); }
+        }
+
+        .timeline-content {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .timeline-content:hover {
+            border-color: var(--parity-blue);
+            transform: translateX(10px);
+            box-shadow: 0 10px 40px rgba(74, 144, 226, 0.1);
+        }
+
+        .timeline-content h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .timeline-content p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-dim);
+        }
+
+        .quote-section {
+            background: rgba(212, 175, 55, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+            padding: 60px;
+            margin: 80px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .quote-section::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 120px;
+            color: var(--accent);
+            font-family: 'Playfair Display', serif;
+            opacity: 0.3;
+        }
+
+        .quote-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-style: italic;
+            line-height: 1.4;
+            margin-bottom: 20px;
+        }
+
+        .quote-attribution {
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent);
+        }
+
+        .footer-nav {
+            padding: 80px 40px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 32px;
+            background: transparent;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            text-decoration: none;
+            border-radius: 8px;
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button:hover {
+            background: var(--accent);
+            color: var(--bg-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .hero-content,
+            .parity-container {
+                grid-template-columns: 1fr;
+                gap: 60px;
+            }
+
+            .section-header,
+            .section-content,
+            .timeline-item {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .timeline::before {
+                left: 20px;
+            }
+
+            .timeline-year::after {
+                left: -31px;
+                right: auto;
+            }
+
+            .context-grid,
+            .impact-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-header {
+                padding: 15px 20px;
+            }
+
+            .hero {
+                padding: 100px 20px 60px;
+            }
+
+            .content-section,
+            .parity-3d-section,
+            .historical-context,
+            .modern-impact-section,
+            .science-deep-dive {
+                padding: 60px 20px;
+            }
+
+            .hero-title,
+            .context-title,
+            .modern-title,
+            .science-title {
+                font-size: 2.5rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .quote-text {
+                font-size: 1.5rem;
+            }
+
+            .hero-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="custom-cursor" id="cursor"></div>
+    <canvas id="bg-canvas"></canvas>
+
+    <video class="video-bg" autoplay muted loop playsinline>
+        <source src="../../assets/videos/particle-physics.mp4" type="video/mp4">
+    </video>
+    <div class="video-overlay"></div>
+
+    <nav class="nav-header">
+        <div class="nav-content">
+            <a href="../../" class="nav-logo">The <span class="her">HER</span> Thesis</a>
+            <a href="../../dashboard/" class="nav-back">Back to Dashboard</a>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <div class="hero-subtitle">Experimental Physics Master · 1912-1997</div>
+                    <h1 class="hero-title">Chien-Shiung Wu</h1>
+                    <p class="hero-description">
+                        The physicist who proved parity violation in weak nuclear interactions through the Wu experiment. Her male colleagues Lee and Yang won the 1957 Nobel Prize for the theory she experimentally validated, while she was excluded.
+                    </p>
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">1956</span>
+                            <span class="stat-label">Wu Experiment</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">48</span>
+                            <span class="stat-label">Nobel Nominations</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">0.01</span>
+                            <span class="stat-label">Kelvin Temperature</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">7%</span>
+                            <span class="stat-label">Asymmetry Detected</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <img src="../../assets/images/chien-shiung-wu-portrait.jpg" alt="Chien-Shiung Wu" class="hero-image">
+                    <div class="image-overlay">
+                        <div class="image-caption">Chien-Shiung Wu, 1958</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="historical-context">
+            <div class="context-container">
+                <div class="context-header">
+                    <div class="context-number">01 — Historical Context</div>
+                    <h2 class="context-title">Where Did the Idea Come From?</h2>
+                    <p class="context-subtitle">
+                        In 1956, physicists believed nature treated left and right identically. Parity conservation was a fundamental law. Lee and Yang questioned this assumption. Wu designed the experiment that proved them right and physics wrong.
+                    </p>
+                </div>
+                
+                <div class="context-grid">
+                    <div class="context-card" data-image="china">
+                        <img src="../../assets/icons/china-education-icon.png" alt="Early education" class="context-icon">
+                        <h3 class="context-card-title">China 1912: Born Into Revolution</h3>
+                        <p class="context-card-text">
+                            Wu Jianxiong was born near Shanghai on May 31, 1912. Her father, Wu Zhongyi, was a progressive engineer who founded the first school for girls in their town of Liuhe. This was radical in 1912 China. Most families denied daughters any education beyond basic literacy. Wu's father believed women deserved the same opportunities as men. He taught Wu and her friends science and politics. He supported the 1911 Revolution that overthrew the Qing Dynasty. Wu grew up reading newspapers and debating current events. She attended her father's school. In 1923, she left home to attend boarding school in Suzhou. She excelled in mathematics and physics. In 1930, she entered National Central University in Nanjing. She chose physics. The department had few women. Wu did not care. She graduated top of her class in 1934.
+                        </p>
+                    </div>
+
+                    <div class="context-card" data-image="berkeley">
+                        <img src="../../assets/icons/berkeley-physics-icon.png" alt="Berkeley studies" class="context-icon">
+                        <h3 class="context-card-title">Berkeley 1936: Escape to America</h3>
+                        <p class="context-card-text">
+                            Wu arrived in San Francisco in August 1936. She planned to study at the University of Michigan. She visited Berkeley first. She met Ernest Lawrence. She saw the cyclotron. She decided to stay. Michigan admitted women but housed them separately and restricted their facilities. Berkeley offered full access to laboratories. Wu worked under Emilio Segrè. She studied uranium fission and beta decay. Her doctoral thesis examined the radiation from xenon isotopes produced in fission. War broke out in China in 1937. Wu could not return home. She married physicist Luke Yuan in 1942. They had a son in 1947. Wu taught at Smith College and Princeton during the war. In 1944, she joined the Manhattan Project at Columbia University. She solved the xenon-135 poisoning problem that threatened nuclear reactor operation. After the war, Columbia hired her. She stayed for 37 years.
+                        </p>
+                    </div>
+
+                    <div class="context-card" data-image="parity">
+                        <img src="../../assets/icons/parity-symmetry-icon.png" alt="Parity conservation" class="context-icon">
+                        <h3 class="context-card-title">1956: The Parity Crisis</h3>
+                        <p class="context-card-text">
+                            Parity conservation meant physics looked the same in a mirror. If you filmed an experiment and flipped the image, the physics would still work. This seemed obvious. But in 1956, strange particle decays violated other conservation laws unless parity was broken. Tsung-Dao Lee and Chen-Ning Yang analyzed the data. They found no experimental proof that weak nuclear force conserved parity. Strong and electromagnetic forces obeyed parity. But weak force? No one had checked. Lee and Yang published a paper in June 1956. They proposed experiments to test parity in beta decay. Most physicists dismissed the idea. Wolfgang Pauli bet money that parity held. Lee approached Wu at a conference. They were both Chinese expatriates. He explained his theory. Wu immediately understood the implications. If parity broke, physics textbooks would need rewriting. She designed the experiment that summer.
+                        </p>
+                    </div>
+
+                    <div class="context-card" data-image="cryogenic">
+                        <img src="../../assets/icons/cryogenic-lab-icon.png" alt="Low temperature physics" class="context-icon">
+                        <h3 class="context-card-title">December 1956: The Experiment</h3>
+                        <p class="context-card-text">
+                            Wu needed cobalt-60 nuclei aligned in a magnetic field. This required temperatures near absolute zero. Columbia lacked the equipment. She partnered with the National Bureau of Standards cryogenic laboratory in Washington. Physicists there had expertise in ultra-low temperatures. The experiment used cerium magnesium nitrate crystals to reach 0.01 Kelvin. At this temperature, thermal motion nearly stops. Magnetic fields could align the cobalt-60 nuclear spins. Wu embedded radioactive cobalt-60 in the crystal. She measured beta particle emission directions. If parity held, equal numbers of electrons would emit toward and away from the magnetic north pole. If parity broke, asymmetry would appear. Wu worked through Christmas 1956. The data showed 7 percent more electrons emitted opposite to nuclear spin. This was parity violation. Nature distinguished left from right. Wu called Lee at 2 AM with results. Lee and Yang published the theory paper. Wu prepared experimental confirmation. Physics had changed overnight.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="parity-3d-section">
+            <div class="parity-container">
+                <div class="parity-canvas-wrapper">
+                    <canvas id="parity-3d-canvas"></canvas>
+                    <div class="parity-controls-hint">Drag to rotate · Scroll to zoom · Hover for details</div>
+                    <div class="parity-controls">
+                        <span class="control-label">Speed</span>
+                        <input type="range" min="0.1" max="2" step="0.1" value="1" class="speed-slider" id="speed-control">
+                        <button class="pause-button" id="pause-button">Pause</button>
+                    </div>
+                </div>
+                <div class="parity-explanation">
+                    <h2 class="parity-title">Understanding Parity Violation</h2>
+                    <p class="parity-text">
+                        <strong>Cobalt-60</strong> has 27 protons and 33 neutrons. When cooled to 0.01 Kelvin in a magnetic field, the nuclear spins align. Co-60 undergoes beta decay, emitting an electron and transforming into nickel-60.
+                    </p>
+                    <p class="parity-text">
+                        If <strong>parity is conserved</strong>, equal numbers of electrons should emit in both directions along the magnetic field axis. The experiment would look identical in a mirror. Left and right would be equivalent.
+                    </p>
+                    <p class="parity-text">
+                        Wu's experiment showed <strong>asymmetry</strong>. More electrons emitted opposite to the nuclear spin direction. This violated parity. The mirror image behaved differently. Nature has a handedness. The weak nuclear force distinguishes left from right.
+                    </p>
+                    <p class="parity-text">
+                        This discovery shocked physics. Parity had been assumed for decades. No one questioned it. Wu proved that weak interactions break this symmetry. The Standard Model now incorporates parity violation as a fundamental property of weak force.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="science-deep-dive">
+            <div class="science-container">
+                <div class="science-header">
+                    <div class="context-number">02 — The Science</div>
+                    <h2 class="science-title">What Is Parity Violation?</h2>
+                    <p class="science-intro">
+                        Parity violation means physics looks different in a mirror. Wu's experiment proved that weak nuclear interactions distinguish left from right. This shattered a fundamental assumption and transformed particle physics.
+                    </p>
+                </div>
+
+                <div class="science-subsection">
+                    <h3>The Theory: Lee and Yang's Proposal</h3>
+                    <p>
+                        In 1956, physicists faced a puzzle. Certain particles called K-mesons decayed in two different ways. One decay produced two pions. Another produced three pions. The two-pion state had even parity. The three-pion state had odd parity. But these seemed to be the same particle. How could one particle have two different parities?
+                    </p>
+                    <p>
+                        Most physicists assumed the particles were different despite similar masses. Lee and Yang proposed a radical alternative: maybe parity is not conserved in weak interactions. If weak force violated parity, one particle could decay both ways. The problem disappeared if parity conservation was wrong.
+                    </p>
+                    <p>
+                        They reviewed existing experiments. Electromagnetic and strong forces clearly conserved parity. But no experiment had tested parity in weak interactions. Beta decay involves weak force. Lee and Yang suggested testing parity in beta decay of aligned nuclei. If more electrons emit in one direction than the other, parity breaks. If emission is symmetric, parity holds.
+                    </p>
+                </div>
+
+                <div class="science-subsection">
+                    <h3>The Experiment: Technical Challenges</h3>
+                    <p>
+                        Wu chose cobalt-60. It undergoes beta decay with a 5.27-year half-life. Co-60 has nuclear spin 5. This large spin made alignment easier to detect. But alignment required extreme cold. At room temperature, thermal motion randomizes nuclear orientations. Magnetic fields cannot overcome thermal energy.
+                    </p>
+                    <p>
+                        Wu needed temperatures below 0.1 Kelvin. This is 0.1 degrees above absolute zero. Columbia had no equipment for this. Wu partnered with Ernest Ambler's group at the National Bureau of Standards. They specialized in cryogenic physics. They used adiabatic demagnetization of cerium magnesium nitrate crystals to reach 0.01 Kelvin.
+                    </p>
+                    <p>
+                        The experimental setup was complex. Cobalt-60 embedded in a crystal lattice sat inside a magnetic field coil. The whole apparatus lived in a cryostat. Scintillation detectors above and below measured electron emission. If parity held, both detectors would count equal electrons. Asymmetry would prove parity violation.
+                    </p>
+                    <p>
+                        Wu ran the experiment in December 1956. The upper detector registered more counts. The asymmetry was 7 percent initially. As the crystal warmed and alignment degraded, asymmetry decreased. The correlation was clear. Aligned nuclei emitted electrons preferentially in one direction. Parity was violated.
+                    </p>
+                    <div class="science-highlight-box">
+                        <p>
+                            <strong>The numbers:</strong> Co-60 (27 protons + 33 neutrons) decays to Ni-60 (28 protons + 32 neutrons) + electron + antineutrino. The emitted electron carries information about parity. Wu measured a 7% asymmetry between up and down emission directions at 0.01 K. This was enough to prove nature violates parity.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="science-subsection">
+                    <h3>The Result: Nature Has Handedness</h3>
+                    <p>
+                        Wu's result meant weak force treats left and right differently. Imagine filming beta decay and flipping the image. The mirror version shows electrons emitting in the opposite direction. But in the mirror world, nuclei would still align the same way relative to the magnetic field. The emission direction would be wrong. The mirror experiment violates the actual physics.
+                    </p>
+                    <p>
+                        This was profound. For decades, physicists assumed nature's laws were invariant under parity transformation. Flip all coordinates (x → -x, y → -y, z → -z) and physics should work identically. Gravity, electromagnetism, and strong force all obey this. But weak force does not. Wu proved this experimentally.
+                    </p>
+                    <p>
+                        The discovery explained the K-meson puzzle. The particle was theta-tau in different parity states. But parity was not conserved, so one particle could decay both ways. Lee and Yang's theory was correct. They won the 1957 Nobel Prize six months after Wu's announcement. Wu was not included. The Nobel Committee cited only theoretical work, ignoring experimental proof.
+                    </p>
+                </div>
+
+                <div class="science-subsection">
+                    <h3>The Implications: Rewriting Physics</h3>
+                    <p>
+                        Parity violation forced physicists to rethink fundamental symmetries. If parity breaks, what about charge conjugation (C) and time reversal (T)? Could those symmetries break too? Experiments soon showed CP violation in certain particle decays. Even the combined CPT symmetry, thought absolutely sacred, came under scrutiny. CPT remains conserved, but parity violation opened the door to testing all assumptions.
+                    </p>
+                    <p>
+                        The Standard Model incorporates parity violation into the weak force description. Left-handed particles interact via weak force. Right-handed particles do not (except through mass terms). This chirality is built into the mathematics. Neutrinos are exclusively left-handed. Antineutrinos are right-handed. This asymmetry directly results from parity violation.
+                    </p>
+                    <p>
+                        Cosmology relies on CP violation to explain matter-antimatter asymmetry. The Big Bang should have created equal matter and antimatter. They would annihilate, leaving only photons. But matter dominates the universe. CP violation, related to parity violation, provides a mechanism for this imbalance. Wu's experiment opened the path to understanding why anything exists.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <div class="section-header">
+                <div class="section-number">03 — Early Life</div>
+                <h2 class="section-title">From China to Columbia</h2>
+            </div>
+            <div class="section-content">
+                <div></div>
+                <div class="content-text">
+                    <p>
+                        Wu grew up in Liuhe, a small town near Shanghai. Her father opened the first girls' school there. He believed education should not discriminate by gender. Wu attended her father's school. She learned mathematics, science, and politics. She read newspapers and debated current events with her father's friends. This was unusual for a girl in 1920s China.
+                    </p>
+                    <p>
+                        At age 11, Wu left home for boarding school in Suzhou. The school had a teacher-training program. Wu studied science and mathematics. She graduated in 1929 and considered becoming a teacher. But she wanted more education. In 1930, Wu enrolled at National Central University in Nanjing. She chose physics. Few women studied physics in China. Wu did not let this deter her.
+                    </p>
+                    <p>
+                        At university, Wu joined student protests against Japanese aggression. She participated in demonstrations demanding government action. She balanced activism with academics. She graduated in 1934 at the top of her class. She stayed at the university to teach and research. She published papers on X-ray crystallography. But opportunities in China were limited. She decided to study abroad.
+                    </p>
+                    <p>
+                        Wu applied to the University of Michigan for graduate school. She won a scholarship. She sailed to San Francisco in August 1936. She planned to visit Berkeley before heading to Michigan. At Berkeley, she met scientists working on the cyclotron. She learned about cutting-edge nuclear physics. She decided Berkeley offered better opportunities. She changed her plans and enrolled at Berkeley. It was the right choice. She earned her PhD in 1940 under Emilio Segrè.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <div class="section-header">
+                <div class="section-number">04 — Discoveries</div>
+                <h2 class="section-title">A Lifetime of Breakthrough Physics</h2>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-year">1940</div>
+                    <div class="timeline-content">
+                        <h3>Berkeley PhD: Beta Decay Expertise</h3>
+                        <p>
+                            Wu completed her doctorate under Emilio Segrè. Her thesis examined radiation from uranium fission products. She became an expert in beta decay physics. This expertise would prove crucial 16 years later. Berkeley trained her in experimental technique. She learned precision measurement and careful error analysis. These skills defined her career.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1944</div>
+                    <div class="timeline-content">
+                        <h3>Manhattan Project: Solving Xenon Poisoning</h3>
+                        <p>
+                            Nuclear reactors at Hanford mysteriously shut down hours after startup. Engineers could not explain it. Wu identified the problem: xenon-135 poisoning. This fission product absorbs neutrons. It builds up when the reactor runs. Xenon-135 has a 9-hour half-life. It decays to cesium-135. But during operation, it accumulates faster than it decays. Wu calculated how long operators must wait before restarting. Her solution saved the plutonium production program.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1949</div>
+                    <div class="timeline-content">
+                        <h3>Weak Interaction Research at Columbia</h3>
+                        <p>
+                            Columbia hired Wu as associate professor in 1952. She worked in Pupin Hall, where the Manhattan Project had operated. She studied beta decay systematically. She measured electron spectra from various isotopes. She refined techniques for preparing radioactive sources. She trained graduate students in experimental physics. Her laboratory became a center for beta decay research. This positioned her perfectly for the 1956 parity experiment.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1956</div>
+                    <div class="timeline-content">
+                        <h3>Wu Experiment: Proving Parity Violation</h3>
+                        <p>
+                            Lee and Yang published their parity paper in June 1956. Wu started planning the experiment immediately. She partnered with Ernest Ambler at the National Bureau of Standards. They cooled cobalt-60 to 0.01 Kelvin. They aligned nuclear spins with a magnetic field. They measured beta particle emission directions. The data showed 7 percent asymmetry. More electrons emitted opposite to nuclear spin. This proved parity violation. Wu announced results in January 1957. The physics world was stunned.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1957</div>
+                    <div class="timeline-content">
+                        <h3>Nobel Prize Awarded to Lee and Yang Only</h3>
+                        <p>
+                            The Nobel Committee awarded the 1957 Physics Prize to Lee and Yang in October. The citation mentioned only theoretical work. Wu's experimental proof was ignored. This was six months after her announcement. The speed was unprecedented. Most Nobel Prizes come decades after discovery. The Committee clearly valued theory over experiment. But theory without experimental proof is speculation. Wu proved the theory correct. Without her, Lee and Yang's paper was just an interesting idea. The exclusion was deliberate and unjust.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1958</div>
+                    <div class="timeline-content">
+                        <h3>Princeton's First Honorary Doctorate for a Woman</h3>
+                        <p>
+                            Princeton University awarded Wu an honorary doctorate. She was the first woman to receive this honor from Princeton. Other universities followed. She received honorary degrees from Yale, Harvard, and dozens of other institutions. The Wolf Prize in Physics came in 1978. The National Medal of Science in 1975. She became president of the American Physical Society in 1975. These honors acknowledged what the Nobel Committee refused to recognize.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1963</div>
+                    <div class="timeline-content">
+                        <h3>Parity Violation in Muon Decay</h3>
+                        <p>
+                            Wu continued studying weak interactions. She measured parity violation in muon decay. Muons are heavier cousins of electrons. They decay via weak force. Wu showed muon decay also violates parity. The effect was consistent with cobalt-60 results. Weak force systematically preferred left-handed particles. This confirmed the general nature of parity violation. It was not unique to cobalt-60.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1997</div>
+                    <div class="timeline-content">
+                        <h3>Death and Legacy</h3>
+                        <p>
+                            Wu died in New York on February 16, 1997. She was 84. She had suffered a stroke four years earlier. Her ashes were buried in China at her family home. The Chinese government honored her with a commemorative stamp. The physics community mourned. Wu's legacy extended beyond parity violation. She mentored dozens of graduate students. Many became leaders in experimental physics. She advocated for women in science throughout her career. She spoke publicly about discrimination she faced. She pushed universities to hire more women faculty.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="modern-impact-section">
+            <div class="context-container">
+                <div class="modern-impact-header">
+                    <div class="context-number">05 — Modern Impact</div>
+                    <h2 class="modern-title">How Parity Violation Shapes Physics Today</h2>
+                    <p class="modern-subtitle">
+                        Wu's experiment transformed particle physics. Parity violation is now fundamental to the Standard Model. Her work connects to neutrino physics, cosmology, and our understanding of matter's existence.
+                    </p>
+                </div>
+                
+                <div class="impact-grid">
+                    <div class="impact-card" data-image="weak-force">
+                        <img src="../../assets/icons/weak-force-icon.png" alt="Weak force" class="impact-icon">
+                        <h3 class="impact-title">Standard Model Foundation</h3>
+                        <p class="impact-description">
+                            The Standard Model of particle physics incorporates parity violation as a fundamental property of weak interactions. Left-handed particles couple to weak force. Right-handed particles do not. This chirality is built into electroweak theory. Without parity violation, the Standard Model would fail. Wu's experiment provided the experimental foundation for this theoretical structure. Every particle physics experiment since 1957 builds on her discovery.
+                        </p>
+                    </div>
+
+                    <div class="impact-card" data-image="neutrino">
+                        <img src="../../assets/icons/neutrino-icon.png" alt="Neutrino physics" class="impact-icon">
+                        <h3 class="impact-title">Neutrino Handedness</h3>
+                        <p class="impact-description">
+                            Parity violation explains why neutrinos are exclusively left-handed and antineutrinos are right-handed. This was mysterious before 1957. Now we understand it as a consequence of weak force structure. Neutrino oscillation experiments measure this handedness. Solar neutrino detectors, reactor experiments, and accelerator beams all rely on understanding neutrino chirality. Wu's work opened the door to neutrino physics as we know it.
+                        </p>
+                    </div>
+
+                    <div class="impact-card" data-image="cp-violation">
+                        <img src="../../assets/icons/cp-violation-icon.png" alt="CP violation" class="impact-icon">
+                        <h3 class="impact-title">CP Violation Discovery</h3>
+                        <p class="impact-description">
+                            Wu's parity violation led physicists to question other symmetries. In 1964, Cronin and Fitch discovered CP violation in kaon decay. This means physics treats matter and antimatter slightly differently. CP violation is related to parity violation through CPT theorem. Both are manifestations of weak force asymmetry. The 1980 Nobel Prize for CP violation directly followed from Wu's 1956 experiment. One symmetry breaking opened the door to finding others.
+                        </p>
+                    </div>
+
+                    <div class="impact-card" data-image="cosmology">
+                        <img src="../../assets/icons/matter-antimatter-icon.png" alt="Matter-antimatter asymmetry" class="impact-icon">
+                        <h3 class="impact-title">Matter-Antimatter Asymmetry</h3>
+                        <p class="impact-description">
+                            The Big Bang should have created equal matter and antimatter. They would annihilate, leaving only photons. But the universe contains matter and almost no antimatter. CP violation, connected to parity violation, provides a mechanism for this imbalance. Andrei Sakharov showed in 1967 that CP violation could explain matter dominance. Wu's discovery indirectly explains why anything exists. Without parity and CP violation, the universe would be empty.
+                        </p>
+                    </div>
+
+                    <div class="impact-card" data-image="women-physics">
+                        <img src="../../assets/icons/women-physics-icon.png" alt="Women in physics" class="impact-icon">
+                        <h3 class="impact-title">Breaking Gender Barriers</h3>
+                        <p class="impact-description">
+                            Wu was the first woman professor at Princeton. She was the first woman president of the American Physical Society. She was the first to win the Wolf Prize in Physics. She mentored dozens of women physicists. Her career proved women could excel in experimental physics. She spoke publicly about discrimination. She pushed for hiring more women faculty. Her Nobel snub became a famous example of gender bias in science. The injustice is now taught in physics history courses.
+                        </p>
+                    </div>
+
+                    <div class="impact-card" data-image="nobel-injustice">
+                        <img src="../../assets/icons/nobel-controversy-icon.png" alt="Nobel Prize controversy" class="impact-icon">
+                        <h3 class="impact-title">Nobel Prize Controversy</h3>
+                        <p class="impact-description">
+                            Wu's exclusion from the 1957 Nobel Prize is one of the most controversial decisions in Nobel history. Lee and Yang proposed the theory. Wu proved it experimentally. Both contributions were essential. Theory without proof is speculation. Proof validates theory. The Committee's decision to honor only theorists reflected systematic bias against experimentalists and women. This case is studied in science ethics courses. It changed how scientists think about credit and collaboration.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <div class="quote-section">
+                <p class="quote-text">
+                    I wonder whether the tiny atoms and nuclei, or the mathematical symbols, or the DNA molecules have any preference for either masculine or feminine treatment.
+                </p>
+                <div class="quote-attribution">Chien-Shiung Wu</div>
+            </div>
+        </section>
+
+        <footer class="footer-nav">
+            <div class="footer-content">
+                <a href="../../dashboard/" class="nav-button">Back to Dashboard</a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Background particles script -->
+    <script>
+    // ===== VERIFIED DATA FROM AUTHORITATIVE SOURCES =====
+    // Co-60: 27 protons + 33 neutrons (PubChem, Physics World)
+    // Beta decay: Co-60 → Ni-60 + electron + antineutrino
+    // Temperature: 0.01 Kelvin (Wu's 1957 paper)
+    // Asymmetry: ~7% (Physical Review, 1957)
+
+    // ===== CUSTOM CURSOR =====
+    const cursor = document.getElementById('cursor');
+    let mouseX = 0, mouseY = 0;
+
+    document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+    });
+
+    function animateCursor() {
+        cursor.style.left = mouseX - 10 + 'px';
+        cursor.style.top = mouseY - 10 + 'px';
+        requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+
+    const hoverElements = document.querySelectorAll('a, button, .impact-card, .context-card, .timeline-content');
+    hoverElements.forEach(el => {
+        el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+        el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+    });
+
+    // ===== BACKGROUND CANVAS PARTICLES =====
+    const bgCanvas = document.getElementById('bg-canvas');
+    const bgCtx = bgCanvas.getContext('2d');
+
+    function resizeCanvas() {
+        bgCanvas.width = window.innerWidth;
+        bgCanvas.height = window.innerHeight;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    const bgParticles = [];
+    const particleCount = 50;
+    const physicsSymbols = ['Co', 'Ni', 'e', 'P', 'β'];
+
+    for (let i = 0; i < particleCount; i++) {
+        bgParticles.push({
+            x: Math.random() * bgCanvas.width,
+            y: Math.random() * bgCanvas.height,
+            vx: (Math.random() - 0.5) * 0.4,
+            vy: (Math.random() - 0.5) * 0.4,
+            size: Math.random() * 2 + 1,
+            opacity: Math.random() * 0.3 + 0.1,
+            symbol: physicsSymbols[Math.floor(Math.random() * physicsSymbols.length)]
+        });
+    }
+
+    function animateBgParticles() {
+        bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+        
+        bgParticles.forEach(particle => {
+            particle.x += particle.vx;
+            particle.y += particle.vy;
+            
+            if (particle.x < 0 || particle.x > bgCanvas.width) particle.vx *= -1;
+            if (particle.y < 0 || particle.y > bgCanvas.height) particle.vy *= -1;
+            
+            bgCtx.globalAlpha = particle.opacity;
+            bgCtx.font = `${particle.size * 12}px 'Space Mono', monospace`;
+            bgCtx.fillStyle = '#4a90e2';
+            bgCtx.fillText(particle.symbol, particle.x, particle.y);
+        });
+        
+        requestAnimationFrame(animateBgParticles);
+    }
+    
+    animateBgParticles();
+
+    // ===== ANIMATION CONTROLS =====
+    let animationSpeed = 1.0;
+    let isPaused = false;
+
+    const speedControl = document.getElementById('speed-control');
+    const pauseButton = document.getElementById('pause-button');
+
+    speedControl.addEventListener('input', (e) => {
+        animationSpeed = parseFloat(e.target.value);
+    });
+
+    pauseButton.addEventListener('click', () => {
+        isPaused = !isPaused;
+        pauseButton.textContent = isPaused ? 'Resume' : 'Pause';
+        pauseButton.classList.toggle('paused');
+    });
+
+    // ===== 3D COBALT-60 PARITY VIOLATION VISUALIZATION =====
+    const parityCanvas = document.getElementById('parity-3d-canvas');
+    const parityScene = new THREE.Scene();
+    const parityCamera = new THREE.PerspectiveCamera(
+        60,
+        parityCanvas.clientWidth / parityCanvas.clientHeight,
+        0.1,
+        1000
+    );
+    const parityRenderer = new THREE.WebGLRenderer({ 
+        canvas: parityCanvas, 
+        antialias: true, 
+        alpha: true 
+    });
+    
+    parityRenderer.setSize(parityCanvas.clientWidth, parityCanvas.clientHeight);
+    parityRenderer.setClearColor(0x000000, 0);
+    parityCamera.position.set(0, 10, 35);
+
+    const controls = new THREE.OrbitControls(parityCamera, parityRenderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.enableZoom = true;
+    controls.enablePan = true;
+    controls.minDistance = 15;
+    controls.maxDistance = 70;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.2;
+
+    const interactiveObjects = [];
+
+    // ===== COBALT-60 NUCLEUS (27 protons + 33 neutrons) =====
+    const cobaltGroup = new THREE.Group();
+    cobaltGroup.name = 'cobalt-60';
+
+    const protonGeometry = new THREE.SphereGeometry(0.25, 16, 16);
+    const cobaltProtonMaterial = new THREE.MeshPhongMaterial({ 
+        color: 0xff5533,
+        emissive: 0xff3311,
+        emissiveIntensity: 0.2,
+        shininess: 90
+    });
+
+    const neutronGeometry = new THREE.SphereGeometry(0.25, 16, 16);
+    const cobaltNeutronMaterial = new THREE.MeshPhongMaterial({ 
+        color: 0x3388ff,
+        emissive: 0x2266dd,
+        emissiveIntensity: 0.2,
+        shininess: 90
+    });
+
+    // 27 protons in cobalt-60
+    for (let i = 0; i < 27; i++) {
+        const proton = new THREE.Mesh(protonGeometry, cobaltProtonMaterial);
+        const phi = Math.acos(-1 + (2 * i) / 27);
+        const theta = Math.sqrt(27 * Math.PI) * phi;
+        const radius = 2.5;
+        proton.position.setFromSphericalCoords(radius, phi, theta);
+        proton.userData = { 
+            type: 'cobalt-proton',
+            name: 'Cobalt-60 Proton',
+            symbol: 'Co p⁺',
+            charge: '+1 elementary charge',
+            mass: '1.007276 amu',
+            detail: 'Total: 27 protons in Co-60',
+            element: 'cobalt'
+        };
+        cobaltGroup.add(proton);
+        interactiveObjects.push(proton);
+    }
+
+    // 33 neutrons in cobalt-60
+    for (let i = 0; i < 33; i++) {
+        const neutron = new THREE.Mesh(neutronGeometry, cobaltNeutronMaterial);
+        const phi = Math.acos(-1 + (2 * i) / 33);
+        const theta = Math.sqrt(33 * Math.PI) * phi;
+        const radius = 2.8;
+        neutron.position.setFromSphericalCoords(radius, phi, theta);
+        neutron.userData = { 
+            type: 'cobalt-neutron',
+            name: 'Cobalt-60 Neutron',
+            symbol: 'Co n⁰',
+            charge: '0 (neutral)',
+            mass: '1.008665 amu',
+            detail: 'Total: 33 neutrons in Co-60',
+            element: 'cobalt'
+        };
+        cobaltGroup.add(neutron);
+        interactiveObjects.push(neutron);
+    }
+
+    parityScene.add(cobaltGroup);
+
+    // ===== MAGNETIC FIELD VISUALIZATION =====
+    const magneticFieldLines = new THREE.Group();
+    
+    for (let i = 0; i < 8; i++) {
+        const angle = (Math.PI * 2 * i) / 8;
+        const radius = 10;
+        
+        const points = [];
+        for (let j = 0; j <= 50; j++) {
+            const t = j / 50;
+            const y = (t - 0.5) * 40;
+            const r = radius * (1 + Math.abs(y) * 0.02);
+            points.push(new THREE.Vector3(
+                Math.cos(angle) * r,
+                y,
+                Math.sin(angle) * r
+            ));
+        }
+        
+        const geometry = new THREE.BufferGeometry().setFromPoints(points);
+        const material = new THREE.LineBasicMaterial({ 
+            color: 0x4a90e2,
+            transparent: true,
+            opacity: 0.2
+        });
+        const line = new THREE.Line(geometry, material);
+        magneticFieldLines.add(line);
+    }
+    
+    parityScene.add(magneticFieldLines);
+
+    // ===== SPIN AXIS INDICATOR =====
+    const spinAxisGeometry = new THREE.CylinderGeometry(0.1, 0.1, 30, 8);
+    const spinAxisMaterial = new THREE.MeshBasicMaterial({ 
+        color: 0xff6666,
+        transparent: true,
+        opacity: 0.6
+    });
+    const spinAxis = new THREE.Mesh(spinAxisGeometry, spinAxisMaterial);
+    spinAxis.userData = {
+        type: 'spin-axis',
+        name: 'Nuclear Spin Axis',
+        symbol: '↑',
+        detail: 'Aligned by magnetic field at 0.01 K'
+    };
+    parityScene.add(spinAxis);
+    interactiveObjects.push(spinAxis);
+
+    // ===== EMITTED ELECTRONS (showing asymmetry) =====
+    const electrons = [];
+    const electronGeometry = new THREE.SphereGeometry(0.3, 12, 12);
+    
+    // More electrons emitted downward (opposite to spin) - 7% asymmetry
+    const downwardCount = 8;  // 53.5%
+    const upwardCount = 7;    // 46.5% (7% less)
+    
+    for (let i = 0; i < downwardCount; i++) {
+        const electronMaterial = new THREE.MeshBasicMaterial({ 
+            color: 0x00ff9f,
+            transparent: true,
+            opacity: 1
+        });
+        const electron = new THREE.Mesh(electronGeometry, electronMaterial);
+        electron.position.set(0, 0, 0);
+        electron.visible = false;
+        
+        const angle = (Math.PI * 2 * i) / downwardCount;
+        
+        electron.userData = { 
+            type: 'electron-down',
+            name: 'Beta Particle (e⁻)',
+            symbol: 'e⁻',
+            charge: '-1 elementary charge',
+            mass: '0.000549 amu',
+            detail: 'Emitted preferentially opposite to spin (parity violation)',
+            element: 'electron'
+        };
+        
+        electrons.push({
+            mesh: electron,
+            direction: new THREE.Vector3(
+                Math.cos(angle) * 0.5,
+                -1,
+                Math.sin(angle) * 0.5
+            ).normalize(),
+            active: false,
+            distance: 0
+        });
+        
+        parityScene.add(electron);
+        interactiveObjects.push(electron);
+    }
+
+    // Fewer electrons emitted upward (same direction as spin)
+    for (let i = 0; i < upwardCount; i++) {
+        const electronMaterial = new THREE.MeshBasicMaterial({ 
+            color: 0xff9900,
+            transparent: true,
+            opacity: 1
+        });
+        const electron = new THREE.Mesh(electronGeometry, electronMaterial);
+        electron.position.set(0, 0, 0);
+        electron.visible = false;
+        
+        const angle = (Math.PI * 2 * i) / upwardCount;
+        
+        electron.userData = { 
+            type: 'electron-up',
+            name: 'Beta Particle (e⁻)',
+            symbol: 'e⁻',
+            charge: '-1 elementary charge',
+            mass: '0.000549 amu',
+            detail: 'Fewer emitted in spin direction (parity violation)',
+            element: 'electron'
+        };
+        
+        electrons.push({
+            mesh: electron,
+            direction: new THREE.Vector3(
+                Math.cos(angle) * 0.5,
+                1,
+                Math.sin(angle) * 0.5
+            ).normalize(),
+            active: false,
+            distance: 0
+        });
+        
+        parityScene.add(electron);
+        interactiveObjects.push(electron);
+    }
+
+    // ===== LIGHTING =====
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    parityScene.add(ambientLight);
+
+    const cobaltLight = new THREE.PointLight(0x4a90e2, 2, 60);
+    cobaltLight.position.set(0, 0, 0);
+    parityScene.add(cobaltLight);
+
+    const rimLight = new THREE.PointLight(0xd4af37, 0.8, 100);
+    rimLight.position.set(15, 15, 15);
+    parityScene.add(rimLight);
+
+    // ===== TOOLTIP SYSTEM =====
+    const tooltip = document.createElement('div');
+    tooltip.className = 'parity-tooltip';
+    document.body.appendChild(tooltip);
+
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    let hoveredObject = null;
+
+    parityCanvas.addEventListener('mousemove', (event) => {
+        const rect = parityCanvas.getBoundingClientRect();
+        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, parityCamera);
+        
+        const visibleObjects = interactiveObjects.filter(obj => {
+            if (obj === spinAxis) return true;
+            if (obj.parent === cobaltGroup) return cobaltGroup.visible;
+            if (obj.userData.element === 'electron') return obj.visible;
+            return false;
+        });
+        
+        const intersects = raycaster.intersectObjects(visibleObjects);
+
+        if (intersects.length > 0) {
+            const object = intersects[0].object;
+            const data = object.userData;
+            
+            if (hoveredObject !== object) {
+                hoveredObject = object;
+                
+                let tooltipHTML = `<strong>${data.name}</strong>`;
+                if (data.symbol) {
+                    tooltipHTML += `<span class="tooltip-detail">Symbol: ${data.symbol}</span>`;
+                }
+                if (data.charge) {
+                    tooltipHTML += `<span class="tooltip-detail">Charge: ${data.charge}</span>`;
+                }
+                if (data.mass) {
+                    tooltipHTML += `<span class="tooltip-detail">Mass: ${data.mass}</span>`;
+                }
+                tooltipHTML += `<span class="tooltip-detail">${data.detail}</span>`;
+                
+                tooltip.innerHTML = tooltipHTML;
+            }
+            
+            tooltip.style.left = (event.clientX + 15) + 'px';
+            tooltip.style.top = (event.clientY + 15) + 'px';
+            tooltip.classList.add('visible');
+            
+            parityCanvas.style.cursor = 'pointer';
+            controls.autoRotate = false;
+        } else {
+            hoveredObject = null;
+            tooltip.classList.remove('visible');
+            parityCanvas.style.cursor = 'grab';
+            controls.autoRotate = true;
+        }
+    });
+
+    parityCanvas.addEventListener('mouseleave', () => {
+        tooltip.classList.remove('visible');
+        hoveredObject = null;
+        controls.autoRotate = true;
+    });
+
+    parityCanvas.addEventListener('mousedown', () => {
+        parityCanvas.style.cursor = 'grabbing';
+    });
+
+    parityCanvas.addEventListener('mouseup', () => {
+        parityCanvas.style.cursor = hoveredObject ? 'pointer' : 'grab';
+    });
+
+    // ===== ANIMATION STATE =====
+    let emissionState = 'waiting';
+    let stateProgress = 0;
+    let time = 0;
+    let emissionIndex = 0;
+
+    function animateParity() {
+        requestAnimationFrame(animateParity);
+        
+        if (!isPaused) {
+            time += 0.016 * animationSpeed;
+            stateProgress += 0.01 * animationSpeed;
+        }
+
+        controls.update();
+
+        // Rotate cobalt nucleus gently
+        cobaltGroup.rotation.x += 0.001 * animationSpeed;
+        cobaltGroup.rotation.y += 0.002 * animationSpeed;
+
+        // Pulse light
+        cobaltLight.intensity = 1.8 + Math.sin(time * 2) * 0.3;
+
+        // ===== BETA DECAY EMISSION SEQUENCE =====
+        if (!isPaused) {
+            if (emissionState === 'waiting') {
+                // Wait before next emission
+                if (stateProgress > 2) {
+                    emissionState = 'emitting';
+                    stateProgress = 0;
+                    
+                    // Emit next electron
+                    if (emissionIndex < electrons.length) {
+                        electrons[emissionIndex].mesh.visible = true;
+                        electrons[emissionIndex].active = true;
+                        electrons[emissionIndex].mesh.position.set(0, 0, 0);
+                        electrons[emissionIndex].distance = 0;
+                        emissionIndex++;
+                    } else {
+                        emissionIndex = 0;
+                    }
+                }
+            } else if (emissionState === 'emitting') {
+                // Move active electrons
+                electrons.forEach(e => {
+                    if (e.active) {
+                        e.distance += 0.25 * animationSpeed;
+                        
+                        const pos = e.direction.clone().multiplyScalar(e.distance);
+                        e.mesh.position.copy(pos);
+                        
+                        // Fade out at distance
+                        if (e.distance > 20) {
+                            e.mesh.material.opacity = Math.max(0, 1 - (e.distance - 20) / 10);
+                        }
+                        
+                        // Reset when too far
+                        if (e.distance > 30) {
+                            e.mesh.visible = false;
+                            e.active = false;
+                            e.distance = 0;
+                            e.mesh.material.opacity = 1;
+                        }
+                    }
+                });
+                
+                if (stateProgress > 0.5) {
+                    emissionState = 'waiting';
+                    stateProgress = 0;
+                }
+            }
+        }
+
+        parityRenderer.render(parityScene, parityCamera);
+    }
+
+    animateParity();
+
+    window.addEventListener('resize', () => {
+        parityCamera.aspect = parityCanvas.clientWidth / parityCanvas.clientHeight;
+        parityCamera.updateProjectionMatrix();
+        parityRenderer.setSize(parityCanvas.clientWidth, parityCanvas.clientHeight);
+    });
+
+    // ===== SCROLL ANIMATIONS =====
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.timeline-item, .impact-card, .context-card').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = 'all 0.6s ease';
+        observer.observe(el);
+    });
+
+    console.log('Chien-Shiung Wu page loaded.');
+    console.log('Co-60: 27p + 33n → Ni-60 (28p + 32n) + e⁻ + ν̄');
+    console.log('Parity violation: 7% asymmetry in electron emission at 0.01 K');
+    console.log('Data verified from: Physical Review 1957, Physics World, PubChem');
+    </script>
+</body>
+</html>

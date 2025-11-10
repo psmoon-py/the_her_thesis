@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>The HER Thesis - Stories of Forgotten Brilliance</title>
+    <meta charset="utf-8">
+    <meta name="description" content="Interactive timeline of women scientists who changed the world" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="icon" type="image/png" href="../favicon.png">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #ffffff;
+            --bg-color: #000000;
+            --accent-color-intro: #d4af37;
+            --accent-light: #c9ada7;
+            --text-gray: #888888;
+            --animation-duration: 1.5s;
+        }
+
+        /* Intro overlay */
+        .intro-container {
+            position: fixed;
+            width: 100%;
+            height: 100vh;
+            z-index: 10001;
+            background: var(--bg-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 2s ease-out;
+            cursor: default;
+        }
+
+        .intro-container.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #intro-canvas {
+            position: fixed;
+            width: 100%;
+            height: 100vh;
+            z-index: 1;
+        }
+
+        .intro-overlay {
+            position: fixed;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0);
+            z-index: 2;
+        }
+
+        .intro-text-container {
+            position: fixed;
+            width: 80%;
+            text-align: center;
+            z-index: 3;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .intro-text {
+            position: absolute;
+            width: 100%;
+            opacity: 0;
+            transform: translate(-50%, -50%);
+            left: 50%;
+            top: 50%;
+            font-size: clamp(24px, 4vw, 42px);
+            line-height: 1.4;
+            font-weight: 400;
+            letter-spacing: .5px;
+            animation: none;
+            pointer-events: none;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .intro-text.active {
+            animation: fadeInOut 5s ease-in-out;
+        }
+
+        @keyframes fadeInOut {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -40%);
+            }
+
+            20% {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+
+            80% {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+        }
+
+        .intro-text .highlight {
+            color: var(--accent-color-intro);
+            font-weight: 700;
+            font-style: italic;
+        }
+
+        .intro-skip-button {
+            position: fixed;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 32px;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, .3);
+            color: var(--text-gray);
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all .3s;
+            z-index: 4;
+        }
+
+        .intro-skip-button:hover {
+            background: rgba(212, 175, 55, .1);
+            border-color: var(--accent-color-intro);
+            color: var(--primary-color);
+        }
+
+        .sound-toggle {
+            position: fixed;
+            top: 40px;
+            right: 40px;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            z-index: 4;
+            opacity: .5;
+            transition: opacity .3s;
+        }
+
+        .sound-toggle:hover {
+            opacity: 1;
+        }
+    </style>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #000000;
+            --accent: #d4af37;
+            --danger: #ff6b6b;
+            --warning: #ff9f43;
+            --text: #ffffff;
+            --text-dim: rgba(255, 255, 255, .5);
+            --nav-width: 80px;
+            /* a comfortable centered column width */
+            --content-width: clamp(320px, 62ch, 740px);
+            --easing: cubic-bezier(0.23, 1, 0.320, 1);
+        }
+
+        html {
+            overflow: hidden;
+            height: 100vh;
+            background: #000;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: var(--bg-dark);
+            color: var(--text);
+            font-family: 'Space Grotesk', system-ui, sans-serif;
+            overflow: hidden;
+            cursor: crosshair;
+        }
+
+        #container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: 1;
+            background: transparent;
+        }
+
+        #fade-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: #000;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .story-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, .1);
+            z-index: 2000;
+        }
+
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--warning));
+            transition: width 1s var(--easing);
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        .progress-text {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+            z-index: 2001;
+        }
+
+        .story-viewport {
+            position: fixed;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .content-wrapper {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        /* ──────────────────────────────────────────
+     CENTER ALL SECTIONS (desktop baseline)
+     ────────────────────────────────────────── */
+        .content-section {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: var(--content-width);
+            max-width: min(90vw, var(--content-width));
+            /* default state (before .active) sits slightly below center for a soft rise-in */
+            transform: translate(-50%, calc(-50% + 40px));
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .6s var(--easing), transform .6s var(--easing);
+            text-align: center;
+        }
+
+        .content-section.active {
+            opacity: 1;
+            transform: translate(-50%, -50%);
+            pointer-events: auto;
+        }
+
+        /* left/right class names are now aliases for the centered layout */
+        .content-left,
+        .content-right,
+        .content-center,
+        .content-bottom {
+            left: 50%;
+            right: auto;
+            top: 50%;
+            bottom: auto;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .section-number {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 3px;
+            color: var(--accent);
+            text-transform: uppercase;
+            margin-bottom: 24px;
+            opacity: .8;
+        }
+
+        .section-title {
+            font-size: clamp(36px, 5vw, 64px);
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 16px;
+            letter-spacing: -2px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .section-subtitle {
+            font-size: 18px;
+            color: var(--text-dim);
+            margin-bottom: 24px;
+            font-weight: 300;
+        }
+
+        /* compact centered reading column */
+        .section-text {
+            font-size: 16px;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, .85);
+            max-width: 56ch;
+            margin: 0 auto;
+            text-align: justify;
+            text-justify: inter-word;
+            hyphens: auto;
+            letter-spacing: .2px;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-top: 32px;
+        }
+
+        .data-card {
+            background: rgba(255, 255, 255, .05);
+            border: 1px solid rgba(255, 255, 255, .1);
+            border-radius: 8px;
+            padding: 16px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all .3s;
+        }
+
+        .data-card.highlight {
+            border-color: var(--accent);
+            animation: pulse-highlight 2s infinite;
+        }
+
+        @keyframes pulse-highlight {
+
+            0%,
+            100% {
+                border-color: var(--accent);
+                box-shadow: 0 0 10px rgba(212, 175, 55, .3);
+            }
+
+            50% {
+                box-shadow: 0 0 20px rgba(212, 175, 55, .5);
+            }
+        }
+
+        .data-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Space Mono', monospace;
+        }
+
+        .data-value {
+            font-size: 28px;
+            font-weight: 700;
+            font-family: 'Space Mono', monospace;
+        }
+
+        .data-unit {
+            font-size: 14px;
+            color: var(--text-dim);
+            margin-left: 4px;
+        }
+
+        .nav-ruler {
+            position: fixed;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: var(--nav-width);
+            height: 400px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ruler-track {
+            position: relative;
+            width: 2px;
+            height: 100%;
+            background: rgba(255, 255, 255, .1);
+        }
+
+        .ruler-markers {
+            position: absolute;
+            inset: 0;
+        }
+
+        .ruler-marker {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 1px;
+            background: rgba(255, 255, 255, .3);
+            transition: all .3s;
+            cursor: pointer;
+        }
+
+        .ruler-marker:hover {
+            width: 30px;
+            background: var(--accent);
+        }
+
+        .ruler-marker.active {
+            width: 40px;
+            background: var(--accent);
+            box-shadow: 0 0 20px var(--accent);
+        }
+
+        .ruler-indicator {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            transition: top .8s var(--easing);
+            box-shadow: 0 0 20px var(--accent);
+        }
+
+        .hud-element {
+            position: fixed;
+            font-size: 11px;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            z-index: 80;
+            font-family: 'Space Mono', monospace;
+        }
+
+        .hud-top-left {
+            top: 30px;
+            left: 30px;
+        }
+
+        .hud-top-right {
+            top: 30px;
+            right: 30px;
+            text-align: right;
+        }
+
+        .stars-container {
+            position: fixed;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .hero-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 40px;
+            background: transparent;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            text-decoration: none;
+            transition: all .3s;
+            margin: 32px auto 0;
+            /* 👈 centers the button block */
+            cursor: pointer;
+            font-family: 'Space Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .hero-button:hover {
+            background: var(--accent);
+            color: var(--bg-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, .3);
+        }
+
+        .skip-button {
+            position: fixed;
+            bottom: 14px;
+            right: 60px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, .1);
+            border: 1px solid rgba(255, 255, 255, .3);
+            color: #fff;
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            z-index: 100;
+            opacity: 0;
+            transition: all .3s;
+        }
+
+        .skip-button.visible {
+            opacity: 1;
+        }
+
+        .skip-button:hover {
+            background: rgba(212, 175, 55, .2);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .bottom-left-controls {
+            position: fixed;
+            bottom: 62px;
+            left: 145px;
+            z-index: 100;
+            display: flex;
+            gap: 15px;
+        }
+
+        .bottom-right-controls {
+            position: fixed;
+            bottom: 62px;
+            right: 145px;
+            z-index: 100;
+            display: flex;
+            gap: 15px;
+        }
+
+        .control-button {
+            padding: 10px 15px;
+            background: rgba(0, 0, 0, .5);
+            border: 1px solid var(--accent);
+            border-radius: 4px;
+            color: var(--accent);
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all .3s;
+            text-transform: uppercase;
+        }
+
+        .control-button:hover {
+            background: rgba(212, 175, 55, .1);
+            box-shadow: 0 0 10px rgba(212, 175, 55, .3);
+        }
+
+        .control-button2 {
+            padding: 12px 25px;
+            background: var(--accent);
+            border: 1px solid #000;
+            border-radius: 4px;
+            color: #000;
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all .3s;
+            text-transform: uppercase;
+        }
+
+        .control-button2:hover {
+            background: #fff;
+            box-shadow: 0 0 10px rgba(212, 175, 55, .3);
+        }
+
+        /* Scramble effect remains unchanged */
+        .scramble-text-story,
+        .scramble-text {
+            display: inline-block;
+            position: relative;
+            font-family: inherit;
+            min-width: fit-content;
+        }
+
+        .scramble-text-story.animating,
+        .scramble-text.animating {
+            animation: scrambleGlitch .3s infinite;
+        }
+
+        @keyframes scrambleGlitch {
+
+            0%,
+            100% {
+                text-shadow: .05em 0 0 rgba(212, 175, 55, .75),
+                    -.05em -.025em 0 rgba(201, 173, 167, .75),
+                    .025em .05em 0 rgba(139, 90, 60, .75);
+            }
+
+            15% {
+                text-shadow: -.05em -.025em 0 rgba(212, 175, 55, .75),
+                    .025em .025em 0 rgba(201, 173, 167, .75),
+                    -.05em -.05em 0 rgba(139, 90, 60, .75);
+            }
+        }
+
+        .intro-text.active.scramble-text-story.animating {
+            animation: fadeInOut 5s ease-in-out, scrambleGlitch .3s infinite;
+        }
+
+        /* ─────────────────────────────
+     MOBILE: center + fit viewport
+     ───────────────────────────── */
+        /* Mobile layout */
+        @media (max-width: 768px) {
+
+            /* keep HUD ("WOMEN IN SCIENCE 1867–1950") above the card */
+            .hud-element {
+                z-index: 3000;
+            }
+
+            /* hide the ruler only on mobile */
+            .nav-ruler {
+                display: none;
+            }
+
+            /* each section becomes a centered scrollable card */
+            .content-section {
+                padding: 20px;
+                width: calc(100vw - 40px);
+                max-width: 680px;
+                left: 50% !important;
+                right: auto !important;
+                top: 50% !important;
+                transform: translate(-50%, -50%) !important;
+
+                /* leave vertical room for HUD + bottom buttons */
+                max-height: calc(100vh - 120px);
+                overflow: auto;
+
+                text-align: center;
+            }
+
+            .section-title {
+                font-size: 28px;
+            }
+
+            .section-text {
+                text-align: justify;
+                max-width: none;
+            }
+
+            /* center the "Explore More Stories" hero button (section 8) */
+            .hero-button {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            /* === bottom buttons on mobile ===
+     - show BOTH
+     - fixed at the bottom
+     - side-by-side around the center
+  */
+            .bottom-left-controls,
+            .bottom-right-controls {
+                position: fixed;
+                bottom: 24px;
+                z-index: 2500;
+                display: flex !important;
+                align-items: center;
+            }
+
+            /* "Skip to the end" – slightly left of center */
+            .bottom-left-controls {
+                left: 50%;
+                transform: translateX(-100%) translateX(-8px);
+            }
+
+            /* "View all scientists" – slightly right of center */
+            .bottom-right-controls {
+                right: 50%;
+                transform: translateX(100%) translateX(8px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="intro-container" id="introContainer">
+        <canvas id="intro-canvas"></canvas>
+
+        <div class="intro-overlay"></div>
+
+        <div class="intro-text-container">
+            <div class="intro-text scramble-text-story" data-index="0">For centuries, brilliant women have shaped our
+                understanding of the <span class="highlight">universe</span>.</div>
+            <div class="intro-text scramble-text-story" data-index="1">Their discoveries in <span
+                    class="highlight">physics, chemistry, biology, and astronomy</span> changed everything.</div>
+            <div class="intro-text scramble-text-story" data-index="2">Yet many of their contributions were <span
+                    class="highlight">overlooked, minimized, or forgotten</span>.</div>
+            <div class="intro-text scramble-text-story" data-index="3">This is the story of <span
+                    class="highlight">seven remarkable women</span> whose brilliance deserves recognition.</div>
+            <div class="intro-text scramble-text-story" data-index="4">Welcome to <span class="highlight">The HER
+                    Thesis</span></div>
+        </div>
+
+        <button class="intro-skip-button" id="skipIntro">
+            SKIP INTRODUCTION
+        </button>
+
+        <div class="sound-toggle" id="soundToggle">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <path d="M8 10V22L16 26V6L8 10Z" stroke="white" stroke-width="1" />
+                <path d="M20 12C20 12 22 14 22 16C22 18 20 20 20 20" stroke="white" stroke-width="1" />
+                <path d="M24 8C24 8 28 12 28 16C28 20 24 24 24 24" stroke="white" stroke-width="1" opacity="0.5" />
+            </svg>
+        </div>
+    </div>
+
+    <div class="story-progress">
+        <div class="progress-fill" id="storyProgress"></div>
+    </div>
+
+    <div class="story-viewport">
+        <div id="fade-overlay"></div>
+        <div id="container"></div>
+
+        <div class="stars-container">
+            <canvas id="starfield-canvas"></canvas>
+        </div>
+
+        <div class="content-wrapper">
+            <!-- Section 0: Introduction -->
+            <div class="content-section content-center" id="section-0">
+                <div class="section-number">01 — Introduction</div>
+                <h1 class="section-title scramble-text-story">The Hidden Figures of Science</h1>
+                <p class="section-subtitle">A journey through forgotten brilliance</p>
+                <p class="section-text">
+                    Throughout history, brilliant women have made groundbreaking discoveries in physics, chemistry,
+                    biology, and astronomy.
+                    Their work laid the foundation for modern science, yet many of their contributions were overlooked
+                    or attributed to male colleagues.
+                    This interactive timeline celebrates seven extraordinary women whose discoveries fundamentally
+                    changed our understanding of the natural world.
+                </p>
+                <div class="data-grid">
+                    <div class="data-card highlight">
+                        <div class="data-label">Scientists Featured</div>
+                        <div class="data-value">7</div>
+                    </div>
+                    <div class="data-card">
+                        <div class="data-label">Time Period</div>
+                        <div class="data-value">1867<span class="data-unit">-1950</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 1: Marie Curie -->
+            <div class="content-section content-left" id="section-1">
+                <div class="section-number">02 — Physics Pioneer</div>
+                <h1 class="section-title scramble-text-story">Marie Curie</h1>
+                <p class="section-subtitle">The Radium Revolutionary (1867-1934)</p>
+                <p class="section-text">
+                    Marie Curie became the first woman to win a Nobel Prize and the only person to win Nobel Prizes in
+                    two different sciences.
+                    Her systematic approach to isolating radioactive elements was revolutionary, establishing methods
+                    still used today.
+                    She discovered radium and polonium, coined the term "radioactivity," and pioneered mobile X-ray
+                    units during World War I.
+                </p>
+                <div class="data-grid">
+                    <div class="data-card highlight">
+                        <div class="data-label">Nobel Prizes Won</div>
+                        <div class="data-value">2</div>
+                    </div>
+                    <div class="data-card">
+                        <div class="data-label">Elements Discovered</div>
+                        <div class="data-value">2<span class="data-unit">Ra, Po</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Lise Meitner -->
+            <div class="content-section content-right" id="section-2">
+                <div class="section-number">03 — Nuclear Physics</div>
+                <h1 class="section-title scramble-text-story">Lise Meitner</h1>
+                <p class="section-subtitle">The Mother of Nuclear Fission (1878-1968)</p>
+                <p class="section-text">
+                    Lise Meitner provided the theoretical explanation for nuclear fission in 1938 and coined the term
+                    itself.
+                    Her groundbreaking work laid the foundation for both nuclear power and atomic weapons.
+                    Despite her crucial contribution to understanding nuclear physics, she was excluded from the Nobel
+                    Prize awarded to her male colleague Otto Hahn.
+                </p>
+                <div class="data-grid">
+                    <div class="data-card">
+                        <div class="data-label">Discovery Year</div>
+                        <div class="data-value">1938</div>
+                    </div>
+                    <div class="data-card highlight">
+                        <div class="data-label">Nobel Prize</div>
+                        <div class="data-value">Denied</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Chien-Shiung Wu -->
+            <div class="content-section content-left" id="section-3">
+                <div class="section-number">04 — Experimental Physics</div>
+                <h1 class="section-title scramble-text-story">Chien-Shiung Wu</h1>
+                <p class="section-subtitle">The First Lady of Physics (1912-1997)</p>
+                <p class="section-text">
+                    Wu's theoretical work in the 1940s laid the groundwork for experiments on parity conservation in
+                    weak nuclear interactions.
+                    Her foundational research provided the theoretical framework that would later be proven
+                    experimentally,
+                    while her male colleagues won the Nobel Prize for building upon her theoretical contributions.
+                </p>
+                <div class="data-grid">
+                    <div class="data-card highlight">
+                        <div class="data-label">Theory Developed</div>
+                        <div class="data-value">1940s</div>
+                    </div>
+                    <div class="data-card">
+                        <div class="data-label">Physics Law</div>
+                        <div class="data-value">Parity<span class="data-unit">theory</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Rosalind Franklin -->
+            <div class="content-section content-right" id="section-4">
+                <div class="section-number">05 — Molecular Biology</div>
+                <h1 class="section-title scramble-text-story">Rosalind Franklin</h1>
+                <p class="section-subtitle">The DNA Pioneer (1920-1958)</p>
+                <p class="section-text">
+                    Franklin developed X-ray crystallography techniques in the 1940s that would prove crucial to
+                    understanding molecular structures.
+                    Her systematic crystallographic analysis methods laid the groundwork for later DNA structural
+                    studies.
+                    Watson and Crick built upon her foundational techniques, earning them the Nobel Prize while
+                    Franklin's methodological contributions went unrecognized.
+                </p>
+                <div class="data-grid">
+                    <div class="data-card highlight">
+                        <div class="data-label">Technique Developed</div>
+                        <div class="data-value">1940s</div>
+                    </div>
+                    <div class="data-card">
+                        <div class="data-label">X-ray Method</div>
+                        <div class="data-value">Crystal<span class="data-unit">lography</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 5: Barbara McClintock -->
+            <div class="content-section content-left" id="section-5">
+                <div class="section-number">06 — Genetics</div>
+                <h1 class="section-title scramble-text-story">Barbara McClintock</h1>
+                <p class="section-subtitle">The Jumping Genes Discoverer (1902-1992)</p>
+                <p class="section-text">
+                    McClintock discovered genetic transposition in the 1940s, showing that genes can move within
+                    chromosomes.
+                    Her work on "jumping genes" was initially dismissed by the scientific community for decades
+                    until molecular biology advanced enough to understand its revolutionary significance, earning her a
+                    Nobel Prize in 1983.
+                </p>
+                <div class="data-grid">
+                    <div class="data-card">
+                        <div class="data-label">Discovery</div>
+                        <div class="data-value">1945</div>
+                    </div>
+                    <div class="data-card highlight">
+                        <div class="data-label">Nobel Prize</div>
+                        <div class="data-value">1983<span class="data-unit">38 years later</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 6: Dorothy Hodgkin -->
+            <div class="content-section content-right" id="section-6">
+                <div class="section-number">07 — Chemistry</div>
+                <h1 class="section-title scramble-text-story">Dorothy Hodgkin</h1>
+                <p class="section-subtitle">The Molecular Architect (1910-1994)</p>
+                <p class="section-text">
+                    Hodgkin pioneered X-ray crystallography work in the 1930s and 1940s to determine molecular
+                    structures.
+                    Her wartime work on penicillin structure enabled the mass production of synthetic antibiotics,
+                    saving countless lives.
+                    She became the third woman to win a Nobel Prize in Chemistry and the first British woman to win a
+                    science Nobel Prize.
+                </p>
+                <div class="data-grid">
+                    <div class="data-card highlight">
+                        <div class="data-label">Nobel Prize</div>
+                        <div class="data-value">1964</div>
+                    </div>
+                    <div class="data-card">
+                        <div class="data-label">Structures Solved</div>
+                        <div class="data-value">3<span class="data-unit">major</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 7: Cecilia Payne -->
+            <div class="content-section content-left" id="section-7">
+                <div class="section-number">08 — Astrophysics</div>
+                <h1 class="section-title scramble-text-story">Cecilia Payne-Gaposchkin</h1>
+                <p class="section-subtitle">The Stellar Composer (1900-1979)</p>
+                <p class="section-text">
+                    Payne determined that stars are primarily composed of hydrogen and helium in her 1925 PhD thesis,
+                    revolutionizing astrophysics.
+                    Her thesis was initially called "impossible" by leading astronomers because it contradicted accepted
+                    beliefs,
+                    but later became the foundation of stellar physics and modern astronomy.
+                </p>
+                <div class="data-grid">
+                    <div class="data-card">
+                        <div class="data-label">PhD Thesis</div>
+                        <div class="data-value">1925</div>
+                    </div>
+                    <div class="data-card highlight">
+                        <div class="data-label">Stars Made Of</div>
+                        <div class="data-value">H & He</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 8: Legacy -->
+            <div class="content-section content-center" id="section-8">
+                <div class="section-number">09 — Their Legacy</div>
+                <h1 class="section-title scramble-text-story">Continuing Their Work</h1>
+                <p class="section-subtitle">The fight for recognition continues</p>
+                <p class="section-text">
+                    These women didn't just make discoveries—they opened entire fields of study before 1950. From
+                    radioactivity to stellar composition,
+                    from nuclear fission theory to genetic transposition, their pre-1950 work shapes our modern world.
+                    Their legacy lives on in every woman scientist working today, breaking barriers and pushing the
+                    boundaries of human knowledge.
+                </p>
+
+                <a href="../dashboard/" class="hero-button">
+                    <span>Explore More Stories →</span>
+                </a>
+            </div>
+        </div>
+
+        <nav class="nav-ruler">
+            <div class="ruler-track">
+                <div class="ruler-markers" id="ruler-markers"></div>
+                <div class="ruler-indicator" id="ruler-indicator"></div>
+            </div>
+        </nav>
+
+        <div class="hud-element hud-top-left">
+            <div>THE HER THESIS</div>
+            <div id="current-date">2025.10.29</div>
+        </div>
+
+        <div class="hud-element hud-top-right">
+            <div>WOMEN IN SCIENCE</div>
+            <div class="hud-distance" id="timeline-year">1867-1950</div>
+        </div>
+
+        <div class="bottom-left-controls">
+            <button class="control-button" onclick="skipToEnd()">
+                Skip to the end
+            </button>
+        </div>
+
+        <div class="bottom-right-controls">
+            <a href="../dashboard/"><button class="control-button2 scramble-text-story">
+                    View All Scientists
+                </button></a>
+        </div>
+    </div>
+
+    <!-- AUDIO: reproduz após primeira interação -->
+    <audio id="story-audio" src="../assets/audio/ambient-science.mp3" preload="auto" playsinline loop></audio>
+
+    <script>
+        // === Story Audio Autoplay após interação do usuário ===
+        (function () {
+            const audio = document.getElementById('story-audio');
+            const toggle = document.getElementById('soundToggle');
+            if (!audio) return;
+
+            let started = false;
+            audio.volume = 0.03;
+
+            function tryPlay() {
+                if (started) return;
+                started = true;
+                audio.play().catch(err => {
+                    started = false;
+                    console.warn('Reprodução adiada:', err);
+                });
+            }
+
+            ['pointerdown', 'keydown', 'touchstart'].forEach(ev => {
+                window.addEventListener(ev, tryPlay, { once: true, passive: true });
+            });
+
+            if (toggle) {
+                toggle.addEventListener('click', () => {
+                    if (audio.muted || audio.paused) {
+                        audio.muted = false;
+                        audio.play().catch(() => { });
+                        toggle.style.opacity = 1;
+                    } else {
+                        audio.muted = true;
+                        toggle.style.opacity = 0.35;
+                    }
+                });
+            }
+        })();
+    </script>
+
+    <script>
+        /* ---------- Intro Scrambler ---------- */
+        const RANDOM_CHARS = '⚛️🧬💊🌟ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+        class IntroScrambler {
+            constructor() { this._tick = null; }
+            scramble(el, duration = 20, hold = 10) {
+                if (!el) return;
+                const original = el.getAttribute('data-final') || el.innerHTML;
+                el.setAttribute('data-final', original);
+
+                const plain = el.textContent;
+                const len = plain.length;
+
+                let start = performance.now();
+                el.classList.add('animating');
+
+                const frame = (now) => {
+                    const t = Math.min(1, (now - start) / duration);
+                    const reveal = Math.floor(len * t);
+                    let out = '';
+                    for (let i = 0; i < len; i++) {
+                        if (i < reveal) {
+                            out += plain[i];
+                        } else if (plain[i] === ' ') {
+                            out += ' ';
+                        } else {
+                            out += RANDOM_CHARS[(Math.random() * RANDOM_CHARS.length) | 0];
+                        }
+                    }
+                    el.textContent = out;
+
+                    if (t < 1) {
+                        this._tick = requestAnimationFrame(frame);
+                    } else {
+                        el.textContent = plain;
+                        setTimeout(() => el.classList.remove('animating'), hold);
+                    }
+                };
+                cancelAnimationFrame(this._tick);
+                this._tick = requestAnimationFrame(frame);
+            }
+        }
+        const introScrambler = new IntroScrambler();
+
+        // Three.js Setup para fundo científico
+        let introScene, introCamera, introRenderer;
+        let introAnimationId, particles;
+
+        function createParticleTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 128; canvas.height = 128;
+            const context = canvas.getContext('2d');
+            const gradient = context.createRadialGradient(canvas.width / 2, canvas.height / 2, 0, canvas.width / 2, canvas.height / 2, canvas.width / 2);
+            gradient.addColorStop(0, 'rgba(212, 175, 55, 1)');
+            gradient.addColorStop(0.2, 'rgba(212, 175, 55, 0.8)');
+            gradient.addColorStop(0.8, 'rgba(212, 175, 55, 0.1)');
+            gradient.addColorStop(1, 'rgba(212, 175, 55, 0)');
+            context.fillStyle = gradient;
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            return new THREE.CanvasTexture(canvas);
+        }
+
+        function initIntroScene() {
+            introScene = new THREE.Scene();
+            introCamera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+            introCamera.position.z = 5;
+            const canvas = document.getElementById('intro-canvas');
+            introRenderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+            introRenderer.setSize(window.innerWidth, window.innerHeight);
+            introRenderer.setClearColor(0x000000, 0);
+
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particlesCount = 3000;
+            const positions = new Float32Array(particlesCount * 3);
+            for (let i = 0; i < particlesCount; i++) {
+                let v = new THREE.Vector3();
+                v.x = Math.random() * 2 - 1;
+                v.y = Math.random() * 2 - 1;
+                v.z = Math.random() * 2 - 1;
+                v.normalize(); v.multiplyScalar(Math.random() * 10 + 200);
+                positions[i * 3] = v.x; positions[i * 3 + 1] = v.y; positions[i * 3 + 2] = v.z;
+            }
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+            const particleTexture = createParticleTexture();
+            const particlesMaterial = new THREE.PointsMaterial({
+                color: 0xd4af37,
+                size: 1.5,
+                map: particleTexture,
+                blending: THREE.AdditiveBlending,
+                transparent: true,
+                depthWrite: false
+            });
+            particles = new THREE.Points(particlesGeometry, particlesMaterial);
+            introScene.add(particles);
+            animateIntro();
+        }
+
+        function animateIntro() {
+            introAnimationId = requestAnimationFrame(animateIntro);
+            if (particles) particles.rotation.y += 0.0001;
+            introRenderer.render(introScene, introCamera);
+        }
+
+        class IntroTextSequence {
+            constructor() {
+                this.texts = document.querySelectorAll('.intro-text');
+                this.currentIndex = 0;
+                this.duration = 5000;
+                this.isPlaying = false;
+                this.intervalId = null;
+                this.skipButton = document.getElementById('skipIntro');
+                this.container = document.getElementById('introContainer');
+                this.bindEvents();
+            }
+            start() {
+                if (this.isPlaying) return;
+                this.isPlaying = true;
+                this.showText(0);
+                this.intervalId = setInterval(() => this.nextText(), this.duration);
+            }
+            showText(index) {
+                this.texts.forEach(text => { text.classList.remove('active', 'animating'); });
+                const el = this.texts[index];
+                if (el) {
+                    el.classList.add('active', 'animating');
+                    introScrambler.scramble(el, 1200);
+                    this.currentIndex = index;
+                }
+            }
+            nextText() {
+                this.currentIndex++;
+                if (this.currentIndex >= this.texts.length) {
+                    this.end();
+                } else {
+                    this.showText(this.currentIndex);
+                }
+            }
+            skip() { this.end(); }
+            end() {
+                if (!this.isPlaying) return;
+                if (this.intervalId) clearInterval(this.intervalId);
+                this.isPlaying = false;
+                this.container.classList.add('hidden');
+                if (introAnimationId) cancelAnimationFrame(introAnimationId);
+
+                if (typeof window.startMainExperience === 'function') {
+                    console.log("Intro finished, starting main experience immediately.");
+                    window.startMainExperience();
+                }
+                setTimeout(() => { if (this.container) this.container.remove(); }, 2000);
+            }
+            bindEvents() {
+                this.skipButton.addEventListener('click', () => this.skip());
+                document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && this.isPlaying) this.skip(); });
+            }
+        }
+
+        window.addEventListener('load', () => {
+            initIntroScene();
+            const sequence = new IntroTextSequence();
+            setTimeout(() => sequence.start(), 1000);
+        });
+
+        window.addEventListener('resize', () => {
+            if (introCamera && introRenderer) {
+                introCamera.aspect = window.innerWidth / window.innerHeight;
+                introCamera.updateProjectionMatrix();
+                introRenderer.setSize(window.innerWidth, window.innerHeight);
+            }
+        });
+    </script>
+
+    <script>
+        /* Places a section vertically based on its real height.
+   - Desktop:
+       - sections 0 & 8 → centered whenever they fit
+       - others → slightly biased upward for the “timeline” feel
+   - Mobile:
+       - each section becomes a scrollable card that fits inside the viewport
+*/
+        function placeSection(el) {
+            if (!el) return;
+
+            const id = el.id || '';
+            const isCenterHero = (id === 'section-0' || id === 'section-8');
+            const vh = window.innerHeight;
+            const vw = window.innerWidth;
+
+            // Reset before measuring
+            el.style.top = '';
+            el.style.bottom = '';
+            el.style.maxHeight = '';
+            el.style.overflowY = 'visible';
+
+            const h = el.offsetHeight;
+
+            /* ---------- MOBILE BEHAVIOUR (<= 768px) ---------- */
+            if (vw <= 768) {
+                // Treat slide like a centered card with internal scroll
+                const margin = 72; // space for HUD + buttons
+                const maxH = vh - margin * 2;
+
+                el.style.position = 'absolute';
+                el.style.top = `${margin}px`;
+
+                if (maxH > 0) {
+                    el.style.maxHeight = `${maxH}px`;
+                    el.style.overflowY = 'auto';
+                }
+                return;
+            }
+
+            /* ---------- DESKTOP BEHAVIOUR ---------- */
+
+            const safeTop = Math.round(0.12 * vh);
+            const safeBottom = Math.round(0.12 * vh);
+
+            let top;
+
+            if (isCenterHero) {
+                // Intro + Legacy: try true vertical center
+                if (h + safeTop + safeBottom <= vh) {
+                    top = Math.floor((vh - h) / 2);
+                } else {
+                    // If they’re too tall, pin within safe area
+                    top = safeTop;
+                }
+            } else {
+                // Side sections: slightly above center for drama
+                const desiredCenter = Math.floor((vh - h) / 2);
+                const biasUp = Math.round(0.08 * vh); // nudge up a bit
+                top = desiredCenter - biasUp;
+
+                if (top < safeTop) top = safeTop;
+                if (top + h > vh - safeBottom) {
+                    top = Math.max(safeTop, vh - safeBottom - h);
+                }
+            }
+
+            el.style.position = 'absolute';
+            el.style.top = `${top}px`;
+        }
+
+        // === MAIN STORY EXPERIENCE ===
+        let container, scene, camera, renderer;
+        let currentSection = 0;
+        const totalSections = 9; // Updated to 9 sections (7 scientists + intro + legacy)
+
+        class StoryExperience {
+            constructor() {
+                this.currentSection = 0;
+                this.totalSections = 9; // Updated to 9 sections
+                this.isScrolling = false;
+                this.init();
+            }
+
+            init() {
+                this.initScene();
+                this.initNavigation();
+                this.initStarfield();
+                this.updateProgress();
+                this.showSection(0);
+
+                window.startMainExperience = () => {
+                    this.showSection(0);
+                };
+            }
+
+            initScene() {
+                container = document.getElementById('container');
+                scene = new THREE.Scene();
+                camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.setClearColor(0x000000, 0);
+                container.appendChild(renderer.domElement);
+
+                this.animate();
+            }
+
+            initStarfield() {
+                const canvas = document.getElementById('starfield-canvas');
+                const ctx = canvas.getContext('2d');
+
+                function resize() {
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                }
+
+                function createStars() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                    for (let i = 0; i < 200; i++) {
+                        const x = Math.random() * canvas.width;
+                        const y = Math.random() * canvas.height;
+                        const size = Math.random() * 2;
+                        const opacity = Math.random() * 0.8 + 0.2;
+
+                        ctx.fillStyle = `rgba(212, 175, 55, ${opacity})`;
+                        ctx.beginPath();
+                        ctx.arc(x, y, size, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+
+                resize();
+                createStars();
+
+                window.addEventListener('resize', () => {
+                    resize();
+                    createStars();
+                });
+            }
+
+            initNavigation() {
+                // Ruler navigation
+                this.createRuler();
+
+                // Keyboard navigation
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+                        e.preventDefault();
+                        this.nextSection();
+                    } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+                        e.preventDefault();
+                        this.prevSection();
+                    }
+                });
+
+                // Scroll navigation
+                let scrollTimeout;
+                window.addEventListener('wheel', (e) => {
+                    if (this.isScrolling) return;
+
+                    clearTimeout(scrollTimeout);
+                    scrollTimeout = setTimeout(() => {
+                        if (e.deltaY > 0) {
+                            this.nextSection();
+                        } else {
+                            this.prevSection();
+                        }
+                    }, 100);
+                }, { passive: true });
+            }
+
+            createRuler() {
+                const markersContainer = document.getElementById('ruler-markers');
+                const indicator = document.getElementById('ruler-indicator');
+
+                for (let i = 0; i < this.totalSections; i++) {
+                    const marker = document.createElement('div');
+                    marker.className = 'ruler-marker';
+                    marker.style.top = `${(i / (this.totalSections - 1)) * 100}%`;
+                    marker.addEventListener('click', () => this.navigateToSection(i));
+                    markersContainer.appendChild(marker);
+                }
+            }
+
+            showSection(index) {
+                if (index < 0 || index >= this.totalSections || this.isScrolling) return;
+
+                this.isScrolling = true;
+                this.currentSection = index;
+
+                // Hide all sections
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+
+                // Show current section (CSS handles centering)
+                const currentElement = document.getElementById(`section-${index}`);
+                if (currentElement) currentElement.classList.add('active');
+
+                // Update ruler + progress
+                this.updateRuler();
+                this.updateProgress();
+
+                // Scramble animation
+                setTimeout(() => {
+                    const scrambleElements = currentElement?.querySelectorAll('.scramble-text-story');
+                    scrambleElements?.forEach(el => {
+                        if (el.textContent) introScrambler.scramble(el, 800);
+                    });
+                }, 300);
+
+                setTimeout(() => { this.isScrolling = false; }, 800);
+            }
+
+
+
+            updateRuler() {
+                const markers = document.querySelectorAll('.ruler-marker');
+                const indicator = document.getElementById('ruler-indicator');
+
+                markers.forEach((marker, index) => {
+                    if (index === this.currentSection) {
+                        marker.classList.add('active');
+                    } else {
+                        marker.classList.remove('active');
+                    }
+                });
+
+                if (indicator) {
+                    const progress = this.currentSection / (this.totalSections - 1);
+                    indicator.style.top = `${progress * 100}%`;
+                }
+            }
+
+            updateProgress() {
+                const progressBar = document.getElementById('storyProgress');
+                if (progressBar) {
+                    const progress = (this.currentSection / (this.totalSections - 1)) * 100;
+                    progressBar.style.width = `${progress}%`;
+                }
+            }
+
+            nextSection() {
+                if (this.currentSection < this.totalSections - 1) {
+                    this.showSection(this.currentSection + 1);
+                }
+            }
+
+            prevSection() {
+                if (this.currentSection > 0) {
+                    this.showSection(this.currentSection - 1);
+                }
+            }
+
+            navigateToSection(index) {
+                this.showSection(index);
+            }
+
+            animate() {
+                requestAnimationFrame(() => this.animate());
+                renderer.render(scene, camera);
+            }
+        }
+
+        // Skip to end function
+        function skipToEnd() {
+            if (window.storyExperience) {
+                window.storyExperience.navigateToSection(8); // Go to last section (index 8)
+            }
+        }
+
+        // Initialize when intro finishes
+        window.addEventListener('DOMContentLoaded', () => {
+            // Will be started by intro sequence
+            window.storyExperience = new StoryExperience();
+        });
+
+        window.addEventListener('resize', () => {
+            const active = document.querySelector('.content-section.active');
+            if (active) placeSection(active);
+        });
+
+    </script>
+
+</body>
+
+</html>

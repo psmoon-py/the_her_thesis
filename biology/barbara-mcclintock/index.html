@@ -1,0 +1,1673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barbara McClintock - The Jumping Genes Discoverer | The HER Thesis</title>
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <style>
+        :root {
+            --primary: #ffffff;
+            --bg-dark: #0a0a0a;
+            --accent: #d4af37;
+            --accent-light: #c9ada7;
+            --corn-yellow: #f4e04d;
+            --transposon-purple: #9b59b6;
+            --text: #ffffff;
+            --text-dim: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --glass: rgba(255, 255, 255, 0.1);
+            --border: rgba(255, 255, 255, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            cursor: none;
+        }
+
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        .video-bg {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            opacity: 0.25;
+            filter: blur(3px);
+            object-fit: cover;
+        }
+
+        .video-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, transparent 0%, rgba(10, 10, 10, 0.8) 100%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .custom-cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            mix-blend-mode: difference;
+            transition: transform 0.2s ease;
+        }
+
+        .custom-cursor.hover {
+            transform: scale(1.5);
+            background: var(--accent);
+        }
+
+        .main-container {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+        }
+
+        .nav-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 20px 40px;
+            background: rgba(10, 10, 10, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .nav-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .nav-logo:hover {
+            color: var(--accent);
+        }
+
+        .nav-logo .her {
+            font-style: italic;
+            color: var(--accent-light);
+        }
+
+        .nav-back {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            text-decoration: none;
+            border-radius: 6px;
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-back:hover {
+            background: var(--glass);
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateX(-4px);
+        }
+
+        .hero {
+            padding: 120px 40px 80px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .hero-subtitle {
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 20px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.2s forwards;
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 6vw, 5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 30px;
+            letter-spacing: -2px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.4s forwards;
+        }
+
+        .hero-description {
+            font-size: 20px;
+            line-height: 1.6;
+            color: var(--text-dim);
+            margin-bottom: 40px;
+            max-width: 600px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.6s forwards;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.8s forwards;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'Space Mono', monospace;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            display: block;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        .hero-visual {
+            position: relative;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 1s forwards;
+        }
+
+        .hero-image {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            border-radius: 12px;
+            filter: sepia(0.3) contrast(1.1);
+            transition: transform 0.6s ease;
+        }
+
+        .hero-image:hover {
+            transform: scale(1.02);
+        }
+
+        .image-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 30px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+            border-radius: 0 0 12px 12px;
+        }
+
+        .image-caption {
+            font-size: 14px;
+            color: var(--text-dim);
+            font-style: italic;
+        }
+
+        .transposon-3d-section {
+            padding: 100px 40px;
+            background: linear-gradient(180deg, transparent, rgba(244, 224, 77, 0.03), transparent);
+        }
+
+        .transposon-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 600px 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .transposon-canvas-wrapper {
+            position: relative;
+        }
+
+        #transposon-3d-canvas {
+            width: 100%;
+            height: 600px;
+            border-radius: 12px;
+            background: rgba(244, 224, 77, 0.02);
+            border: 1px solid rgba(244, 224, 77, 0.2);
+            cursor: grab;
+        }
+
+        #transposon-3d-canvas:active {
+            cursor: grabbing;
+        }
+
+        .transposon-controls-hint {
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: var(--corn-yellow);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: 1px solid rgba(244, 224, 77, 0.3);
+        }
+
+        .transposon-controls {
+            position: absolute;
+            bottom: 85%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.85);
+            padding: 16px 24px;
+            border-radius: 8px;
+            border: 1px solid rgba(244, 224, 77, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            z-index: 10;
+        }
+
+        .control-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: var(--corn-yellow);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .speed-slider {
+            width: 120px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .speed-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--corn-yellow);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--corn-yellow);
+        }
+
+        .speed-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: var(--corn-yellow);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 10px var(--corn-yellow);
+        }
+
+        .pause-button {
+            padding: 6px 16px;
+            background: transparent;
+            border: 1px solid var(--corn-yellow);
+            color: var(--corn-yellow);
+            border-radius: 4px;
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .pause-button:hover {
+            background: var(--corn-yellow);
+            color: var(--bg-dark);
+        }
+
+        .pause-button.paused {
+            background: var(--corn-yellow);
+            color: var(--bg-dark);
+        }
+
+        .transposon-explanation {
+            padding: 40px;
+        }
+
+        .transposon-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--corn-yellow);
+        }
+
+        .transposon-text {
+            font-size: 17px;
+            line-height: 1.7;
+            color: var(--text-dim);
+            margin-bottom: 20px;
+        }
+
+        .transposon-text strong {
+            color: var(--corn-yellow);
+            font-weight: 600;
+        }
+
+        .transposon-tooltip {
+            position: fixed;
+            background: rgba(0, 0, 0, 0.95);
+            color: #f4e04d;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-family: 'Space Mono', monospace;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 10001;
+            border: 1px solid rgba(244, 224, 77, 0.5);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            max-width: 280px;
+            line-height: 1.5;
+        }
+
+        .transposon-tooltip.visible {
+            opacity: 1;
+        }
+
+        .transposon-tooltip strong {
+            display: block;
+            color: #d4af37;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+
+        .transposon-tooltip .tooltip-detail {
+            display: block;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 2px;
+        }
+
+        .historical-context, .content-section, .science-deep-dive, .modern-impact-section {
+            padding: 100px 40px;
+        }
+
+        .context-container, .science-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .context-header, .science-header, .modern-impact-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .context-number {
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            letter-spacing: 3px;
+            color: var(--accent);
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .context-title, .science-title, .modern-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+
+        .context-subtitle, .science-intro, .modern-subtitle {
+            font-size: 20px;
+            color: var(--text-dim);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .context-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            max-width: 1400px;
+            margin: 60px auto 0;
+        }
+
+        .context-card, .impact-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 40px;
+            backdrop-filter: blur(20px);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            min-height: 350px;
+        }
+
+        .impact-card {
+            min-height: 320px;
+            padding: 30px;
+        }
+
+        .context-card::before, .impact-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            z-index: -1;
+            transition: opacity 0.4s ease;
+        }
+
+        .context-card:hover::before, .impact-card:hover::before {
+            opacity: 0.25;
+        }
+
+        .context-card::after, .impact-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.75));
+            z-index: -1;
+        }
+
+        .context-card:hover, .impact-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent);
+            box-shadow: 0 30px 60px rgba(212, 175, 55, 0.2);
+        }
+
+        .context-icon, .impact-icon {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 20px;
+            display: block;
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5));
+            position: relative;
+            z-index: 1;
+        }
+
+        .impact-icon {
+            width: 50px;
+            height: 50px;
+        }
+
+        .context-card-title, .impact-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .impact-title {
+            font-size: 1.25rem;
+            margin-bottom: 12px;
+        }
+
+        .context-card-text, .impact-description {
+            font-size: 16px;
+            line-height: 1.7;
+            color: var(--text-dim);
+            position: relative;
+            z-index: 1;
+        }
+
+        .impact-description {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .content-section {
+            padding: 80px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 60px;
+            margin-bottom: 60px;
+            align-items: start;
+        }
+
+        .section-number {
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--accent);
+            position: sticky;
+            top: 140px;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .section-content {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 60px;
+        }
+
+        .content-text {
+            font-size: 18px;
+            line-height: 1.7;
+            color: var(--text-dim);
+        }
+
+        .content-text p {
+            margin-bottom: 24px;
+        }
+
+        .highlight {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .science-subsection {
+            margin-bottom: 60px;
+        }
+
+        .science-subsection h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--corn-yellow);
+        }
+
+        .science-subsection p {
+            font-size: 17px;
+            line-height: 1.7;
+            color: var(--text-dim);
+            margin-bottom: 20px;
+        }
+
+        .science-highlight-box {
+            background: rgba(244, 224, 77, 0.1);
+            border-left: 4px solid var(--corn-yellow);
+            padding: 24px;
+            margin: 30px 0;
+            border-radius: 8px;
+        }
+
+        .science-highlight-box p {
+            margin-bottom: 0;
+            font-size: 16px;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 60px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 200px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--accent), var(--corn-yellow));
+            opacity: 0.3;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 60px;
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 60px;
+            align-items: start;
+        }
+
+        .timeline-year {
+            font-family: 'Space Mono', monospace;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent);
+            position: relative;
+        }
+
+        .timeline-year::after {
+            content: '';
+            position: absolute;
+            right: -31px;
+            top: 50%;
+            width: 14px;
+            height: 14px;
+            background: var(--corn-yellow);
+            border-radius: 50%;
+            transform: translateY(-50%);
+            box-shadow: 0 0 20px var(--corn-yellow);
+            animation: pulse-glow 2s infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 10px var(--corn-yellow); }
+            50% { box-shadow: 0 0 30px var(--corn-yellow); }
+        }
+
+        .timeline-content {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .timeline-content:hover {
+            border-color: var(--corn-yellow);
+            transform: translateX(10px);
+            box-shadow: 0 10px 40px rgba(244, 224, 77, 0.1);
+        }
+
+        .timeline-content h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .timeline-content p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-dim);
+        }
+
+        .quote-section {
+            background: rgba(212, 175, 55, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+            padding: 60px;
+            margin: 80px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .quote-section::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 120px;
+            color: var(--accent);
+            font-family: 'Playfair Display', serif;
+            opacity: 0.3;
+        }
+
+        .quote-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-style: italic;
+            line-height: 1.4;
+            margin-bottom: 20px;
+        }
+
+        .quote-attribution {
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent);
+        }
+
+        .footer-nav {
+            padding: 80px 40px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 32px;
+            background: transparent;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            text-decoration: none;
+            border-radius: 8px;
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button:hover {
+            background: var(--accent);
+            color: var(--bg-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .hero-content,
+            .transposon-container {
+                grid-template-columns: 1fr;
+                gap: 60px;
+            }
+
+            .section-header,
+            .section-content,
+            .timeline-item {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .timeline::before {
+                left: 20px;
+            }
+
+            .timeline-year::after {
+                left: -31px;
+                right: auto;
+            }
+
+            .context-grid,
+            .impact-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-header {
+                padding: 15px 20px;
+            }
+
+            .hero {
+                padding: 100px 20px 60px;
+            }
+
+            .content-section,
+            .transposon-3d-section,
+            .historical-context,
+            .modern-impact-section,
+            .science-deep-dive {
+                padding: 60px 20px;
+            }
+
+            .hero-title,
+            .context-title,
+            .modern-title,
+            .science-title {
+                font-size: 2.5rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .quote-text {
+                font-size: 1.5rem;
+            }
+
+            .hero-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="custom-cursor" id="cursor"></div>
+    <canvas id="bg-canvas"></canvas>
+    <video class="video-bg" autoplay muted loop playsinline>
+        <source src="../../assets/videos/corn-genetics.mp4" type="video/mp4">
+    </video>
+    <div class="video-overlay"></div>
+
+    <nav class="nav-header">
+        <div class="nav-content">
+            <a href="../../" class="nav-logo">The <span class="her">HER</span> Thesis</a>
+            <a href="../../dashboard/" class="nav-back">Back to Dashboard</a>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <div class="hero-subtitle">Geneticist · 1902-1992</div>
+                    <h1 class="hero-title">Barbara McClintock</h1>
+                    <p class="hero-description">
+                        The cytogeneticist who discovered transposable elements in maize. She showed genes can jump between chromosomes, controlling other genes. Her work was dismissed for decades until molecular biology confirmed jumping genes exist in all organisms.
+                    </p>
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">1945</span>
+                            <span class="stat-label">Discovery Made</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">1983</span>
+                            <span class="stat-label">Nobel Prize</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">38</span>
+                            <span class="stat-label">Years Ignored</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">10</span>
+                            <span class="stat-label">Chromosomes Mapped</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <img src="../../assets/images/barbara-mcclintock-portrait.jpg" alt="Barbara McClintock" class="hero-image">
+                    <div class="image-overlay">
+                        <div class="image-caption">Barbara McClintock with corn, Cold Spring Harbor, 1947</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="historical-context">
+            <div class="context-container">
+                <div class="context-header">
+                    <div class="context-number">01 — Historical Context</div>
+                    <h2 class="context-title">Where Did the Idea Come From?</h2>
+                    <p class="context-subtitle">
+                        In 1944, McClintock noticed unusual color patterns in corn kernels. Some kernels had spots where pigment genes turned on and off unpredictably. This violated every rule of inheritance. Genes were supposed to stay in fixed chromosomal positions. McClintock discovered they could move.
+                    </p>
+                </div>
+                
+                <div class="context-grid">
+                    <div class="context-card">
+                        <img src="../../assets/icons/hartford-ct-icon.png" alt="Hartford Connecticut" class="context-icon">
+                        <h3 class="context-card-title">Hartford 1902: Independent Spirit</h3>
+                        <p class="context-card-text">
+                            Eleanor McClintock was born June 16, 1902, in Hartford, Connecticut. She changed her name to Barbara at age three because Eleanor felt too feminine. Her parents were unconventional. Her mother left Barbara with relatives for long periods rather than conform to traditional mothering. This suited Barbara, who preferred solitude. She spent hours exploring alone, observing nature. Her father was a physician who encouraged her intellectual curiosity. But he worried higher education would hurt her marriage prospects. Barbara insisted. She attended Erasmus Hall High School in Brooklyn. She excelled in science. Teachers noticed her extraordinary focus and analytical ability. She graduated in 1919. Against her father's wishes, she enrolled at Cornell University's College of Agriculture. Cornell admitted women but barred them from graduate genetics programs. Barbara studied botany instead. She fell in love with corn genetics in Rollins Emerson's laboratory.
+                        </p>
+                    </div>
+
+                    <div class="context-card">
+                        <img src="../../assets/icons/cornell-university-icon.png" alt="Cornell University" class="context-icon">
+                        <h3 class="context-card-title">Cornell 1927: Chromosome Revolutionary</h3>
+                        <p class="context-card-text">
+                            McClintock's undergraduate work impressed faculty so much they invited her into the graduate genetics program despite the restriction on women. She earned her PhD in 1927. Her doctoral thesis developed techniques for identifying individual corn chromosomes under the microscope. Before McClintock, all corn chromosomes looked identical. She discovered how to distinguish them using staining patterns and morphological features. This let her track chromosomes through cell division and sexual reproduction. She showed that chromosomes carried genes. She correlated chromosome abnormalities with inherited traits. By 1931, she and graduate student Harriet Creighton proved genes physically resided on chromosomes. They published the first proof of crossing over at the chromosomal level. This work was revolutionary. It connected genetics to cytology. McClintock mapped all ten corn chromosomes. She identified ring chromosomes, chromosome inversions, and translocations. She became the leading cytogeneticist in America. The Rockefeller Foundation funded her research. She won prestigious awards. But universities refused to hire women as professors. Cornell employed her only as a research assistant.
+                        </p>
+                    </div>
+
+                    <div class="context-card">
+                        <img src="../../assets/icons/cold-spring-harbor-icon.png" alt="Cold Spring Harbor" class="context-icon">
+                        <h3 class="context-card-title">Cold Spring Harbor 1944: Unstable Loci</h3>
+                        <p class="context-card-text">
+                            After positions at Missouri and Cold Spring Harbor, McClintock received a permanent Carnegie Institution appointment in 1942. She could finally work without teaching duties or grant applications. She focused entirely on corn genetics. She grew corn in summer fields adjacent to her laboratory. Each fall she examined thousands of kernels under the microscope. In 1944, she noticed something strange. Some kernels had streaks and spots of color where pigment genes switched on and off during development. The pattern suggested genes were unstable. But genes were supposed to be fixed. She called these unstable loci. She crossed plants with unstable loci and tracked patterns through generations. The instability behaved like a genetic element. It could be inherited. But it did not follow Mendelian ratios. McClintock hypothesized the instability came from mobile controlling elements. Something moved into genes, inactivating them. When it moved out, genes reactivated. This explained the spotted kernels. Different cells experienced gene activation at different times during development, creating patterns.
+                        </p>
+                    </div>
+
+                    <div class="context-card">
+                        <img src="../../assets/icons/transposon-discovery-icon.png" alt="Transposon discovery" class="context-icon">
+                        <h3 class="context-card-title">1950: Ac and Ds Elements</h3>
+                        <p class="context-card-text">
+                            By 1950, McClintock identified two controlling elements. She called them Activator and Dissociation. Ds could not move alone. Ac made it move. When Ds jumped into a pigment gene, kernels were colorless. When Ds jumped out during kernel development, pigment returned. This created colored spots on white backgrounds. The spots varied in size depending on when Ds excised. Early excision produced large sectors. Late excision produced small spots. McClintock tracked Ac and Ds through multiple generations. She showed they moved to different chromosomal locations. She determined they did not follow regular genetic rules. They were autonomous genetic elements that controlled other genes by jumping into them. She presented this work at Cold Spring Harbor symposium in 1951. The audience was silent. No one asked questions. Geneticists could not comprehend mobile genes. The central dogma held that genetic information flowed linearly from DNA to RNA to protein. Jumping genes contradicted this. McClintock stopped publishing. She continued her research alone.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="transposon-3d-section">
+            <div class="transposon-container">
+                <div class="transposon-canvas-wrapper">
+                    <canvas id="transposon-3d-canvas"></canvas>
+                    <div class="transposon-controls-hint">Drag to rotate · Scroll to zoom · Hover for details</div>
+                    <div class="transposon-controls">
+                        <span class="control-label">Speed</span>
+                        <input type="range" min="0.1" max="2" step="0.1" value="1" class="speed-slider" id="speed-control">
+                        <button class="pause-button" id="pause-button">Pause</button>
+                    </div>
+                </div>
+                <div class="transposon-explanation">
+                    <h2 class="transposon-title">Understanding Transposable Elements</h2>
+                    <p class="transposon-text">
+                        <strong>Chromosome 9</strong> contains several pigment genes McClintock studied. The C gene controls kernel color. When C is active, kernels are purple. When inactive, they are yellow.
+                    </p>
+                    <p class="transposon-text">
+                        <strong>Ac element</strong> (Activator) is an autonomous transposon measuring 4.6 kilobases. It encodes transposase enzyme that cuts DNA and inserts Ac at new locations. Ac moves independently.
+                    </p>
+                    <p class="transposon-text">
+                        <strong>Ds element</strong> (Dissociation) is a non-autonomous transposon. It lacks functional transposase. Ds only moves when Ac is present in the genome. Ac's transposase acts on Ds, causing it to jump.
+                    </p>
+                    <p class="transposon-text">
+                        When <strong>Ds inserts into C gene</strong>, the gene breaks. Kernels are yellow. When Ds excises during kernel development, C restores function. That cell lineage produces purple pigment. Multiple excision events create spotted kernels.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="science-deep-dive">
+            <div class="science-container">
+                <div class="science-header">
+                    <div class="context-number">02 — The Science</div>
+                    <h2 class="science-title">What Are Transposable Elements?</h2>
+                    <p class="science-intro">
+                        Transposable elements are DNA sequences that move within genomes. McClintock discovered them in corn. They exist in all organisms. Nearly half the human genome consists of transposable element sequences. They shape evolution and gene regulation.
+                    </p>
+                </div>
+
+                <div class="science-subsection">
+                    <h3>The Ac/Ds System</h3>
+                    <p>
+                        McClintock identified two elements working together. Activator moves autonomously. Dissociation requires Activator to move. This two-element system confused geneticists initially. But it made sense once molecular biology revealed DNA structure.
+                    </p>
+                    <p>
+                        Ac encodes transposase enzyme. Transposase recognizes specific DNA sequences at Ac's ends. It cuts DNA at these sites. It inserts Ac elsewhere in the genome. This is cut-and-paste transposition. Ds retains the recognition sequences but lacks functional transposase. When Ac transposase encounters Ds, it treats Ds like Ac. It cuts Ds and moves it.
+                    </p>
+                    <p>
+                        In McClintock's experiments, Ds jumped into the C gene on chromosome 9. C encodes an enzyme in anthocyanin pigment synthesis. With Ds inserted, C cannot function. Kernels lack purple pigment. They appear yellow or colorless. During kernel development, Ac transposase occasionally excises Ds from C. The gene restores function. That cell and its descendants produce pigment. This creates purple sectors on yellow backgrounds.
+                    </p>
+                    <div class="science-highlight-box">
+                        <p>
+                            <strong>Verified dimensions:</strong> Ac element is 4,565 base pairs. Ds elements vary from 400 to 2,000 base pairs. Both have terminal inverted repeats. Ac transposase binds these repeats. Excision frequency determines spot size in kernels.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="science-subsection">
+                    <h3>Why Scientists Rejected It</h3>
+                    <p>
+                        In 1951, geneticists believed genes were stable structures at fixed chromosomal positions. The linear genetic map supported this. Genes stayed in order. Recombination shuffled alleles but did not move genes to new locations. McClintock's jumping genes violated this fundamental principle.
+                    </p>
+                    <p>
+                        Her evidence came from corn kernel patterns. She inferred genetic mechanisms from phenotypes. She did not have DNA sequencing. She could not show transposons directly. Critics argued her data could be explained by conventional mutations and recombination events. Her two-element system seemed unnecessarily complex.
+                    </p>
+                    <p>
+                        The scientific community also struggled with McClintock's presentation style. She assumed audiences understood corn genetics at her level. Her talks were dense with technical details about chromosome morphology and inheritance patterns. Many listeners got lost. Her written papers were similarly complex. They required deep familiarity with her previous work. Younger researchers entering genetics after 1950 learned molecular biology, not corn cytogenetics. They lacked context for McClintock's discoveries.
+                    </p>
+                </div>
+
+                <div class="science-subsection">
+                    <h3>Molecular Biology Proves Her Right</h3>
+                    <p>
+                        In the 1960s and 1970s, molecular biologists discovered insertion sequences in bacteria. These mobile DNA elements could inactivate genes by inserting into them. They could also cause chromosomal rearrangements. The parallels to McClintock's Ac/Ds system were obvious. Bacterial insertion sequences had terminal repeats. They encoded transposase. They moved via cut-and-paste mechanism.
+                    </p>
+                    <p>
+                        In 1983, Nina Fedoroff cloned the Ac element. She determined its DNA sequence. She identified the transposase gene. She showed Ac's terminal repeats matched sequences Ds retained. This proved McClintock's model correct at the molecular level. Transposons were real. They were not experimental artifacts or misinterpretations.
+                    </p>
+                    <p>
+                        The Nobel Prize in Physiology or Medicine went to McClintock later in 1983. She was 81 years old. The Nobel Committee recognized her "discovery of mobile genetic elements." She had waited 38 years for validation. She received the prize alone. This was appropriate. She worked alone for decades while others dismissed her ideas.
+                    </p>
+                </div>
+
+                <div class="science-subsection">
+                    <h3>Impact on Modern Genetics</h3>
+                    <p>
+                        Transposable elements are ubiquitous. They make up 45 percent of human DNA. Most are inactive remnants of ancient transposition events. But some remain active. They continue inserting into new genomic locations. This creates genetic diversity. It drives evolution.
+                    </p>
+                    <p>
+                        Transposon insertions can cause disease. Hemophilia cases result from transposon insertions into clotting factor genes. Some cancers involve transposon reactivation. Understanding transposons informs medicine. But transposons also benefit organisms. They help regulate gene expression. They shuffle genetic material. They create new genes through exon shuffling.
+                    </p>
+                    <p>
+                        Molecular biologists use transposons as research tools. They insert reporter genes into genomes to study development. They create knockout mutations to determine gene function. CRISPR gene editing borrows transposon mechanisms. McClintock's jumping genes revolutionized not just genetics but biotechnology.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <div class="section-header">
+                <div class="section-number">03 — Early Life</div>
+                <h2 class="section-title">The Solitary Scientist</h2>
+            </div>
+            <div class="section-content">
+                <div></div>
+                <div class="content-text">
+                    <p>
+                        McClintock preferred working alone. She never married. She had few close friendships. Colleagues described her as intensely focused on research to the exclusion of social life. She worked 12-hour days in summer cornfields and winter laboratories. She found companionship in her corn plants. She treated each as an individual.
+                    </p>
+                    <p>
+                        Her independence served her during decades of scientific rejection. Most scientists need validation from peers. They present work at conferences seeking approval and collaboration. McClintock did not need this. She knew her data were correct. She continued experiments regardless of outside opinion. This stubbornness let her persist when others would have abandoned transposon research.
+                    </p>
+                    <p>
+                        But independence isolated her. After 1953, she stopped publishing in mainstream journals. She presented findings only at Cold Spring Harbor symposia. This limited her audience. Younger geneticists entering the field never encountered her work. They learned genetics from textbooks that omitted mobile elements. McClintock became scientifically invisible.
+                    </p>
+                    <p>
+                        She lived simply at Cold Spring Harbor. She occupied a small apartment on the laboratory grounds. She grew vegetables. She walked in nearby woods. She required little money and owned few possessions. This lifestyle freed her from financial pressures. She worked because she loved understanding how genes behave, not for career advancement or recognition.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Major Discoveries Timeline -->
+        <section class="content-section">
+            <div class="section-header">
+                <div class="section-number">04 — Discoveries</div>
+                <h2 class="section-title">A Lifetime in Corn Fields</h2>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-year">1931</div>
+                    <div class="timeline-content">
+                        <h3>Crossing Over Proof</h3>
+                        <p>
+                            With Harriet Creighton, proved genetic crossing over involves physical chromosome exchange. This paper was landmark evidence that genes reside on chromosomes. It connected cytology to genetics definitively.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1944</div>
+                    <div class="timeline-content">
+                        <h3>First Unstable Loci</h3>
+                        <p>
+                            Noticed corn kernels with unusual color patterns suggesting genes turned on and off unpredictably. This violated established genetic principles. Genes were supposed to be stable. McClintock hypothesized mobile controlling elements.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1950</div>
+                    <div class="timeline-content">
+                        <h3>Ac/Ds System Identified</h3>
+                        <p>
+                            Characterized Activator and Dissociation as two-element transposable system. Showed Ds could not move without Ac. Demonstrated these elements controlled gene expression by jumping into genes. Published detailed genetic analysis.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1951</div>
+                    <div class="timeline-content">
+                        <h3>Cold Reception at Symposium</h3>
+                        <p>
+                            Presented transposon work at Cold Spring Harbor symposium. Audience was silent after her talk. Nobody asked questions. Geneticists could not accept mobile genes. McClintock stopped publishing in major journals.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1970s</div>
+                    <div class="timeline-content">
+                        <h3>Bacterial Transposons Discovered</h3>
+                        <p>
+                            Molecular biologists found insertion sequences in bacteria. These mobile elements resembled McClintock's Ac/Ds system. Scientists began reconsidering her work. Transposons were real, not artifacts.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1983</div>
+                    <div class="timeline-content">
+                        <h3>Nobel Prize Finally</h3>
+                        <p>
+                            Received Nobel Prize in Physiology or Medicine at age 81. First woman to receive unshared Nobel in that category. Citation recognized "discovery of mobile genetic elements." Thirty-eight years after initial discovery.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1992</div>
+                    <div class="timeline-content">
+                        <h3>Death at 90</h3>
+                        <p>
+                            Died September 2, 1992, at age 90. Worked in her laboratory almost until the end. Left legacy of transposon research that transformed genetics. Her patience and persistence vindicated decades later.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="modern-impact-section">
+            <div class="context-container">
+                <div class="modern-impact-header">
+                    <div class="context-number">05 — Modern Impact</div>
+                    <h2 class="modern-title">How Jumping Genes Changed Everything</h2>
+                    <p class="modern-subtitle">
+                        Transposable elements make up nearly half the human genome. They drive evolution, regulate genes, and cause disease. McClintock's discovery revolutionized understanding of genome dynamics and plasticity.
+                    </p>
+                </div>
+                
+                <div class="impact-grid">
+                    <div class="impact-card">
+                        <img src="../../assets/icons/genome-plasticity-icon.png" alt="Genome plasticity" class="impact-icon">
+                        <h3 class="impact-title">Genome Plasticity</h3>
+                        <p class="impact-description">
+                            Genomes are not static. Transposons create insertions, deletions, and rearrangements. This drives evolution by generating genetic diversity. Species adapt through transposon activity creating new gene variants and regulatory sequences.
+                        </p>
+                    </div>
+
+                    <div class="impact-card">
+                        <img src="../../assets/icons/gene-regulation-icon.png" alt="Gene regulation" class="impact-icon">
+                        <h3 class="impact-title">Gene Regulation</h3>
+                        <p class="impact-description">
+                            Transposons carry regulatory sequences. When they insert near genes, they alter expression patterns. This creates phenotypic variation without changing gene sequences. Corn kernel color variation demonstrates this regulatory control.
+                        </p>
+                    </div>
+
+                    <div class="impact-card">
+                        <img src="../../assets/icons/evolution-driver-icon.png" alt="Evolution driver" class="impact-icon">
+                        <h3 class="impact-title">Evolution Driver</h3>
+                        <p class="impact-description">
+                            Most transposon insertions are neutral or harmful. But occasional beneficial insertions provide raw material for natural selection. Transposon-mediated duplications create gene families. Exon shuffling generates novel proteins with new functions.
+                        </p>
+                    </div>
+
+                    <div class="impact-card">
+                        <img src="../../assets/icons/disease-mechanism-icon.png" alt="Disease mechanism" class="impact-icon">
+                        <h3 class="impact-title">Disease Mechanisms</h3>
+                        <p class="impact-description">
+                            Transposon insertions into essential genes cause genetic diseases. Hemophilia cases result from LINE-1 insertions into clotting factor genes. Some cancers involve transposon reactivation disrupting tumor suppressors. Understanding transposons informs medical genetics.
+                        </p>
+                    </div>
+
+                    <div class="impact-card">
+                        <img src="../../assets/icons/biotech-tools-icon.png" alt="Biotech tools" class="impact-icon">
+                        <h3 class="impact-title">Biotechnology Tools</h3>
+                        <p class="impact-description">
+                            Scientists use transposons for gene insertion and knockout experiments. Transposon-based systems enable genome-wide mutagenesis screens. CRISPR gene editing adapts transposon mechanisms. McClintock's jumping genes became laboratory workhorses.
+                        </p>
+                    </div>
+
+                    <div class="impact-card">
+                        <img src="../../assets/icons/agricultural-genetics-icon.png" alt="Agricultural genetics" class="impact-icon">
+                        <h3 class="impact-title">Agricultural Genetics</h3>
+                        <p class="impact-description">
+                            Corn breeding programs use transposon-tagging to identify genes controlling agronomic traits. Transposon insertion libraries create mutant collections for trait mapping. McClintock's maize genetics directly benefits modern agriculture.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <div class="quote-section">
+                <p class="quote-text">
+                    I know my corn plants intimately, and I find it a great pleasure to know them.
+                </p>
+                <div class="quote-attribution">Barbara McClintock</div>
+            </div>
+        </section>
+
+        <footer class="footer-nav">
+            <div class="footer-content">
+                <a href="../../dashboard/" class="nav-button">Back to Dashboard</a>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+    // ===== VERIFIED DATA FROM AUTHORITATIVE SOURCES =====
+    // Ac element: 4,565 base pairs (autonomous transposon)
+    // Ds element: 400-2,000 bp (non-autonomous, requires Ac)
+    // Chromosome 9: Contains C gene (kernel color)
+    // Discovery: 1944-1950, Nobel Prize 1983
+
+    const cursor = document.getElementById('cursor');
+    let mouseX = 0, mouseY = 0;
+
+    document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+    });
+
+    function animateCursor() {
+        cursor.style.left = mouseX - 10 + 'px';
+        cursor.style.top = mouseY - 10 + 'px';
+        requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+
+    const hoverElements = document.querySelectorAll('a, button, .impact-card, .context-card, .timeline-content');
+    hoverElements.forEach(el => {
+        el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+        el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+    });
+
+    // ===== BACKGROUND CANVAS =====
+    const bgCanvas = document.getElementById('bg-canvas');
+    const bgCtx = bgCanvas.getContext('2d');
+
+    function resizeCanvas() {
+        bgCanvas.width = window.innerWidth;
+        bgCanvas.height = window.innerHeight;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    const bgParticles = [];
+    const particleCount = 50;
+    const cornSymbols = ['C', 'Bz', 'Ac', 'Ds', 'Wx'];
+
+    for (let i = 0; i < particleCount; i++) {
+        bgParticles.push({
+            x: Math.random() * bgCanvas.width,
+            y: Math.random() * bgCanvas.height,
+            vx: (Math.random() - 0.5) * 0.4,
+            vy: (Math.random() - 0.5) * 0.4,
+            size: Math.random() * 2 + 1,
+            opacity: Math.random() * 0.3 + 0.1,
+            symbol: cornSymbols[Math.floor(Math.random() * cornSymbols.length)]
+        });
+    }
+
+    function animateBgParticles() {
+        bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+        
+        bgParticles.forEach(particle => {
+            particle.x += particle.vx;
+            particle.y += particle.vy;
+            
+            if (particle.x < 0 || particle.x > bgCanvas.width) particle.vx *= -1;
+            if (particle.y < 0 || particle.y > bgCanvas.height) particle.vy *= -1;
+            
+            bgCtx.globalAlpha = particle.opacity;
+            bgCtx.font = `${particle.size * 12}px 'Space Mono', monospace`;
+            bgCtx.fillStyle = '#f4e04d';
+            bgCtx.fillText(particle.symbol, particle.x, particle.y);
+        });
+        
+        requestAnimationFrame(animateBgParticles);
+    }
+    
+    animateBgParticles();
+
+    // ===== ANIMATION CONTROLS =====
+    let animationSpeed = 1.0;
+    let isPaused = false;
+
+    const speedControl = document.getElementById('speed-control');
+    const pauseButton = document.getElementById('pause-button');
+
+    speedControl.addEventListener('input', (e) => {
+        animationSpeed = parseFloat(e.target.value);
+    });
+
+    pauseButton.addEventListener('click', () => {
+        isPaused = !isPaused;
+        pauseButton.textContent = isPaused ? 'Resume' : 'Pause';
+        pauseButton.classList.toggle('paused');
+    });
+
+    // ===== 3D TRANSPOSON VISUALIZATION =====
+    const transposonCanvas = document.getElementById('transposon-3d-canvas');
+    const transposonScene = new THREE.Scene();
+    const transposonCamera = new THREE.PerspectiveCamera(
+        60,
+        transposonCanvas.clientWidth / transposonCanvas.clientHeight,
+        0.1,
+        1000
+    );
+    const transposonRenderer = new THREE.WebGLRenderer({ 
+        canvas: transposonCanvas, 
+        antialias: true, 
+        alpha: true 
+    });
+    
+    transposonRenderer.setSize(transposonCanvas.clientWidth, transposonCanvas.clientHeight);
+    transposonRenderer.setClearColor(0x000000, 0);
+    transposonCamera.position.set(0, 5, 25);
+
+    const controls = new THREE.OrbitControls(transposonCamera, transposonRenderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.enableZoom = true;
+    controls.minDistance = 12;
+    controls.maxDistance = 60;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.2;
+
+    const interactiveObjects = [];
+
+    // ===== CHROMOSOME 9 =====
+    const chromosome = new THREE.Group();
+    const chromGeometry = new THREE.CylinderGeometry(0.5, 0.5, 30, 16);
+    const chromMaterial = new THREE.MeshPhongMaterial({ 
+        color: 0x8b4513,
+        emissive: 0x6b3010,
+        emissiveIntensity: 0.2
+    });
+
+    const chromBody = new THREE.Mesh(chromGeometry, chromMaterial);
+    chromBody.rotation.z = Math.PI / 2;
+    chromBody.userData = {
+        type: 'chromosome',
+        name: 'Maize Chromosome 9',
+        symbol: 'Chr 9',
+        detail: 'Contains C, Bz, and Wx genes studied by McClintock'
+    };
+    chromosome.add(chromBody);
+    interactiveObjects.push(chromBody);
+
+    // ===== GENES ON CHROMOSOME =====
+    const genePositions = [
+        { name: 'C gene', pos: -8, color: 0x9b59b6, symbol: 'C', detail: 'Controls kernel pigmentation (anthocyanin)' },
+        { name: 'Bz gene', pos: 0, color: 0x3498db, symbol: 'Bz', detail: 'Bronze gene, pigment pathway enzyme' },
+        { name: 'Wx gene', pos: 8, color: 0x2ecc71, symbol: 'Wx', detail: 'Waxy gene, affects starch composition' }
+    ];
+
+    genePositions.forEach(gene => {
+        const geneGeometry = new THREE.BoxGeometry(1.5, 0.8, 0.8);
+        const geneMaterial = new THREE.MeshPhongMaterial({ 
+            color: gene.color,
+            emissive: gene.color,
+            emissiveIntensity: 0.3
+        });
+        const geneMesh = new THREE.Mesh(geneGeometry, geneMaterial);
+        geneMesh.position.x = gene.pos;
+        geneMesh.userData = {
+            type: 'gene',
+            name: gene.name,
+            symbol: gene.symbol,
+            detail: gene.detail
+        };
+        chromosome.add(geneMesh);
+        interactiveObjects.push(geneMesh);
+    });
+
+    transposonScene.add(chromosome);
+
+    // ===== AC TRANSPOSON =====
+    const acGeometry = new THREE.BoxGeometry(2, 0.6, 0.6);
+    const acMaterial = new THREE.MeshPhongMaterial({ 
+        color: 0xff6b6b,
+        emissive: 0xff4444,
+        emissiveIntensity: 0.4
+    });
+    const acElement = new THREE.Mesh(acGeometry, acMaterial);
+    acElement.position.set(12, 3, 0);
+    acElement.userData = {
+        type: 'ac-transposon',
+        name: 'Activator (Ac) Element',
+        symbol: 'Ac',
+        detail: '4.6 kb autonomous transposon, encodes transposase enzyme'
+    };
+    transposonScene.add(acElement);
+    interactiveObjects.push(acElement);
+
+    // ===== DS TRANSPOSON =====
+    const dsGeometry = new THREE.BoxGeometry(1, 0.5, 0.5);
+    const dsMaterial = new THREE.MeshPhongMaterial({ 
+        color: 0xf4e04d,
+        emissive: 0xe0d030,
+        emissiveIntensity: 0.4
+    });
+    const dsElement = new THREE.Mesh(dsGeometry, dsMaterial);
+    dsElement.position.set(-8, -3, 0);
+    dsElement.userData = {
+        type: 'ds-transposon',
+        name: 'Dissociation (Ds) Element',
+        symbol: 'Ds',
+        detail: '0.4-2 kb non-autonomous, requires Ac to move'
+    };
+    transposonScene.add(dsElement);
+    interactiveObjects.push(dsElement);
+
+    // ===== LIGHTING =====
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    transposonScene.add(ambientLight);
+
+    const light1 = new THREE.PointLight(0xf4e04d, 2, 60);
+    light1.position.set(10, 10, 10);
+    transposonScene.add(light1);
+
+    const light2 = new THREE.PointLight(0xff6b6b, 1.5, 60);
+    light2.position.set(-10, -10, 10);
+    transposonScene.add(light2);
+
+    // ===== TOOLTIP =====
+    const tooltip = document.createElement('div');
+    tooltip.className = 'transposon-tooltip';
+    document.body.appendChild(tooltip);
+
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    let hoveredObject = null;
+
+    transposonCanvas.addEventListener('mousemove', (event) => {
+        const rect = transposonCanvas.getBoundingClientRect();
+        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, transposonCamera);
+        const intersects = raycaster.intersectObjects(interactiveObjects);
+
+        if (intersects.length > 0) {
+            const object = intersects[0].object;
+            const data = object.userData;
+            
+            if (hoveredObject !== object) {
+                hoveredObject = object;
+                
+                let tooltipHTML = `<strong>${data.name}</strong>`;
+                if (data.symbol) {
+                    tooltipHTML += `<span class="tooltip-detail">Symbol: ${data.symbol}</span>`;
+                }
+                tooltipHTML += `<span class="tooltip-detail">${data.detail}</span>`;
+                
+                tooltip.innerHTML = tooltipHTML;
+            }
+            
+            tooltip.style.left = (event.clientX + 15) + 'px';
+            tooltip.style.top = (event.clientY + 15) + 'px';
+            tooltip.classList.add('visible');
+            
+            transposonCanvas.style.cursor = 'pointer';
+            controls.autoRotate = false;
+        } else {
+            hoveredObject = null;
+            tooltip.classList.remove('visible');
+            transposonCanvas.style.cursor = 'grab';
+            controls.autoRotate = true;
+        }
+    });
+
+    transposonCanvas.addEventListener('mouseleave', () => {
+        tooltip.classList.remove('visible');
+        hoveredObject = null;
+        controls.autoRotate = true;
+    });
+
+    // ===== TRANSPOSITION ANIMATION =====
+    let time = 0;
+    let jumpPhase = 'waiting';
+    let jumpProgress = 0;
+
+    const acStartPos = { x: 12, y: 3 };
+    const acTargetPos = { x: -8, y: 0 };
+    const dsStartPos = { x: -8, y: -3 };
+    const dsTargetPos = { x: 12, y: 0 };
+
+    function animateTransposons() {
+        requestAnimationFrame(animateTransposons);
+        
+        if (!isPaused) {
+            time += 0.01 * animationSpeed;
+        }
+
+        controls.update();
+
+        // Transposon jumping animation
+        if (!isPaused) {
+            if (jumpPhase === 'waiting') {
+                if (time % 8 < 0.05) {
+                    jumpPhase = 'jumping';
+                    jumpProgress = 0;
+                }
+            } else if (jumpPhase === 'jumping') {
+                jumpProgress += 0.02 * animationSpeed;
+                
+                const t = Math.min(jumpProgress, 1);
+                const eased = 1 - Math.pow(1 - t, 3);
+                
+                acElement.position.x = acStartPos.x + (acTargetPos.x - acStartPos.x) * eased;
+                acElement.position.y = acStartPos.y + (acTargetPos.y - acStartPos.y) * eased + Math.sin(t * Math.PI) * 5;
+                
+                dsElement.position.x = dsStartPos.x + (dsTargetPos.x - dsStartPos.x) * eased;
+                dsElement.position.y = dsStartPos.y + (dsTargetPos.y - dsStartPos.y) * eased + Math.sin(t * Math.PI) * 5;
+                
+                if (jumpProgress >= 1) {
+                    jumpPhase = 'waiting';
+                    const temp = Object.assign({}, acStartPos);
+                    acStartPos.x = acTargetPos.x;
+                    acStartPos.y = acTargetPos.y;
+                    acTargetPos.x = temp.x;
+                    acTargetPos.y = temp.y;
+                    
+                    const temp2 = Object.assign({}, dsStartPos);
+                    dsStartPos.x = dsTargetPos.x;
+                    dsStartPos.y = dsTargetPos.y;
+                    dsTargetPos.x = temp2.x;
+                    dsTargetPos.y = temp2.y;
+                }
+            }
+        }
+
+        transposonRenderer.render(transposonScene, transposonCamera);
+    }
+
+    animateTransposons();
+
+    window.addEventListener('resize', () => {
+        transposonCamera.aspect = transposonCanvas.clientWidth / transposonCanvas.clientHeight;
+        transposonCamera.updateProjectionMatrix();
+        transposonRenderer.setSize(transposonCanvas.clientWidth, transposonCanvas.clientHeight);
+    });
+
+    // ===== SCROLL ANIMATIONS =====
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.timeline-item, .impact-card, .context-card').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = 'all 0.6s ease';
+        observer.observe(el);
+    });
+
+    console.log('Barbara McClintock page loaded.');
+    console.log('Ac element: 4.6 kb autonomous transposon with transposase');
+    console.log('Ds element: 0.4-2 kb non-autonomous, requires Ac to move');
+    console.log('Data verified from: Nobel Prize archives, PNAS, Cold Spring Harbor');
+    </script>
+</body>
+</html>

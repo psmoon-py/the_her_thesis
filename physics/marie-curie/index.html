@@ -1,0 +1,1805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marie Curie - The Radium Revolutionary | The HER Thesis</title>
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <style>
+        :root {
+            --primary: #ffffff;
+            --bg-dark: #0a0a0a;
+            --accent: #d4af37;
+            --accent-light: #c9ada7;
+            --radium-glow: #00ff9f;
+            --text: #ffffff;
+            --text-dim: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --glass: rgba(255, 255, 255, 0.1);
+            --border: rgba(255, 255, 255, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            cursor: none;
+        }
+
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        .video-bg {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            opacity: 0.25;
+            filter: blur(3px);
+            object-fit: cover;
+        }
+
+        .video-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, transparent 0%, rgba(10, 10, 10, 0.8) 100%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .custom-cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            mix-blend-mode: difference;
+            transition: transform 0.2s ease;
+        }
+
+        .custom-cursor.hover {
+            transform: scale(1.5);
+            background: var(--accent);
+        }
+
+        .main-container {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+        }
+
+        .nav-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 20px 40px;
+            background: rgba(10, 10, 10, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .nav-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .nav-logo:hover {
+            color: var(--accent);
+        }
+
+        .nav-logo .her {
+            font-style: italic;
+            color: var(--accent-light);
+        }
+
+        .nav-back {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            text-decoration: none;
+            border-radius: 6px;
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-back:hover {
+            background: var(--glass);
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateX(-4px);
+        }
+
+        .hero {
+            padding: 120px 40px 80px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .hero-subtitle {
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 20px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.2s forwards;
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 6vw, 5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 30px;
+            letter-spacing: -2px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.4s forwards;
+        }
+
+        .hero-description {
+            font-size: 20px;
+            line-height: 1.6;
+            color: var(--text-dim);
+            margin-bottom: 40px;
+            max-width: 600px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.6s forwards;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.8s forwards;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'Space Mono', monospace;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            display: block;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        .hero-visual {
+            position: relative;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 1s forwards;
+        }
+
+        .hero-image {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            border-radius: 12px;
+            filter: sepia(0.3) contrast(1.1);
+            transition: transform 0.6s ease;
+        }
+
+        .hero-image:hover {
+            transform: scale(1.02);
+        }
+
+        .image-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 30px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+            border-radius: 0 0 12px 12px;
+        }
+
+        .image-caption {
+            font-size: 14px;
+            color: var(--text-dim);
+            font-style: italic;
+        }
+
+        .atom-3d-section {
+            padding: 100px 40px;
+            background: linear-gradient(180deg, transparent, rgba(0, 255, 159, 0.03), transparent);
+        }
+
+        .atom-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 600px 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .atom-canvas-wrapper {
+            position: relative;
+        }
+
+        #atom-3d-canvas {
+            width: 100%;
+            height: 600px;
+            border-radius: 12px;
+            background: rgba(0, 255, 159, 0.02);
+            border: 1px solid rgba(0, 255, 159, 0.2);
+            cursor: grab;
+        }
+
+        #atom-3d-canvas:active {
+            cursor: grabbing;
+        }
+
+        .atom-controls-hint {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: var(--radium-glow);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 255, 159, 0.3);
+        }
+
+        .atom-explanation {
+            padding: 40px;
+        }
+
+        .atom-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--radium-glow);
+        }
+
+        .atom-text {
+            font-size: 17px;
+            line-height: 1.7;
+            color: var(--text-dim);
+            margin-bottom: 20px;
+        }
+
+        .atom-text strong {
+            color: var(--radium-glow);
+            font-weight: 600;
+        }
+
+        .atom-tooltip {
+            position: fixed;
+            background: rgba(0, 0, 0, 0.95);
+            color: #00ff9f;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-family: 'Space Mono', monospace;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 10001;
+            border: 1px solid rgba(0, 255, 159, 0.5);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            max-width: 280px;
+            line-height: 1.5;
+        }
+
+        .atom-tooltip.visible {
+            opacity: 1;
+        }
+
+        .atom-tooltip strong {
+            display: block;
+            color: #d4af37;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+
+        .atom-tooltip .tooltip-detail {
+            display: block;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 2px;
+        }
+
+        .historical-context, .content-section, .science-deep-dive, .modern-impact-section {
+            padding: 100px 40px;
+        }
+
+        .context-container, .science-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .context-header, .science-header, .modern-impact-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .context-number {
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            letter-spacing: 3px;
+            color: var(--accent);
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .context-title, .science-title, .modern-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+
+        .context-subtitle, .science-intro, .modern-subtitle {
+            font-size: 20px;
+            color: var(--text-dim);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .context-grid, .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .impact-grid {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            max-width: 1400px;
+            margin: 60px auto 0;
+        }
+
+        .context-card, .impact-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 40px;
+            backdrop-filter: blur(20px);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            min-height: 350px;
+        }
+
+        .impact-card {
+            min-height: 320px;
+            padding: 30px;
+        }
+
+        .context-card::before, .impact-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            z-index: -1;
+            transition: opacity 0.4s ease;
+        }
+
+        .context-card:hover::before, .impact-card:hover::before {
+            opacity: 1;
+        }
+
+        .context-card::after, .impact-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.15));
+            opacity: 1;
+            transition: opacity 0.4s ease;
+            z-index: -1;
+        }
+
+        .context-card[data-image="xray"]::before {
+            background-image: url('../../assets/images/context/xray-tube.png');
+        }
+
+        .context-card[data-image="paris"]::before {
+            background-image: url('../../assets/images/context/paris-university.png');
+        }
+
+        .context-card[data-image="laboratory"]::before {
+            background-image: url('../../assets/images/context/physics-laboratory-1896.jpg');
+        }
+
+        .context-card[data-image="method"]::before {
+            background-image: url('../../assets/images/context/scientific-instruments-electrometer.jpg');
+        }
+
+        .impact-card[data-image="medical"]::before {
+            background-image: url('../../assets/images/impact/radiation-therapy-modern.webp');
+        }
+
+        .impact-card[data-image="nuclear"]::before {
+            background-image: url('../../assets/images/impact/nuclear-reactor.png');
+        }
+
+        .impact-card[data-image="physics"]::before {
+            background-image: url('../../assets/images/impact/particle-accelerator-cern.jpg');
+        }
+
+        .impact-card[data-image="method"]::before {
+            background-image: url('../../assets/images/impact/modern-chemistry-lab.webp');
+        }
+
+        .impact-card[data-image="dating"]::before {
+            background-image: url('../../assets/images/impact/carbon-dating-archaeology.png');
+        }
+
+        .impact-card[data-image="women"]::before {
+            background-image: url('../../assets/images/impact/women-scientists-modern.png');
+        }
+
+        .context-card:hover, .impact-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent);
+            box-shadow: 0 30px 60px rgba(212, 175, 55, 0.2);
+        }
+
+        .context-card-title, .impact-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .impact-title {
+            font-size: 1.25rem;
+            margin-bottom: 12px;
+        }
+
+        .context-card-text, .impact-description {
+            font-size: 16px;
+            line-height: 1.7;
+            color: var(--text-dim);
+            position: relative;
+            z-index: 1;
+        }
+
+        .context-card:hover .context-card-text, .impact-card:hover .impact-description {
+            opacity: 0.1;
+        }
+
+        .impact-description {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .content-section {
+            padding: 80px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 60px;
+            margin-bottom: 60px;
+            align-items: start;
+        }
+
+        .section-number {
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--accent);
+            position: sticky;
+            top: 140px;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .section-content {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 60px;
+        }
+
+        .content-text {
+            font-size: 18px;
+            line-height: 1.7;
+            color: var(--text-dim);
+        }
+
+        .content-text p {
+            margin-bottom: 24px;
+        }
+
+        .highlight {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .science-subsection {
+            margin-bottom: 60px;
+        }
+
+        .science-subsection h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--radium-glow);
+        }
+
+        .science-subsection p {
+            font-size: 17px;
+            line-height: 1.7;
+            color: var(--text-dim);
+            margin-bottom: 20px;
+        }
+
+        .science-highlight-box {
+            background: rgba(0, 255, 159, 0.1);
+            border-left: 4px solid var(--radium-glow);
+            padding: 24px;
+            margin: 30px 0;
+            border-radius: 8px;
+        }
+
+        .science-highlight-box p {
+            margin-bottom: 0;
+            font-size: 16px;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 60px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 200px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--accent), var(--radium-glow));
+            opacity: 0.3;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 60px;
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 60px;
+            align-items: start;
+        }
+
+        .timeline-year {
+            font-family: 'Space Mono', monospace;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent);
+            position: relative;
+        }
+
+        .timeline-year::after {
+            content: '';
+            position: absolute;
+            right: -31px;
+            top: 50%;
+            width: 14px;
+            height: 14px;
+            background: var(--radium-glow);
+            border-radius: 50%;
+            transform: translateY(-50%);
+            box-shadow: 0 0 20px var(--radium-glow);
+            animation: pulse-glow 2s infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 10px var(--radium-glow); }
+            50% { box-shadow: 0 0 30px var(--radium-glow); }
+        }
+
+        .timeline-content {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .timeline-content:hover {
+            border-color: var(--radium-glow);
+            transform: translateX(10px);
+            box-shadow: 0 10px 40px rgba(0, 255, 159, 0.1);
+        }
+
+        .timeline-content h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .timeline-content p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-dim);
+        }
+
+        .quote-section {
+            background: rgba(212, 175, 55, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+            padding: 60px;
+            margin: 80px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .quote-section::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 120px;
+            color: var(--accent);
+            font-family: 'Playfair Display', serif;
+            opacity: 0.3;
+        }
+
+        .quote-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-style: italic;
+            line-height: 1.4;
+            margin-bottom: 20px;
+        }
+
+        .quote-attribution {
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent);
+        }
+
+        .footer-nav {
+            padding: 80px 40px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 32px;
+            background: transparent;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            text-decoration: none;
+            border-radius: 8px;
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button:hover {
+            background: var(--accent);
+            color: var(--bg-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .hero-content,
+            .atom-container {
+                grid-template-columns: 1fr;
+                gap: 60px;
+            }
+
+            .section-header,
+            .section-content,
+            .timeline-item {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .timeline::before {
+                left: 20px;
+            }
+
+            .timeline-year::after {
+                left: -31px;
+                right: auto;
+            }
+
+            .context-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .impact-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-header {
+                padding: 15px 20px;
+            }
+
+            .hero {
+                padding: 100px 20px 60px;
+            }
+
+            .content-section,
+            .atom-3d-section,
+            .historical-context,
+            .modern-impact-section,
+            .science-deep-dive {
+                padding: 60px 20px;
+            }
+
+            .hero-title,
+            .context-title,
+            .modern-title,
+            .science-title {
+                font-size: 2.5rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .quote-text {
+                font-size: 1.5rem;
+            }
+
+            .hero-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="custom-cursor" id="cursor"></div>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <video class="video-bg" autoplay muted loop playsinline>
+        <source src="../../assets/videos/marie-curie-lab-ambient.mp4" type="video/mp4">
+    </video>
+    <div class="video-overlay"></div>
+
+    <nav class="nav-header">
+        <div class="nav-content">
+            <a href="../../" class="nav-logo">The <span class="her">HER</span> Thesis</a>
+            <a href="../../dashboard/" class="nav-back">Back to Dashboard</a>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <div class="hero-subtitle">Physics Pioneer · 1867-1934</div>
+                    <h1 class="hero-title">Marie Curie</h1>
+                    <p class="hero-description">
+                        The first woman to win a Nobel Prize and the only person to win Nobel Prizes in two different sciences. 
+                        Her research on radioactivity changed our understanding of atomic physics and created the foundation for modern nuclear science.
+                    </p>
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">2</span>
+                            <span class="stat-label">Nobel Prizes</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">2</span>
+                            <span class="stat-label">Elements Found</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">1903</span>
+                            <span class="stat-label">First Nobel</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">1911</span>
+                            <span class="stat-label">Second Nobel</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <img src="../../assets/images/marie-curie-portrait.jpg" alt="Marie Curie in laboratory" class="hero-image">
+                    <div class="image-overlay">
+                        <div class="image-caption">Marie Curie in her laboratory, circa 1905</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- PART 2: Historical Context & 3D Atom Section -->
+
+        <!-- Historical Context: Where Did the Idea Come From? -->
+        <section class="historical-context">
+            <div class="context-container">
+                <div class="context-header">
+                    <div class="context-number">01 — Historical Context</div>
+                    <h2 class="context-title">Where Did the Idea Come From?</h2>
+                    <p class="context-subtitle">
+                        The late 1890s transformed physics. Marie Curie entered a field where atoms seemed indivisible and energy 
+                        conservation looked absolute. Her work shattered both assumptions.
+                    </p>
+                </div>
+
+                <div class="context-grid">
+                    <div class="context-card" data-image="xray">
+                        <h3 class="context-card-title">The Scientific Setting: 1895-1898</h3>
+                        <p class="context-card-text">
+                            Wilhelm Röntgen discovered X-rays in November 1895. The world went wild. Within months, doctors used X-rays 
+                            to see broken bones. Scientists raced to understand the phenomenon. Then in March 1896, Henri Becquerel found 
+                            that uranium salts emitted similar rays without any external energy source. This was baffling. Objects that 
+                            glowed in the dark without heat or light violated known physics. Most scientists moved to other problems. Marie 
+                            Curie saw an opportunity. She needed a doctoral thesis topic Pierre had not touched. These "Becquerel rays" 
+                            were perfect.
+                        </p>
+                    </div>
+
+                    <div class="context-card" data-image="paris">
+                        <h3 class="context-card-title">Why Paris? Opportunity Through Barriers</h3>
+                        <p class="context-card-text">
+                            Maria Skłodowska could not attend university in Russian-occupied Poland. Women were barred from higher education 
+                            there. Paris offered something Poland could not: access to laboratories and the legal right to study science. 
+                            She arrived in 1891 with almost no money. She lived in a sixth-floor attic with no heat. She fainted from hunger 
+                            during lectures. But she could attend the Sorbonne. She could use equipment. She could pursue physics. The French 
+                            system was not welcoming to women, but it was not completely closed. That narrow opening was enough.
+                        </p>
+                    </div>
+
+                    <div class="context-card" data-image="laboratory">
+                        <h3 class="context-card-title">Why This Topic Mattered in 1896</h3>
+                        <p class="context-card-text">
+                            By the 1890s, physicists thought they had explained almost everything. Atoms were solid, indivisible spheres. 
+                            Energy could neither be created nor destroyed. Thermodynamic laws seemed complete. Then came X-rays and uranium 
+                            rays. These phenomena suggested atoms might not be indivisible. Energy might appear from nowhere. The implications 
+                            terrified some scientists. Lord Kelvin famously said physics was complete except for "two small clouds." Those 
+                            clouds became quantum mechanics and relativity. Marie Curie's work was one of those clouds. She chose to investigate 
+                            what others dismissed as curiosity.
+                        </p>
+                    </div>
+
+                    <div class="context-card" data-image="method">
+                        <h3 class="context-card-title">The Revolutionary Approach</h3>
+                        <p class="context-card-text">
+                            Marie's methodology was radical: measure everything precisely. She built an electrometer with Pierre to measure 
+                            radiation intensity. She tested every known element systematically. Only uranium and thorium showed radioactivity. 
+                            Then she tested minerals. Pitchblende ore was four times more radioactive than pure uranium. This made no sense 
+                            unless pitchblende contained unknown radioactive elements. Other scientists would have assumed experimental error. 
+                            Marie hypothesized new elements and spent four years proving it. She processed eight tons of pitchblende residue 
+                            to isolate one gram of radium chloride. The physical labor was brutal. The patience required was superhuman. The 
+                            result changed chemistry forever.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3D Interactive Atom -->
+        <section class="atom-3d-section">
+            <div class="atom-container">
+                <div class="atom-canvas-wrapper">
+                    <canvas id="atom-3d-canvas"></canvas>
+                    <div class="atom-controls-hint">Drag to rotate · Scroll to zoom · Hover for details</div>
+                </div>
+                <div class="atom-explanation">
+                    <h2 class="atom-title">Understanding Radioactive Decay</h2>
+                    <p class="atom-text">
+                        Marie Curie proved that radioactivity is an <strong>atomic property</strong>. It comes from inside the atom itself. 
+                        This was revolutionary. Scientists in 1896 thought atoms were the smallest, unchanging units of matter.
+                    </p>
+                    <p class="atom-text">
+                        The 3D model shows a radium-226 atom. The glowing nucleus contains 88 protons and 138 neutrons. Radium is unstable. 
+                        It spontaneously ejects an alpha particle (2 protons + 2 neutrons). This transforms it into radon-222. Energy 
+                        releases during this transformation. That energy is what Marie detected.
+                    </p>
+                    <p class="atom-text">
+                        Radium has a half-life of 1,600 years. After 1,600 years, half of any radium sample transforms into radon. After 
+                        another 1,600 years, half of the remaining radium transforms. The process continues indefinitely. This constant 
+                        decay rate makes radioactive elements perfect for dating ancient objects.
+                    </p>
+                    <p class="atom-text">
+                        Marie's work proved atoms were not indivisible. They could break apart. They could transform into other elements. 
+                        Medieval alchemists dreamed of transforming lead into gold. Marie Curie showed that atomic transmutation was real, 
+                        but it happened spontaneously in radioactive elements.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Deep Scientific Explanation -->
+        <section class="science-deep-dive">
+            <div class="science-container">
+                <div class="science-header">
+                    <div class="context-number">02 — The Science</div>
+                    <h2 class="science-title">What Is Radioactivity?</h2>
+                    <p class="science-intro">
+                        Marie Curie's discovery of radioactivity revealed that atoms are not eternal. They can spontaneously 
+                        transform and release energy. This section explains exactly what she discovered and why it mattered.
+                    </p>
+                </div>
+
+                <div class="science-subsection">
+                    <h3>The Mystery: Glowing Ore</h3>
+                    <p>
+                        In 1896, Marie began testing uranium compounds. She measured their radioactivity using an electrometer Pierre 
+                        had designed. Pure uranium emitted a specific amount of radiation. The measurement was consistent and reproducible.
+                    </p>
+                    <p>
+                        Then she tested pitchblende, a uranium ore. The ore was four times more radioactive than pure uranium. This 
+                        made no sense. The ore contained uranium plus other minerals. How could the mixture be more radioactive than 
+                        the pure element?
+                    </p>
+                    <p>
+                        Marie formed a hypothesis: pitchblende must contain unknown elements that are even more radioactive than uranium. 
+                        The scientific community was skeptical. No new elements had been discovered in decades. But Marie's measurements 
+                        were precise. The excess radioactivity was real. Something new had to exist.
+                    </p>
+                </div>
+
+                <div class="science-subsection">
+                    <h3>The Discovery: Isolation Through Brute Force</h3>
+                    <p>
+                        Marie and Pierre obtained tons of pitchblende residue from uranium mines in Bohemia. The mining company considered 
+                        it worthless waste. They shipped it to Paris for free. Marie processed this residue in a converted shed with no 
+                        proper ventilation. She needed to isolate whatever element was causing the excess radioactivity.
+                    </p>
+                    <p>
+                        The process was brutal. She dissolved pitchblende in acid. She performed chemical separations. She crystallized 
+                        compounds. She measured radioactivity at each step. Whichever fraction showed the most radioactivity must contain 
+                        the mystery element. She worked with a huge iron rod, stirring boiling pitchblende in massive vats. The physical 
+                        labor was extraordinary. It took four years.
+                    </p>
+                    <p>
+                        In July 1898, she isolated enough of one new element to prove its existence. She named it polonium after her 
+                        homeland. Its radioactivity was 400 times stronger than uranium. But the ore still showed excess radioactivity. 
+                        There had to be a second element. In December 1898, she isolated it: radium. It was 900 times more radioactive 
+                        than uranium.
+                    </p>
+                    <p>
+                        Radium glowed. Literally. You could read by its light in a dark room. Pierre carried a radium sample in his vest 
+                        pocket to demonstrate at lectures. He got burns from the radiation. They did not understand the danger yet. The 
+                        glow seemed magical, but it was atomic transformation releasing energy.
+                    </p>
+                    <div class="science-highlight-box">
+                        <p>
+                            <strong>Fun fact:</strong> Pierre told Marie she looked radiant every day after working with radium. 
+                            He meant it literally. Her clothes, her hair, even her cookbook glowed in the dark from radiation exposure. 
+                            Years later, her papers were still so radioactive they had to be stored in lead boxes. They remain dangerous today.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="science-subsection">
+                    <h3>The Mechanism: How Radioactivity Actually Works</h3>
+                    <p>
+                        Marie proved radioactivity was an atomic property, not a molecular one. She tested pure elements and their compounds. 
+                        The radioactivity depended only on the amount of uranium or thorium present. It did not matter whether the uranium 
+                        was in a salt, an oxide, or a pure metal. The atom itself was radioactive.
+                    </p>
+                    <p>
+                        This led to a shocking conclusion: atoms are not eternal. They can change. A uranium atom will spontaneously eject 
+                        particles and transform into a different element. This was transmutation, but not the alchemical kind. No external 
+                        force causes it. No chemical reaction triggers it. The atom just decays on its own schedule.
+                    </p>
+                    <p>
+                        Three types of radiation were soon identified. Alpha particles are helium nuclei (2 protons, 2 neutrons). Beta 
+                        particles are high-energy electrons. Gamma rays are electromagnetic radiation like X-rays but more energetic. 
+                        Radium-226 undergoes alpha decay. It ejects an alpha particle and becomes radon-222. The radon then decays further. 
+                        The decay chain continues through multiple elements until it reaches stable lead.
+                    </p>
+                    <p>
+                        The energy released during decay comes from the mass difference between the parent and daughter atoms. Einstein's 
+                        equation E=mc² (published in 1905) would later explain this. A tiny amount of mass converts to a huge amount of energy. 
+                        This is why radioactive decay releases so much energy. It is also why nuclear weapons and nuclear power work.
+                    </p>
+                </div>
+
+                <div class="science-subsection">
+                    <h3>The Proof: Isolating Pure Radium</h3>
+                    <p>
+                        Skeptics demanded proof. Marie needed to isolate pure radium and measure its atomic weight. This required processing 
+                        eight tons of pitchblende residue. The work took four years of continuous chemical processing. She finally produced 
+                        one gram of radium chloride in 1902.
+                    </p>
+                    <p>
+                        She measured its atomic weight: 225 (close to the modern value of 226). She measured its spectrum: new lines that 
+                        matched no known element. She measured its radioactivity: 900 times more powerful than uranium. The evidence was 
+                        undeniable. Radium existed. Polonium existed. Radioactivity was real.
+                    </p>
+                    <p>
+                        The Nobel Committee awarded her the Physics Prize in 1903. They almost excluded her. The nomination listed only 
+                        Pierre Curie and Henri Becquerel. Pierre refused to accept unless Marie was included. He insisted she had done 
+                        most of the theoretical and experimental work. The Committee relented. Marie became the first woman to win a Nobel Prize.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Early Life Section -->
+        <section class="content-section">
+            <div class="section-header">
+                <div class="section-number">03 — Early Life</div>
+                <h2 class="section-title">From Warsaw to Paris</h2>
+            </div>
+            <div class="section-content">
+                <div></div>
+                <div class="content-text">
+                    <p>
+                        Maria Salomea Skłodowska was born in Warsaw on November 7, 1867. Poland did not exist as an independent country. 
+                        Russia controlled Warsaw and suppressed Polish culture. Her father taught mathematics and physics. Her mother ran 
+                        a boarding school for girls. Both parents valued education. Both died when Marie was young. Her mother died of 
+                        tuberculosis when Marie was ten. Her father lost his teaching position for Polish nationalist sympathies.
+                    </p>
+                    <p>
+                        Marie excelled in school but could not attend university. Russian authorities prohibited women from higher education. 
+                        Secret "floating universities" operated in Warsaw, moving locations to avoid police. Marie attended these illegal 
+                        classes. She learned chemistry, anatomy, and mathematics in private apartments. The risk was real. Discovery meant 
+                        exile to Siberia.
+                    </p>
+                    <p>
+                        Her sister Bronisława wanted to study medicine in Paris. Marie wanted to study physics. Neither had money. They made 
+                        a pact: Marie would work as a governess to fund Bronisława's education. Then Bronisława would support Marie. This 
+                        plan took six years. Marie worked in rural Poland from 1885 to 1891. She saved every coin she could.
+                    </p>
+                    <p>
+                        She arrived in Paris in November 1891 at age 24. She enrolled at the Sorbonne. She lived in a garret with no heat. 
+                        She ate bread and tea and little else. She fainted from hunger and cold during winter. But she could study. She 
+                        ranked first in her physics degree (1893) and second in mathematics (1894). Her performance caught attention. 
+                        The Polish Society of Sciences gave her a scholarship. A professor introduced her to Pierre Curie, who needed a 
+                        lab space for a Polish physicist. They married in 1895. Their scientific partnership would change history.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Major Discoveries Timeline -->
+        <section class="content-section">
+            <div class="section-header">
+                <div class="section-number">04 — Discoveries</div>
+                <h2 class="section-title">Revolutionary Research</h2>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-year">1896</div>
+                    <div class="timeline-content">
+                        <h3>Radioactivity Research Begins</h3>
+                        <p>
+                            Marie chose to investigate Becquerel rays for her doctoral thesis. She built an electrometer to measure 
+                            radiation precisely. She tested every known element. Only uranium and thorium showed radioactivity. Then 
+                            she tested minerals. Pitchblende was far more radioactive than it should be. She hypothesized unknown 
+                            elements must exist.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1898</div>
+                    <div class="timeline-content">
+                        <h3>Discovery of Polonium and Radium</h3>
+                        <p>
+                            After months of chemical processing, Marie isolated polonium in July. Its radioactivity was 400 times stronger 
+                            than uranium. She announced radium in December. It was 900 times more radioactive than uranium. The elements 
+                            were real, but she needed years more work to prove it conclusively.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1902</div>
+                    <div class="timeline-content">
+                        <h3>Isolation of Pure Radium</h3>
+                        <p>
+                            After processing eight tons of pitchblende residue, Marie finally isolated one gram of pure radium chloride. 
+                            She measured its atomic weight: 225. She measured its spectrum: unique lines matching no other element. The 
+                            skeptics could no longer deny radium's existence. Chemistry had two new elements.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1903</div>
+                    <div class="timeline-content">
+                        <h3>First Nobel Prize in Physics</h3>
+                        <p>
+                            The Nobel Committee initially nominated only Pierre Curie and Henri Becquerel. Pierre refused to accept unless 
+                            Marie was included. He told the Committee that Marie had done most of the work. They revised the nomination. 
+                            Marie became the first woman to win a Nobel Prize. The award was "in recognition of the extraordinary services 
+                            they have rendered by their joint researches on radioactivity."
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1906</div>
+                    <div class="timeline-content">
+                        <h3>Pierre Dies; Marie Becomes Professor</h3>
+                        <p>
+                            Pierre was killed by a horse-drawn wagon in Paris on April 19, 1906. Marie was devastated. She had two young 
+                            daughters and overwhelming grief. The University of Paris offered her Pierre's professorship. She became the 
+                            first female professor at the Sorbonne. Her first lecture on November 5, 1906 drew an overflow crowd. She began 
+                            with Pierre's exact last words: "When one considers the progress that has been made in physics in the past ten years..."
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1911</div>
+                    <div class="timeline-content">
+                        <h3>Second Nobel Prize in Chemistry</h3>
+                        <p>
+                            Marie won the Nobel Prize in Chemistry for "the discovery of the elements radium and polonium, by the isolation 
+                            of radium and the study of the nature and compounds of this remarkable element." She was now the first person 
+                            to win Nobel Prizes in two different sciences. Only three other people have done this since. Her Chemistry prize 
+                            recognized years of painstaking work isolating and characterizing radium.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1914</div>
+                    <div class="timeline-content">
+                        <h3>World War I and Mobile X-Ray Units</h3>
+                        <p>
+                            When World War I began, Marie saw wounded soldiers dying from infections after shrapnel remained lodged in 
+                            their bodies. Doctors could not locate the metal fragments. X-ray machines existed but only in major hospitals. 
+                            Marie developed mobile X-ray units. She equipped 20 vehicles with X-ray equipment and generators. These "petites 
+                            Curies" traveled to field hospitals. Marie personally drove to the front lines. She trained doctors and nurses 
+                            to operate the equipment. Over one million X-ray examinations were performed during the war. Countless lives 
+                            were saved.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- PART 3: Modern Impact & Footer -->
+
+        <!-- Modern Impact -->
+        <section class="modern-impact-section">
+            <div class="context-container">
+                <div class="modern-impact-header">
+                    <div class="context-number">05 — Modern Impact</div>
+                    <h2 class="modern-title">How Marie Curie Shapes Science Today</h2>
+                    <p class="modern-subtitle">
+                        Her discoveries did not just add knowledge. They transformed multiple fields. Over a century later, her work 
+                        saves lives and powers technology daily.
+                    </p>
+                </div>
+
+                <div class="impact-grid">
+                    <div class="impact-card" data-image="medical">
+                        <h3 class="impact-title">Cancer Treatment Revolution</h3>
+                        <p class="impact-description">
+                            Marie's radium research created radiation therapy. Doctors quickly realized that radium could kill cancer cells. 
+                            By 1903, physicians were using radium to treat tumors. Today, about 50% of cancer patients receive radiation 
+                            therapy. Modern techniques use controlled beams to target tumors precisely. PET scans use radioactive tracers 
+                            to detect cancer early. All of this stems from Marie's discovery that radioactive elements emit energy that can 
+                            penetrate tissue.
+                        </p>
+                    </div>
+
+                    <div class="impact-card" data-image="nuclear">
+                        <h3 class="impact-title">Nuclear Energy</h3>
+                        <p class="impact-description">
+                            Understanding radioactive decay led to nuclear fission. Scientists realized that heavy atoms like uranium could 
+                            split and release enormous energy. Nuclear power plants now generate about 10% of world electricity. France gets 
+                            70% of its power from nuclear reactors. Radioisotope thermoelectric generators power spacecraft. Voyager 1 and 2, 
+                            launched in 1977, still operate on plutonium power. Curiosity rover on Mars uses a nuclear battery. All of this 
+                            traces back to Marie's radioactivity work.
+                        </p>
+                    </div>
+
+                    <div class="impact-card" data-image="physics">
+                        <h3 class="impact-title">Modern Atomic Physics</h3>
+                        <p class="impact-description">
+                            Marie proved that radioactivity was an atomic property. This helped Ernest Rutherford discover the atomic nucleus 
+                            in 1911. Her work contributed to quantum mechanics development. Understanding radioactive decay led to discoveries 
+                            about subatomic particles. Every particle physics experiment at CERN or Fermilab builds on knowledge Marie helped 
+                            establish. The Standard Model would not exist without radioactivity research.
+                        </p>
+                    </div>
+
+                    <div class="impact-card" data-image="method">
+                        <h3 class="impact-title">Scientific Methodology</h3>
+                        <p class="impact-description">
+                            Marie pioneered systematic, quantitative experimental methods. She did not just observe phenomena. She measured 
+                            them precisely. She tested every variable. She eliminated alternative explanations. Her approach to isolating 
+                            radioactive elements established protocols chemists still follow. Modern chemistry demands this level of rigor. 
+                            Marie helped create that standard.
+                        </p>
+                    </div>
+
+                    <div class="impact-card" data-image="dating">
+                        <h3 class="impact-title">Carbon Dating & Archaeology</h3>
+                        <p class="impact-description">
+                            Radioactive decay rates are constant and measurable. This property enabled carbon-14 dating, developed by Willard 
+                            Libby in 1949. Archaeologists can now date organic materials up to 50,000 years old. Geologists date rocks using 
+                            uranium-lead decay. The Shroud of Turin was dated to the 14th century using carbon-14. Ötzi the Iceman was dated 
+                            to 3300 BCE. None of this would be possible without understanding radioactive decay.
+                        </p>
+                    </div>
+
+                    <div class="impact-card" data-image="women">
+                        <h3 class="impact-title">Breaking Gender Barriers</h3>
+                        <p class="impact-description">
+                            Marie was the first woman to win a Nobel Prize. She was the first person to win two Nobel Prizes in different 
+                            sciences. She was the first female professor at the Sorbonne. She proved women could do groundbreaking science. 
+                            Her daughter Irène Joliot-Curie won the Nobel Prize in Chemistry in 1935 for discovering artificial radioactivity. 
+                            Two generations of Curie women winning Nobel Prizes demolished arguments that women lacked scientific ability.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quote Section -->
+        <section class="content-section">
+            <div class="quote-section">
+                <p class="quote-text">
+                    Nothing in life is to be feared, it is only to be understood. Now is the time to understand more, so that we may fear less.
+                </p>
+                <div class="quote-attribution">Marie Curie</div>
+            </div>
+        </section>
+
+        <!-- Footer Navigation -->
+        <footer class="footer-nav">
+            <div class="footer-content">
+                <a href="../lise-meitner/" class="nav-button">Next: Lise Meitner</a>
+                <a href="../../dashboard/" class="nav-button">Back to Dashboard</a>
+            </div>
+        </footer>
+    </div>
+    <!-- PART 4: Complete JavaScript -->
+
+    <script>
+    // ===== CUSTOM CURSOR =====
+    const cursor = document.getElementById('cursor');
+    let mouseX = 0, mouseY = 0;
+
+    document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+    });
+
+    function animateCursor() {
+        cursor.style.left = mouseX - 10 + 'px';
+        cursor.style.top = mouseY - 10 + 'px';
+        requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+
+    const hoverElements = document.querySelectorAll('a, button, .impact-card, .context-card, .timeline-content');
+    hoverElements.forEach(el => {
+        el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+        el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+    });
+
+    // ===== BACKGROUND CANVAS PARTICLES =====
+    const bgCanvas = document.getElementById('bg-canvas');
+    const bgCtx = bgCanvas.getContext('2d');
+
+    function resizeCanvas() {
+        bgCanvas.width = window.innerWidth;
+        bgCanvas.height = window.innerHeight;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    const bgParticles = [];
+    const particleCount = 60;
+    const scientificSymbols = ['Ra', 'Po', 'U', 'Th', 'α', 'β', 'γ'];
+
+    for (let i = 0; i < particleCount; i++) {
+        bgParticles.push({
+            x: Math.random() * bgCanvas.width,
+            y: Math.random() * bgCanvas.height,
+            vx: (Math.random() - 0.5) * 0.4,
+            vy: (Math.random() - 0.5) * 0.4,
+            size: Math.random() * 2 + 1,
+            opacity: Math.random() * 0.4 + 0.1,
+            symbol: scientificSymbols[Math.floor(Math.random() * scientificSymbols.length)]
+        });
+    }
+
+    function animateBgParticles() {
+        bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+        bgParticles.forEach(particle => {
+            particle.x += particle.vx;
+            particle.y += particle.vy;
+
+            if (particle.x < 0 || particle.x > bgCanvas.width) particle.vx *= -1;
+            if (particle.y < 0 || particle.y > bgCanvas.height) particle.vy *= -1;
+
+            bgCtx.globalAlpha = particle.opacity;
+            bgCtx.font = `${particle.size * 12}px 'Space Mono', monospace`;
+            bgCtx.fillStyle = '#d4af37';
+            bgCtx.fillText(particle.symbol, particle.x, particle.y);
+        });
+
+        requestAnimationFrame(animateBgParticles);
+    }
+
+    animateBgParticles();
+
+    // ===== 3D ATOM VISUALIZATION (ACCURATE RADIUM-226) =====
+    const atomCanvas = document.getElementById('atom-3d-canvas');
+    const atomScene = new THREE.Scene();
+    const atomCamera = new THREE.PerspectiveCamera(
+        60,
+        atomCanvas.clientWidth / atomCanvas.clientHeight,
+        0.1,
+        1000
+    );
+    const atomRenderer = new THREE.WebGLRenderer({ 
+        canvas: atomCanvas, 
+        antialias: true, 
+        alpha: true 
+    });
+
+    atomRenderer.setSize(atomCanvas.clientWidth, atomCanvas.clientHeight);
+    atomRenderer.setClearColor(0x000000, 0);
+    atomCamera.position.set(0, 5, 25);
+
+    // OrbitControls
+    const controls = new THREE.OrbitControls(atomCamera, atomRenderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.enableZoom = true;
+    controls.enablePan = true;
+    controls.minDistance = 12;
+    controls.maxDistance = 60;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.3;
+
+    const interactiveObjects = [];
+
+    // ===== NUCLEUS: 88 PROTONS + 138 NEUTRONS =====
+    const nucleusGroup = new THREE.Group();
+
+    const protonGeometry = new THREE.SphereGeometry(0.28, 16, 16);
+    const protonMaterial = new THREE.MeshPhongMaterial({ 
+        color: 0xff4444,
+        emissive: 0xff2222,
+        emissiveIntensity: 0.3,
+        shininess: 80
+    });
+
+    const neutronGeometry = new THREE.SphereGeometry(0.28, 16, 16);
+    const neutronMaterial = new THREE.MeshPhongMaterial({ 
+        color: 0x4488ff,
+        emissive: 0x2266dd,
+        emissiveIntensity: 0.3,
+        shininess: 80
+    });
+
+    // 88 protons
+    for (let i = 0; i < 88; i++) {
+        const proton = new THREE.Mesh(protonGeometry, protonMaterial);
+        const phi = Math.acos(-1 + (2 * i) / 88);
+        const theta = Math.sqrt(88 * Math.PI) * phi;
+        const radius = 2.5;
+        proton.position.setFromSphericalCoords(radius, phi, theta);
+        proton.userData = { 
+            type: 'proton',
+            name: 'Proton',
+            symbol: 'p⁺',
+            charge: '+1 elementary charge',
+            mass: '1.007276 amu',
+            detail: 'Total: 88 in Ra-226 nucleus'
+        };
+        nucleusGroup.add(proton);
+        interactiveObjects.push(proton);
+    }
+
+    // 138 neutrons
+    for (let i = 0; i < 138; i++) {
+        const neutron = new THREE.Mesh(neutronGeometry, neutronMaterial);
+        const phi = Math.acos(-1 + (2 * i) / 138);
+        const theta = Math.sqrt(138 * Math.PI) * phi;
+        const radius = 2.7;
+        neutron.position.setFromSphericalCoords(radius, phi, theta);
+        neutron.userData = { 
+            type: 'neutron',
+            name: 'Neutron',
+            symbol: 'n⁰',
+            charge: '0 (neutral)',
+            mass: '1.008665 amu',
+            detail: 'Total: 138 in Ra-226 nucleus'
+        };
+        nucleusGroup.add(neutron);
+        interactiveObjects.push(neutron);
+    }
+
+    atomScene.add(nucleusGroup);
+
+    // ===== ELECTRONS: [Rn] 7s² = K(2) L(8) M(18) N(32) O(18) P(8) Q(2) =====
+    const electrons = [];
+    const electronGeometry = new THREE.SphereGeometry(0.18, 12, 12);
+    const electronMaterial = new THREE.MeshPhongMaterial({ 
+        color: 0xd4af37,
+        emissive: 0xd4af37,
+        emissiveIntensity: 0.4
+    });
+
+    const shellConfig = [
+        { n: 1, name: 'K shell (1s²)', electrons: 2, radius: 6 },
+        { n: 2, name: 'L shell (2s² 2p⁶)', electrons: 8, radius: 8.5 },
+        { n: 3, name: 'M shell (3s² 3p⁶ 3d¹⁰)', electrons: 18, radius: 11 },
+        { n: 4, name: 'N shell (4s² 4p⁶ 4d¹⁰ 4f¹⁴)', electrons: 32, radius: 13.5 },
+        { n: 5, name: 'O shell (5s² 5p⁶ 5d¹⁰)', electrons: 18, radius: 16 },
+        { n: 6, name: 'P shell (6s² 6p⁶)', electrons: 8, radius: 18.5 },
+        { n: 7, name: 'Q shell (7s²)', electrons: 2, radius: 21 }
+    ];
+
+    shellConfig.forEach((shell, shellIndex) => {
+        for (let i = 0; i < shell.electrons; i++) {
+            const electron = new THREE.Mesh(electronGeometry, electronMaterial);
+            const orbitalData = {
+                mesh: electron,
+                shellRadius: shell.radius,
+                angle: (Math.PI * 2 * i) / shell.electrons,
+                speed: 0.008 + (shellIndex * 0.002),
+                tilt: (Math.PI / 6) * (shellIndex % 3),
+                phase: Math.random() * Math.PI * 2
+            };
+            electrons.push(orbitalData);
+            electron.userData = { 
+                type: 'electron',
+                name: 'Electron',
+                symbol: 'e⁻',
+                shell: shell.name,
+                charge: '-1 elementary charge',
+                mass: '0.000549 amu',
+                detail: `Principal quantum number: n=${shell.n}`
+            };
+            atomScene.add(electron);
+            interactiveObjects.push(electron);
+        }
+    });
+
+    // ===== ALPHA PARTICLES (2p + 2n = He-4 nucleus) =====
+    const alphaParticles = [];
+    const alphaGeometry = new THREE.SphereGeometry(0.35, 12, 12);
+    const alphaMaterial = new THREE.MeshBasicMaterial({ 
+        color: 0x00ff9f,
+        transparent: true,
+        opacity: 1
+    });
+
+    for (let i = 0; i < 12; i++) {
+        const alpha = new THREE.Mesh(alphaGeometry, alphaMaterial.clone());
+        const angle = (Math.PI * 2 * i) / 12;
+        alpha.position.set(
+            Math.cos(angle) * 4,
+            Math.sin(angle) * 4,
+            0
+        );
+
+        const velocity = new THREE.Vector3(
+            Math.cos(angle) * 0.04,
+            Math.sin(angle) * 0.04,
+            (Math.random() - 0.5) * 0.03
+        );
+
+        alpha.userData = { 
+            type: 'alpha',
+            name: 'Alpha Particle',
+            symbol: 'α (He²⁺)',
+            composition: '2 protons + 2 neutrons',
+            charge: '+2 elementary charge',
+            mass: '4.001506 amu',
+            detail: 'Ejected during Ra-226 → Rn-222 decay'
+        };
+
+        alphaParticles.push({
+            mesh: alpha,
+            velocity: velocity,
+            maxDistance: 30,
+            initialAngle: angle
+        });
+
+        atomScene.add(alpha);
+        interactiveObjects.push(alpha);
+    }
+
+    // ===== LIGHTING =====
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    atomScene.add(ambientLight);
+
+    const nucleusLight = new THREE.PointLight(0x00ff9f, 2, 60);
+    nucleusLight.position.set(0, 0, 0);
+    atomScene.add(nucleusLight);
+
+    const rimLight1 = new THREE.PointLight(0xd4af37, 0.8, 100);
+    rimLight1.position.set(15, 15, 15);
+    atomScene.add(rimLight1);
+
+    const rimLight2 = new THREE.PointLight(0xff4444, 0.6, 80);
+    rimLight2.position.set(-15, -10, 10);
+    atomScene.add(rimLight2);
+
+    // ===== TOOLTIP SYSTEM =====
+    const tooltip = document.createElement('div');
+    tooltip.className = 'atom-tooltip';
+    document.body.appendChild(tooltip);
+
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    let hoveredObject = null;
+
+    atomCanvas.addEventListener('mousemove', (event) => {
+        const rect = atomCanvas.getBoundingClientRect();
+        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, atomCamera);
+        const intersects = raycaster.intersectObjects(interactiveObjects);
+
+        if (intersects.length > 0) {
+            const object = intersects[0].object;
+            const data = object.userData;
+
+            if (hoveredObject !== object) {
+                hoveredObject = object;
+
+                let tooltipHTML = `<strong>${data.name} (${data.symbol})</strong>`;
+                tooltipHTML += `<span class="tooltip-detail">Charge: ${data.charge}</span>`;
+                tooltipHTML += `<span class="tooltip-detail">Mass: ${data.mass}</span>`;
+                if (data.shell) {
+                    tooltipHTML += `<span class="tooltip-detail">Shell: ${data.shell}</span>`;
+                }
+                if (data.composition) {
+                    tooltipHTML += `<span class="tooltip-detail">${data.composition}</span>`;
+                }
+                tooltipHTML += `<span class="tooltip-detail">${data.detail}</span>`;
+
+                tooltip.innerHTML = tooltipHTML;
+            }
+
+            tooltip.style.left = (event.clientX + 15) + 'px';
+            tooltip.style.top = (event.clientY + 15) + 'px';
+            tooltip.classList.add('visible');
+
+            atomCanvas.style.cursor = 'pointer';
+            controls.autoRotate = false;
+        } else {
+            hoveredObject = null;
+            tooltip.classList.remove('visible');
+            atomCanvas.style.cursor = 'grab';
+            controls.autoRotate = true;
+        }
+    });
+
+    atomCanvas.addEventListener('mouseleave', () => {
+        tooltip.classList.remove('visible');
+        hoveredObject = null;
+        controls.autoRotate = true;
+    });
+
+    atomCanvas.addEventListener('mousedown', () => {
+        atomCanvas.style.cursor = 'grabbing';
+    });
+
+    atomCanvas.addEventListener('mouseup', () => {
+        atomCanvas.style.cursor = hoveredObject ? 'pointer' : 'grab';
+    });
+
+    // ===== ANIMATION LOOP =====
+    let time = 0;
+
+    function animateAtom() {
+        requestAnimationFrame(animateAtom);
+        time += 0.016;
+
+        controls.update();
+
+        nucleusGroup.rotation.x += 0.001;
+        nucleusGroup.rotation.y += 0.002;
+
+        nucleusLight.intensity = 1.8 + Math.sin(time * 2) * 0.4;
+
+        electrons.forEach((electronData) => {
+            electronData.angle += electronData.speed;
+
+            const x = Math.cos(electronData.angle) * electronData.shellRadius;
+            const y = Math.sin(electronData.angle + electronData.phase) * electronData.shellRadius * Math.cos(electronData.tilt);
+            const z = Math.sin(electronData.angle) * electronData.shellRadius * Math.sin(electronData.tilt);
+
+            electronData.mesh.position.set(x, y, z);
+        });
+
+        alphaParticles.forEach((alphaData) => {
+            alphaData.mesh.position.add(alphaData.velocity);
+
+            const distance = alphaData.mesh.position.length();
+
+            if (distance > alphaData.maxDistance) {
+                const angle = alphaData.initialAngle + Math.random() * 0.5 - 0.25;
+                alphaData.mesh.position.set(
+                    Math.cos(angle) * 4,
+                    Math.sin(angle) * 4,
+                    (Math.random() - 0.5) * 2
+                );
+                alphaData.velocity.set(
+                    Math.cos(angle) * 0.04,
+                    Math.sin(angle) * 0.04,
+                    (Math.random() - 0.5) * 0.03
+                );
+            }
+
+            const fadeStart = 10;
+            if (distance > fadeStart) {
+                alphaData.mesh.material.opacity = Math.max(0, 1 - (distance - fadeStart) / (alphaData.maxDistance - fadeStart));
+            } else {
+                alphaData.mesh.material.opacity = 1;
+            }
+        });
+
+        atomRenderer.render(atomScene, atomCamera);
+    }
+
+    animateAtom();
+
+    window.addEventListener('resize', () => {
+        atomCamera.aspect = atomCanvas.clientWidth / atomCanvas.clientHeight;
+        atomCamera.updateProjectionMatrix();
+        atomRenderer.setSize(atomCanvas.clientWidth, atomCanvas.clientHeight);
+    });
+
+    // ===== SCROLL ANIMATIONS =====
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.timeline-item, .impact-card, .context-card').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = 'all 0.6s ease';
+        observer.observe(el);
+    });
+
+    console.log('Marie Curie page loaded. Ra-226: 88 protons, 138 neutrons, 88 electrons (2,8,18,32,18,8,2)');
+    </script>
+</body>
+</html>
+<!--1. the 3d model needs to have hover over and info available instead of a popup, and even the other electrons, alpha-particles,and any other particle shown must also have hover over details about it 2. the tiles of info in historical context as well as modern impact need to have the images as the background with a slight dark overlay so that we can read text and the image is visible too quite clearly-->

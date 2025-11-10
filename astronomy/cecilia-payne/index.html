@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cecilia Payne-Gaposchkin - The Stellar Composer | The HER Thesis</title>
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #ffffff;
+            --bg-dark: #0a0a0a;
+            --accent: #d4af37;
+            --accent-light: #c9ada7;
+            --secondary: #8b5a3c;
+            --stellar-purple: #8e44ad;
+            --cosmic-blue: #3498db;
+            --text: #ffffff;
+            --text-dim: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --glass: rgba(255, 255, 255, 0.1);
+            --border: rgba(255, 255, 255, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        body {
+            cursor: none;
+        }
+
+        /* === BACKGROUND CANVAS === */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        /* === VIDEO BACKGROUND === */
+        .video-bg {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            opacity: 0.3;
+            filter: blur(2px) sepia(0.2) saturate(0.8);
+            object-fit: cover;
+        }
+
+        .video-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(
+                ellipse at center,
+                transparent 0%,
+                rgba(10, 10, 10, 0.7) 100%
+            );
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* === CUSTOM CURSOR === */
+        .custom-cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            mix-blend-mode: difference;
+            transition: transform 0.2s ease;
+        }
+
+        .custom-cursor.hover {
+            transform: scale(1.5);
+            background: var(--accent);
+        }
+
+        /* === MAIN LAYOUT === */
+        .main-container {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+        }
+
+        /* === NAVIGATION === */
+        .nav-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 20px 40px;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .nav-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .nav-logo:hover {
+            color: var(--accent);
+        }
+
+        .nav-logo .her {
+            font-style: italic;
+            color: var(--accent-light);
+        }
+
+        .nav-back {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            text-decoration: none;
+            border-radius: 6px;
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-back:hover {
+            background: var(--glass);
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateX(-4px);
+        }
+
+        /* === HERO SECTION === */
+        .hero {
+            padding: 120px 40px 80px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .hero-text {
+            z-index: 2;
+        }
+
+        .hero-subtitle {
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 20px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.2s forwards;
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 6vw, 5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 30px;
+            letter-spacing: -2px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.4s forwards;
+        }
+
+        .hero-description {
+            font-size: 20px;
+            line-height: 1.6;
+            color: var(--text-dim);
+            margin-bottom: 40px;
+            max-width: 600px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.6s forwards;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 30px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.8s forwards;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'Space Mono', monospace;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            display: block;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        /* === HERO IMAGE === */
+        .hero-visual {
+            position: relative;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 1s forwards;
+        }
+
+        .hero-image {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            border-radius: 12px;
+            filter: sepia(0.3) contrast(1.1);
+            transition: transform 0.6s ease;
+        }
+
+        .hero-image:hover {
+            transform: scale(1.02);
+        }
+
+        .image-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 30px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            border-radius: 0 0 12px 12px;
+        }
+
+        .image-caption {
+            font-size: 14px;
+            color: var(--text-dim);
+            font-style: italic;
+        }
+
+        /* === CONTENT SECTIONS === */
+        .content-section {
+            padding: 80px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .section-header {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 60px;
+            margin-bottom: 60px;
+            align-items: start;
+        }
+
+        .section-number {
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--accent);
+            position: sticky;
+            top: 140px;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            line-height: 1.2;
+            color: var(--text);
+        }
+
+        .section-content {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 60px;
+        }
+
+        .content-text {
+            font-size: 18px;
+            line-height: 1.7;
+            color: var(--text-dim);
+        }
+
+        .content-text p {
+            margin-bottom: 24px;
+        }
+
+        .highlight {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* === DISCOVERY TIMELINE === */
+        .timeline {
+            position: relative;
+            padding: 60px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 200px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--accent);
+            opacity: 0.3;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 60px;
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 60px;
+            align-items: start;
+        }
+
+        .timeline-year {
+            font-family: 'Space Mono', monospace;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent);
+            position: relative;
+        }
+
+        .timeline-year::after {
+            content: '';
+            position: absolute;
+            right: -31px;
+            top: 50%;
+            width: 12px;
+            height: 12px;
+            background: var(--accent);
+            border-radius: 50%;
+            transform: translateY(-50%);
+        }
+
+        .timeline-content h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+
+        .timeline-content p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-dim);
+        }
+
+        /* === IMPACT CARDS === */
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .impact-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+        }
+
+        .impact-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(212, 175, 55, 0.1);
+        }
+
+        .impact-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .impact-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+
+        .impact-description {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-dim);
+        }
+
+        /* === QUOTE SECTION === */
+        .quote-section {
+            background: rgba(212, 175, 55, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+            padding: 60px;
+            margin: 80px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .quote-section::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 120px;
+            color: var(--accent);
+            font-family: 'Playfair Display', serif;
+            opacity: 0.3;
+        }
+
+        .quote-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-style: italic;
+            line-height: 1.4;
+            color: var(--text);
+            margin-bottom: 20px;
+        }
+
+        .quote-attribution {
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent);
+        }
+
+        /* === FOOTER NAVIGATION === */
+        .footer-nav {
+            padding: 80px 40px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 32px;
+            background: transparent;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            text-decoration: none;
+            border-radius: 8px;
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button:hover {
+            background: var(--accent);
+            color: var(--bg-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+        }
+
+        /* === ANIMATIONS === */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 1024px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                gap: 60px;
+                text-align: center;
+            }
+
+            .section-header,
+            .section-content,
+            .timeline-item {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .timeline::before {
+                left: 20px;
+            }
+
+            .timeline-year::after {
+                left: -31px;
+                right: auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-header {
+                padding: 15px 20px;
+            }
+
+            .hero {
+                padding: 100px 20px 60px;
+            }
+
+            .content-section {
+                padding: 60px 20px;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .quote-text {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom cursor -->
+    <div class="custom-cursor" id="cursor"></div>
+
+    <!-- Background canvas -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Video background -->
+    <video class="video-bg" autoplay muted loop playsinline>
+        <source src="../../assets/videos/stars-space.mp4" type="video/mp4">
+    </video>
+    <div class="video-overlay"></div>
+
+    <!-- Navigation -->
+    <nav class="nav-header">
+        <div class="nav-content">
+            <a href="../../" class="nav-logo">The <span class="her">HER</span> Thesis</a>
+            <a href="../../dashboard/" class="nav-back">
+                ← Back to Dashboard
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main content -->
+    <div class="main-container">
+        <!-- Hero section -->
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <div class="hero-subtitle">Astrophysics Pioneer</div>
+                    <h1 class="hero-title">Cecilia Payne-Gaposchkin</h1>
+                    <p class="hero-description">
+                        The British-American astronomer who determined that stars are primarily composed of hydrogen and helium. 
+                        Her doctoral thesis revolutionized astrophysics, though it was initially called "impossible" by leading 
+                        astronomers because it contradicted accepted beliefs.
+                    </p>
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">1925</span>
+                            <span class="stat-label">PhD Thesis</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">H & He</span>
+                            <span class="stat-label">Stars Made Of</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">1900</span>
+                            <span class="stat-label">Born</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">1979</span>
+                            <span class="stat-label">Died</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <img src="../../assets/images/cecilia-payne-portrait.jpg" alt="Cecilia Payne at Harvard Observatory" class="hero-image">
+                    <div class="image-overlay">
+                        <div class="image-caption">Cecilia Payne studying stellar spectra at Harvard Observatory, 1925</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Early Life -->
+        <section class="content-section">
+            <div class="section-header">
+                <div class="section-number">01 — Early Life</div>
+                <h2 class="section-title">From Cambridge to Harvard</h2>
+            </div>
+            <div class="section-content">
+                <div></div>
+                <div class="content-text">
+                    <p>
+                        Born <span class="highlight">Cecilia Helena Payne</span> in Wendover, England, 
+                        she showed exceptional mathematical ability from childhood. After her father's death when she was four, 
+                        her mother encouraged her education, believing in the importance of women's intellectual development.
+                    </p>
+                    <p>
+                        At Cambridge University, she initially studied natural sciences but became fascinated with astronomy 
+                        after attending a lecture by Arthur Eddington on his 1919 solar eclipse expedition that confirmed 
+                        Einstein's theory of relativity. This moment changed her life's direction completely.
+                    </p>
+                    <p>
+                        Realizing that British universities offered limited opportunities for women in astronomy, 
+                        she emigrated to the United States in 1923 to work at Harvard College Observatory 
+                        under Harlow Shapley, beginning her groundbreaking career in stellar astrophysics.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Major Discoveries Timeline -->
+        <section class="content-section">
+            <div class="section-header">
+                <div class="section-number">02 — Discoveries</div>
+                <h2 class="section-title">Unlocking Stellar Composition</h2>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-year">1925</div>
+                    <div class="timeline-content">
+                        <h3>Revolutionary PhD Thesis</h3>
+                        <p>
+                            Completed her dissertation on stellar atmospheres, proving that stars are primarily 
+                            hydrogen and helium—contradicting the accepted belief that stars had Earth-like composition.
+                        </p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">1925</div>
+                    <div class="timeline-content">
+                        <h3>Initial Scientific Rejection</h3>
+                        <p>
+                            Her thesis findings were deemed "impossible" by Princeton's Henry Norris Russell, 
+                            forcing her to downplay her conclusions as "almost certainly not real."
+                        </p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">1929</div>
+                    <div class="timeline-content">
+                        <h3>Scientific Vindication</h3>
+                        <p>
+                            Russell independently confirmed her findings and publicly credited her work, 
+                            establishing hydrogen and helium abundance as fundamental stellar physics.
+                        </p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">1956</div>
+                    <div class="timeline-content">
+                        <h3>Harvard Professor</h3>
+                        <p>
+                            Became the first woman to be promoted to full professor at Harvard, 
+                            finally receiving recognition for her pioneering contributions to astronomy.
+                        </p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">1976</div>
+                    <div class="timeline-content">
+                        <h3>Legacy Recognition</h3>
+                        <p>
+                            Received the Henry Norris Russell Prize from the American Astronomical Society, 
+                            named after the man who initially dismissed her groundbreaking work.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Impact Cards -->
+        <section class="content-section">
+            <div class="section-header">
+                <div class="section-number">03 — Impact</div>
+                <h2 class="section-title">Foundation of Modern Astronomy</h2>
+            </div>
+            <div class="section-content">
+                <div></div>
+                <div>
+                    <div class="impact-grid">
+                        <div class="impact-card">
+                            <div class="impact-icon">🌟</div>
+                            <h3 class="impact-title">Stellar Composition</h3>
+                            <p class="impact-description">
+                                Proved that stars are primarily hydrogen and helium, revolutionizing our 
+                                understanding of stellar physics and the universe's elemental composition.
+                            </p>
+                        </div>
+                        <div class="impact-card">
+                            <div class="impact-icon">🔬</div>
+                            <h3 class="impact-title">Spectroscopy Pioneer</h3>
+                            <p class="impact-description">
+                                Advanced spectroscopic analysis techniques that became standard methods 
+                                for determining chemical composition of celestial objects.
+                            </p>
+                        </div>
+                        <div class="impact-card">
+                            <div class="impact-icon">📚</div>
+                            <h3 class="impact-title">Groundbreaking Thesis</h3>
+                            <p class="impact-description">
+                                Her PhD thesis is considered one of the most important in astronomy history, 
+                                establishing fundamental principles of stellar astrophysics.
+                            </p>
+                        </div>
+                        <div class="impact-card">
+                            <div class="impact-icon">🎓</div>
+                            <h3 class="impact-title">Academic Trailblazer</h3>
+                            <p class="impact-description">
+                                As Harvard's first female professor, she opened doors for generations 
+                                of women astronomers and astrophysicists.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quote -->
+        <section class="content-section">
+            <div class="quote-section">
+                <p class="quote-text">
+                    The reward of the young scientist is the emotional thrill of being the first person in the history of the world to see something or to understand something.
+                </p>
+                <div class="quote-attribution">— Cecilia Payne-Gaposchkin</div>
+            </div>
+        </section>
+
+        <!-- Navigation -->
+        <footer class="footer-nav">
+            <div class="footer-content">
+                <!--<a href="../katherine-johnson/" class="nav-button">
+                    Next: Katherine Johnson →
+                </a>-->
+                <a href="../../dashboard/" class="nav-button">
+                    ← Back to Dashboard
+                </a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Background particles script -->
+    <script>
+    // Custom cursor
+    const cursor = document.getElementById('cursor');
+    let mouseX = 0, mouseY = 0;
+
+    document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+    });
+
+    function animateCursor() {
+        cursor.style.left = mouseX - 10 + 'px';
+        cursor.style.top = mouseY - 10 + 'px';
+        requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+
+    // Hover effect for interactive elements
+    const hoverElements = document.querySelectorAll('a, button, .impact-card');
+    hoverElements.forEach(el => {
+        el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+        el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+    });
+
+    // Background canvas with stellar field animation
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Stellar system with hydrogen/helium composition
+    const stars = [];
+    const starCount = 60;
+    const astronomySymbols = ['🌟', '⭐', '🔭', '🌌', '☄️'];
+
+    // Create stars with different compositions
+    for (let i = 0; i < starCount; i++) {
+        stars.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            vx: (Math.random() - 0.5) * 0.5,
+            vy: (Math.random() - 0.5) * 0.5,
+            size: Math.random() * 2 + 0.5,
+            opacity: Math.random() * 0.8 + 0.2,
+            symbol: astronomySymbols[Math.floor(Math.random() * astronomySymbols.length)],
+            twinkle: Math.random() * Math.PI * 2,
+            twinkleSpeed: Math.random() * 0.02 + 0.01,
+            composition: Math.random() < 0.8 ? 'hydrogen' : 'helium', // 80% hydrogen, 20% helium
+            pulsePhase: Math.random() * Math.PI * 2
+        });
+    }
+
+    function animateStars() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        stars.forEach(star => {
+            star.x += star.vx;
+            star.y += star.vy;
+            star.twinkle += star.twinkleSpeed;
+            star.pulsePhase += 0.01;
+            
+            // Boundary wrapping
+            if (star.x < 0) star.x = canvas.width;
+            if (star.x > canvas.width) star.x = 0;
+            if (star.y < 0) star.y = canvas.height;
+            if (star.y > canvas.height) star.y = 0;
+            
+            // Twinkle effect
+            const twinkleIntensity = 0.7 + 0.3 * Math.sin(star.twinkle);
+            const pulseIntensity = 0.8 + 0.2 * Math.sin(star.pulsePhase * 2);
+            const finalOpacity = star.opacity * twinkleIntensity * pulseIntensity;
+            
+            // Color based on composition (Payne's discovery)
+            const color = star.composition === 'hydrogen' ? '#d4af37' : '#5dade2';
+            
+            ctx.save();
+            ctx.translate(star.x, star.y);
+            ctx.globalAlpha = finalOpacity;
+            ctx.font = `${star.size * 8}px serif`;
+            ctx.fillStyle = color;
+            ctx.textAlign = 'center';
+            ctx.fillText(star.symbol, 0, 0);
+            
+            // Add subtle glow for larger stars
+            if (star.size > 1.5) {
+                ctx.shadowColor = color;
+                ctx.shadowBlur = 10;
+                ctx.fillText(star.symbol, 0, 0);
+            }
+            
+            ctx.restore();
+        });
+        
+        requestAnimationFrame(animateStars);
+    }
+    
+    animateStars();
+
+    // Scroll animations
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.timeline-item, .impact-card').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = 'all 0.6s ease';
+        observer.observe(el);
+    });
+    </script>
+</body>
+</html>

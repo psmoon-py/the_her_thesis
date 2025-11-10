@@ -1,0 +1,2245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lise Meitner - The Mother of Nuclear Fission | The HER Thesis</title>
+    <link rel="icon" type="image/png" href="../../favicon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <style>
+        :root {
+            --primary: #ffffff;
+            --bg-dark: #0a0a0a;
+            --accent: #d4af37;
+            --accent-light: #c9ada7;
+            --fission-glow: #00d9ff;
+            --uranium-color: #4a90e2;
+            --text: #ffffff;
+            --text-dim: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --glass: rgba(255, 255, 255, 0.1);
+            --border: rgba(255, 255, 255, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            cursor: none;
+        }
+
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+
+        .video-bg {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            opacity: 0.25;
+            filter: blur(var(--space-2));
+            object-fit: cover;
+            transition: opacity var(--duration-normal) var(--ease-standard);
+        }
+
+        /* Mobile responsive adjustments */
+        @media (max-width: 480px) {
+            .video-bg {
+                opacity: 0.15;
+                filter: blur(var(--space-4));
+                min-width: 120%;
+                min-height: 120%;
+            }
+        }
+
+
+        .video-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, transparent 0%, rgba(10, 10, 10, 0.8) 100%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .custom-cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            mix-blend-mode: difference;
+            transition: transform 0.2s ease;
+        }
+
+        .custom-cursor.hover {
+            transform: scale(1.5);
+            background: var(--accent);
+        }
+
+        .main-container {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+        }
+
+        .nav-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 20px 40px;
+            background: rgba(10, 10, 10, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .nav-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .nav-logo:hover {
+            color: var(--accent);
+        }
+
+        .nav-logo .her {
+            font-style: italic;
+            color: var(--accent-light);
+        }
+
+        .nav-back {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            text-decoration: none;
+            border-radius: 6px;
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-back:hover {
+            background: var(--glass);
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateX(-4px);
+        }
+
+        .hero {
+            padding: 120px 40px 80px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .hero-subtitle {
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 20px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.2s forwards;
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 6vw, 5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 30px;
+            letter-spacing: -2px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.4s forwards;
+        }
+
+        .hero-description {
+            font-size: 20px;
+            line-height: 1.6;
+            color: var(--text-dim);
+            margin-bottom: 40px;
+            max-width: 600px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.6s forwards;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.8s forwards;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'Space Mono', monospace;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            display: block;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        .hero-visual {
+            position: relative;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 1s forwards;
+        }
+
+        .hero-image {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            border-radius: 12px;
+            filter: sepia(0.3) contrast(1.1);
+            transition: transform 0.6s ease;
+        }
+
+        .hero-image:hover {
+            transform: scale(1.02);
+        }
+
+        .image-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 30px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+            border-radius: 0 0 12px 12px;
+        }
+
+        .image-caption {
+            font-size: 14px;
+            color: var(--text-dim);
+            font-style: italic;
+        }
+
+        .fission-3d-section {
+            padding: 100px 40px;
+            background: linear-gradient(180deg, transparent, rgba(0, 217, 255, 0.03), transparent);
+        }
+
+        .fission-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 600px 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .fission-canvas-wrapper {
+            position: relative;
+        }
+
+        #fission-3d-canvas {
+            width: 100%;
+            height: 600px;
+            border-radius: 12px;
+            background: rgba(0, 217, 255, 0.02);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            cursor: grab;
+        }
+
+        #fission-3d-canvas:active {
+            cursor: grabbing;
+        }
+
+        .fission-controls-hint {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: var(--fission-glow);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 217, 255, 0.3);
+        }
+
+        .fission-explanation {
+            padding: 40px;
+        }
+
+        .fission-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--fission-glow);
+        }
+
+        .fission-text {
+            font-size: 17px;
+            line-height: 1.7;
+            color: var(--text-dim);
+            margin-bottom: 20px;
+        }
+
+        .fission-text strong {
+            color: var(--fission-glow);
+            font-weight: 600;
+        }
+
+        .fission-tooltip {
+            position: fixed;
+            background: rgba(0, 0, 0, 0.95);
+            color: #00d9ff;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-family: 'Space Mono', monospace;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 10001;
+            border: 1px solid rgba(0, 217, 255, 0.5);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            max-width: 280px;
+            line-height: 1.5;
+        }
+
+        .fission-tooltip.visible {
+            opacity: 1;
+        }
+
+        .fission-tooltip strong {
+            display: block;
+            color: #d4af37;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+
+        .fission-tooltip .tooltip-detail {
+            display: block;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 2px;
+        }
+
+        .fission-controls {
+            position: absolute;
+            bottom: 85%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.85);
+            padding: 16px 24px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            z-index: 10;
+        }
+
+        .control-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: var(--fission-glow);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .speed-slider {
+            width: 120px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .speed-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--fission-glow);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--fission-glow);
+        }
+
+        .speed-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: var(--fission-glow);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 10px var(--fission-glow);
+        }
+
+        .pause-button {
+            padding: 6px 16px;
+            background: transparent;
+            border: 1px solid var(--fission-glow);
+            color: var(--fission-glow);
+            border-radius: 4px;
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .pause-button:hover {
+            background: var(--fission-glow);
+            color: var(--bg-dark);
+        }
+
+        .pause-button.paused {
+            background: var(--fission-glow);
+            color: var(--bg-dark);
+        }
+
+        .historical-context,
+        .content-section,
+        .science-deep-dive,
+        .modern-impact-section {
+            padding: 100px 40px;
+        }
+
+        .context-container,
+        .science-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .context-header,
+        .science-header,
+        .modern-impact-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .context-number {
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            letter-spacing: 3px;
+            color: var(--accent);
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .context-title,
+        .science-title,
+        .modern-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+
+        .context-subtitle,
+        .science-intro,
+        .modern-subtitle {
+            font-size: 20px;
+            color: var(--text-dim);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .context-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            max-width: 1400px;
+            margin: 60px auto 0;
+        }
+
+        .context-card,
+        .impact-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 40px;
+            backdrop-filter: blur(20px);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            min-height: 350px;
+        }
+
+        .impact-card {
+            min-height: 320px;
+            padding: 30px;
+        }
+
+        .context-card::before,
+        .impact-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            z-index: -1;
+            transition: opacity 0.4s ease;
+        }
+
+        .context-card:hover::before,
+        .impact-card:hover::before {
+            opacity: 1;
+        }
+
+        .context-card::after,
+        .impact-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.15));
+            z-index: -1;
+        }
+
+        .context-card[data-image="vienna"]::before {
+            background-image: url('../../assets/images/context/vienna-university-1900s.jpg');
+        }
+
+        .context-card[data-image="berlin"]::before {
+            background-image: url('../../assets/images/context/kaiser-wilhelm-institute-1907.jpeg');
+        }
+
+        .context-card[data-image="sweden"]::before {
+            background-image: url('../../assets/images/context/stockholm-kungalv-1938.jpg');
+        }
+
+        .context-card[data-image="discrimination"]::before {
+            background-image: url('../../assets/images/context/women-science-discrimination-1900s.jpg');
+        }
+
+        .impact-card[data-image="atomic"]::before {
+            background-image: url('../../assets/images/impact/atomic-bomb-development.jpg');
+        }
+
+        .impact-card[data-image="reactor"]::before {
+            background-image: url('../../assets/images/impact/nuclear-reactor-modern.webp');
+        }
+
+        .impact-card[data-image="medicine"]::before {
+            background-image: url('../../assets/images/impact/nuclear-medicine-pet-scan.jpg');
+        }
+
+        .impact-card[data-image="element"]::before {
+            background-image: url('../../assets/images/impact/meitnerium.svg');
+        }
+
+        .impact-card[data-image="women"]::before {
+            background-image: url('../../assets/images/impact/women-physics-modern.jpg');
+        }
+
+        .impact-card[data-image="nobel"]::before {
+            background-image: url('../../assets/images/impact/nobel-prize-ceremony.jpeg');
+        }
+
+        .context-card:hover,
+        .impact-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent);
+            box-shadow: 0 30px 60px rgba(212, 175, 55, 0.2);
+        }
+
+        .context-icon,
+        .impact-icon {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 20px;
+            display: none;
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5));
+            position: relative;
+            z-index: 1;
+        }
+
+        .impact-icon {
+            width: 50px;
+            height: 50px;
+        }
+
+        .context-card-title,
+        .impact-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .impact-title {
+            font-size: 1.25rem;
+            margin-bottom: 12px;
+        }
+
+        .context-card-text,
+        .impact-description {
+            font-size: 16px;
+            line-height: 1.7;
+            color: var(--text-dim);
+            position: relative;
+            z-index: 1;
+        }
+
+        .context-card:hover .context-card-text,
+        .impact-card:hover .impact-description {
+            opacity: 0.1;
+        }
+
+        .impact-description {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .content-section {
+            padding: 80px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 60px;
+            margin-bottom: 60px;
+            align-items: start;
+        }
+
+        .section-number {
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--accent);
+            position: sticky;
+            top: 140px;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .section-content {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 60px;
+        }
+
+        .content-text {
+            font-size: 18px;
+            line-height: 1.7;
+            color: var(--text-dim);
+        }
+
+        .content-text p {
+            margin-bottom: 24px;
+        }
+
+        .highlight {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .science-subsection {
+            margin-bottom: 60px;
+        }
+
+        .science-subsection h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--fission-glow);
+        }
+
+        .science-subsection p {
+            font-size: 17px;
+            line-height: 1.7;
+            color: var(--text-dim);
+            margin-bottom: 20px;
+        }
+
+        .science-highlight-box {
+            background: rgba(0, 217, 255, 0.1);
+            border-left: 4px solid var(--fission-glow);
+            padding: 24px;
+            margin: 30px 0;
+            border-radius: 8px;
+        }
+
+        .science-highlight-box p {
+            margin-bottom: 0;
+            font-size: 16px;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 60px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 200px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--accent), var(--fission-glow));
+            opacity: 0.3;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 60px;
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 60px;
+            align-items: start;
+        }
+
+        .timeline-year {
+            font-family: 'Space Mono', monospace;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent);
+            position: relative;
+        }
+
+        .timeline-year::after {
+            content: '';
+            position: absolute;
+            right: -31px;
+            top: 50%;
+            width: 14px;
+            height: 14px;
+            background: var(--fission-glow);
+            border-radius: 50%;
+            transform: translateY(-50%);
+            box-shadow: 0 0 20px var(--fission-glow);
+            animation: pulse-glow 2s infinite;
+        }
+
+        @keyframes pulse-glow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 10px var(--fission-glow);
+            }
+
+            50% {
+                box-shadow: 0 0 30px var(--fission-glow);
+            }
+        }
+
+        .timeline-content {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .timeline-content:hover {
+            border-color: var(--fission-glow);
+            transform: translateX(10px);
+            box-shadow: 0 10px 40px rgba(0, 217, 255, 0.1);
+        }
+
+        .timeline-content h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .timeline-content p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-dim);
+        }
+
+        .quote-section {
+            background: rgba(212, 175, 55, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+            padding: 60px;
+            margin: 80px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .quote-section::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 120px;
+            color: var(--accent);
+            font-family: 'Playfair Display', serif;
+            opacity: 0.3;
+        }
+
+        .quote-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-style: italic;
+            line-height: 1.4;
+            margin-bottom: 20px;
+        }
+
+        .quote-attribution {
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent);
+        }
+
+        .footer-nav {
+            padding: 80px 40px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 32px;
+            background: transparent;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            text-decoration: none;
+            border-radius: 8px;
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button:hover {
+            background: var(--accent);
+            color: var(--bg-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 1024px) {
+
+            .hero-content,
+            .fission-container {
+                grid-template-columns: 1fr;
+                gap: 60px;
+            }
+
+            .section-header,
+            .section-content,
+            .timeline-item {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .timeline::before {
+                left: 20px;
+            }
+
+            .timeline-year::after {
+                left: -31px;
+                right: auto;
+            }
+
+            .context-grid,
+            .impact-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+
+            /* hide only the ruler on mobile */
+            .nav-ruler {
+                display: none;
+            }
+
+            /* each story slide becomes a centered scrollable card */
+            .content-section {
+                padding: 20px;
+                width: calc(100vw - 40px);
+                max-width: 680px;
+                left: 50% !important;
+                right: auto !important;
+                top: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                max-height: calc(100svh - 32px * 2);
+                overflow: auto;
+                text-align: center;
+            }
+
+            .section-title {
+                font-size: 28px;
+            }
+
+            .section-text {
+                text-align: justify;
+                max-width: none;
+            }
+
+            /* make "Explore more stories" centered */
+            .hero-button {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            /* 👇 SHOW & CENTER the bottom controls on mobile */
+
+            /* Skip to the end – centered, slightly above the main CTA */
+            .bottom-left-controls {
+                left: 50%;
+                right: auto;
+                bottom: 88px;
+                /* sits above the "view all scientists" button */
+                transform: translateX(-50%);
+                justify-content: center;
+            }
+
+            /* View all scientists – centered at the very bottom */
+            .bottom-right-controls {
+                left: 50%;
+                right: auto;
+                bottom: 32px;
+                transform: translateX(-50%);
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="custom-cursor" id="cursor"></div>
+    <canvas id="bg-canvas"></canvas>
+
+    <video class="video-bg" autoplay muted loop playsinline preload="auto">
+        <source src="../../assets/videos/nuclear-physics.mp4" type="video/mp4">
+        <source src="../../assets/videos/nuclear-physics.webm" type="video/webm">
+    </video>
+    <div class="video-overlay"></div>
+
+    <nav class="nav-header">
+        <div class="nav-content">
+            <a href="../../" class="nav-logo">The <span class="her">HER</span> Thesis</a>
+            <a href="../../dashboard/" class="nav-back">Back to Dashboard</a>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <div class="hero-subtitle">Nuclear Physics Pioneer · 1878-1968</div>
+                    <h1 class="hero-title">Lise Meitner</h1>
+                    <p class="hero-description">
+                        The physicist who explained nuclear fission and named the process. Despite her crucial
+                        theoretical work, she was excluded from the 1944 Nobel Prize given to her collaborator Otto
+                        Hahn. Element 109, meitnerium, honors her legacy.
+                    </p>
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">1938</span>
+                            <span class="stat-label">Fission Explained</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">48</span>
+                            <span class="stat-label">Nobel Nominations</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">109</span>
+                            <span class="stat-label">Element Named Mt</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">1918</span>
+                            <span class="stat-label">Protactinium Found</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <img src="../../assets/images/lise-meitner-portrait.jpg" alt="Lise Meitner" class="hero-image">
+                    <div class="image-overlay">
+                        <div class="image-caption">Lise Meitner, 1946</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="historical-context">
+            <div class="context-container">
+                <div class="context-header">
+                    <div class="context-number">01 — Historical Context</div>
+                    <h2 class="context-title">Where Did the Idea Come From?</h2>
+                    <p class="context-subtitle">
+                        The 1930s saw physicists bombarding atoms with neutrons. No one expected uranium to split. Lise
+                        Meitner, exiled in Sweden, received a puzzling letter from Otto Hahn. Her response during a
+                        Christmas walk in 1938 changed history.
+                    </p>
+                </div>
+
+                <div class="context-grid">
+                    <div class="context-card" data-image="vienna">
+                        <img src="../../assets/icons/university-vienna-icon.png" alt="Education barriers"
+                            class="context-icon">
+                        <h3 class="context-card-title">Vienna 1878: Born Into Barriers</h3>
+                        <p class="context-card-text">
+                            Elise Meitner was born in Vienna on November 7, 1878. She was the third of eight children in
+                            a Jewish family. Her father, Philipp Meitner, was a lawyer. Vienna offered better
+                            opportunities than many European cities, but barriers remained. Girls could not attend
+                            gymnasium. They finished school at age 14. Universities did not admit women. This changed in
+                            1897. Austria-Hungary allowed women to take university entrance exams. Lise was 20 years
+                            old. She had missed eight years of education. She hired tutors and compressed those eight
+                            years into two. She passed the exam in 1901. She enrolled at the University of Vienna. She
+                            studied physics under Ludwig Boltzmann. In 1906, she became only the second woman to earn a
+                            doctorate in physics from Vienna. Teaching was the only option available to women scientists
+                            in Austria. Lise wanted research. She went to Berlin.
+                        </p>
+                    </div>
+
+                    <div class="context-card" data-image="berlin">
+                        <img src="../../assets/icons/kaiser-wilhelm-icon.png" alt="Discrimination" class="context-icon">
+                        <h3 class="context-card-title">Berlin 1907: Discrimination and Discovery</h3>
+                        <p class="context-card-text">
+                            Lise arrived in Berlin to study with Max Planck. Women could not officially attend
+                            university in Prussia. Planck made an exception. She could audit his lectures. She met Otto
+                            Hahn, a chemist studying radioactivity. They began collaborating. The Chemistry Institute
+                            director, Emil Fischer, banned women from the building. He feared they would set their hair
+                            on fire with Bunsen burners. Hahn found a loophole. His lab was in a former carpentry
+                            workshop. It had a separate entrance. Lise could work there. She was unpaid for years. She
+                            relied on allowances from her father. In 1912, the Kaiser Wilhelm Institute for Chemistry
+                            opened. She got a position. In 1918, she and Hahn discovered protactinium. In 1926, she
+                            became Germany's first female physics professor. Then the Nazis took power.
+                        </p>
+                    </div>
+
+                    <div class="context-card" data-image="sweden">
+                        <img src="../../assets/icons/sweden-escape-icon.png" alt="Escape route" class="context-icon">
+                        <h3 class="context-card-title">Sweden 1938: Escape and Calculation</h3>
+                        <p class="context-card-text">
+                            The 1938 Anschluss made Austria part of Germany. Lise lost her Austrian citizenship
+                            protection. She was now subject to Nazi racial laws. She could be arrested at any moment. On
+                            July 13, 1938, Dutch physicist Dirk Coster smuggled her across the German border into the
+                            Netherlands. She had no visa. She carried 10 marks and two small bags. She fled to Sweden.
+                            Manne Siegbahn offered her a position at his Stockholm institute but gave her no support or
+                            equipment. She was miserable and isolated. Otto Hahn continued experiments in Berlin. In
+                            December 1938, he wrote to Lise. His team had bombarded uranium with neutrons. They found
+                            barium. This made no sense. Barium has 56 protons. Uranium has 92. How could neutron
+                            bombardment create barium? Hahn needed a "fantastic explanation." Lise spent Christmas in
+                            Kungälv, Sweden, with her nephew Otto Frisch. They walked in the snow and calculated.
+                        </p>
+                    </div>
+
+                    <div class="context-card" data-image="discrimination">
+                        <img src="../../assets/icons/nobel-exclusion-icon.png" alt="Nobel Prize injustice"
+                            class="context-icon">
+                        <h3 class="context-card-title">1944: The Nobel Prize That Wasn't</h3>
+                        <p class="context-card-text">
+                            Otto Hahn received the 1944 Nobel Prize in Chemistry "for the discovery of nuclear fission."
+                            The citation mentioned no one else. Lise Meitner provided the theoretical explanation. She
+                            calculated the energy released. She named the process "fission." Without her work, Hahn's
+                            barium result was just confusing data. The Nobel Committee received 48 nominations for
+                            Meitner over the years. They ignored all of them. Hahn later downplayed Meitner's role. He
+                            claimed she merely "assisted" with calculations. Historical documents prove otherwise.
+                            Letters show Lise directed experiments and interpreted results. The exclusion was not
+                            accidental. It was deliberate erasure. In 1997, element 109 was named meitnerium. It was
+                            small consolation. The Nobel Prize still lists only Hahn. The injustice stands as one of the
+                            most egregious in Nobel history.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="fission-3d-section">
+            <div class="fission-container">
+                <div class="fission-canvas-wrapper">
+                    <canvas id="fission-3d-canvas"></canvas>
+                    <div class="fission-controls-hint">Drag to rotate · Scroll to zoom · Hover for details</div>
+                    <div class="fission-controls">
+                        <span class="control-label">Speed</span>
+                        <input type="range" min="0.1" max="2" step="0.1" value="1" class="speed-slider"
+                            id="speed-control">
+                        <button class="pause-button" id="pause-button">Pause</button>
+                    </div>
+                </div>
+                <div class="fission-explanation">
+                    <h2 class="fission-title">Understanding Nuclear Fission</h2>
+                    <p class="fission-text">
+                        Lise Meitner realized that when a <strong>uranium-235 nucleus</strong> absorbs a neutron, it
+                        becomes uranium-236. This compound nucleus is unstable. It oscillates. The nucleus behaves like
+                        a liquid drop. It elongates. Then it splits into two fragments.
+                    </p>
+                    <p class="fission-text">
+                        The typical split produces barium-141 (56 protons) and krypton-92 (36 protons). The numbers add
+                        up: 56 + 36 = 92, the original uranium proton count. But the mass does not add up. About 0.1% of
+                        the mass disappears. Where does it go?
+                    </p>
+                    <p class="fission-text">
+                        Einstein's equation E=mc² provides the answer. That missing mass converts to energy. The fission
+                        of one uranium-235 atom releases 202.5 MeV. This is millions of times more energy than chemical
+                        reactions. Two or three neutrons also shoot out. These can trigger more fissions. This is a
+                        chain reaction.
+                    </p>
+                    <p class="fission-text">
+                        Lise calculated all of this during a walk in Swedish snow at Christmas 1938. She and Otto Frisch
+                        worked out the physics on paper. They published their explanation in Nature in February 1939.
+                        Frisch named it "fission" after biological cell division. The nuclear age began.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="science-deep-dive">
+            <div class="science-container">
+                <div class="science-header">
+                    <div class="context-number">02 — The Science</div>
+                    <h2 class="science-title">What Is Nuclear Fission?</h2>
+                    <p class="science-intro">
+                        Lise Meitner's breakthrough explained how heavy atomic nuclei could split and release enormous
+                        energy. This discovery enabled both nuclear weapons and nuclear power. Understanding requires
+                        examining what happened in Berlin in December 1938.
+                    </p>
+                </div>
+
+                <div class="science-subsection">
+                    <h3>The Experiment: Barium From Uranium</h3>
+                    <p>
+                        Otto Hahn and Fritz Strassmann bombarded uranium with slow neutrons. They expected to create
+                        heavier elements. Enrico Fermi had done similar experiments in 1934. He thought he created
+                        elements 93 and 94. Everyone assumed neutron bombardment would add mass to the nucleus.
+                    </p>
+                    <p>
+                        Hahn and Strassmann used chemical separation techniques. They isolated the reaction products.
+                        They found barium. This was impossible according to accepted theory. Barium has 56 protons.
+                        Uranium has 92. How could bombardment with tiny neutrons reduce the proton count by 36? Hahn
+                        wrote to Lise in Sweden. He needed a theoretical explanation.
+                    </p>
+                    <p>
+                        Ida Noddack had suggested in 1934 that uranium might split into lighter elements. No one took
+                        her seriously. She was a woman chemist. She offered no theoretical basis. Fermi dismissed her
+                        idea. Hahn initially dismissed it too. But now the barium evidence was undeniable. Something was
+                        splitting the uranium nucleus.
+                    </p>
+                </div>
+
+                <div class="science-subsection">
+                    <h3>The Calculation: Christmas 1938 in Sweden</h3>
+                    <p>
+                        Otto Frisch visited his aunt Lise for Christmas in Kungälv. She showed him Hahn's letter. They
+                        walked in the snow. Lise on foot, Frisch on skis. They discussed the uranium problem. Lise
+                        remembered the liquid drop model of the nucleus proposed by George Gamow and Niels Bohr.
+                    </p>
+                    <p>
+                        The nucleus is held together by the strong nuclear force. But protons repel each other
+                        electromagnetically. In a heavy nucleus like uranium, the electromagnetic repulsion is enormous.
+                        Adding a neutron destabilizes the balance. The nucleus oscillates. It elongates into a dumbbell
+                        shape. The electromagnetic repulsion overcomes the nuclear force. The nucleus splits.
+                    </p>
+                    <p>
+                        Lise sat on a log and calculated. She used Einstein's E=mc². The mass of uranium-236 is slightly
+                        more than the combined masses of barium-141, krypton-92, and the ejected neutrons. The mass
+                        difference is about 0.2 atomic mass units. Converting to energy: 0.2 amu × c² = 200 MeV. This
+                        matched the kinetic energy of the fission fragments that experimenters had observed but not
+                        understood.
+                    </p>
+                    <p>
+                        Everything fit. The barium result made sense. Uranium nuclei were splitting. Lise and Frisch
+                        wrote a paper. They submitted it to Nature in February 1939. Frisch coined the term "fission" by
+                        analogy with biological cell division. The paper appeared on February 11, 1939. It changed the
+                        world.
+                    </p>
+                    <div class="science-highlight-box">
+                        <p>
+                            <strong>The calculation:</strong> Lise Meitner worked out the fission energy release using
+                            only Einstein's equation and known atomic masses. She had no laboratory. She had no
+                            equipment. She had a pencil, paper, and deep understanding of physics. That was enough to
+                            explain the most important nuclear process of the 20th century.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="science-subsection">
+                    <h3>The Chain Reaction: Why This Mattered</h3>
+                    <p>
+                        Fission releases two or three neutrons per uranium-235 split. Each neutron can trigger another
+                        fission. One becomes two. Two becomes four. Four becomes eight. The reaction multiplies
+                        exponentially. This is a chain reaction.
+                    </p>
+                    <p>
+                        If you control the reaction, you get nuclear power. Nuclear reactors use control rods containing
+                        boron or cadmium. These materials absorb excess neutrons. The chain reaction proceeds slowly.
+                        Heat generates steam. Turbines generate electricity. About 10% of world electricity now comes
+                        from nuclear fission.
+                    </p>
+                    <p>
+                        If you do not control the reaction, you get a nuclear explosion. The Manhattan Project realized
+                        this immediately. The first nuclear bomb test occurred on July 16, 1945. The bomb used
+                        uranium-235 and plutonium-239. Both undergo fission. The explosive yield was equivalent to
+                        25,000 tons of TNT. All from splitting atoms.
+                    </p>
+                    <p>
+                        Lise Meitner refused to work on nuclear weapons. She called them "immoral." The Manhattan
+                        Project invited her to join. She declined. She worked on nuclear reactor physics in Sweden
+                        instead. After Hiroshima, newspapers called her "the mother of the atomic bomb." She hated this.
+                        She had explained fission. She had not advocated weapons. The distinction mattered to her.
+                    </p>
+                </div>
+
+                <div class="science-subsection">
+                    <h3>The Liquid Drop Model: Why Nuclei Split</h3>
+                    <p>
+                        George Gamow and Niels Bohr proposed that the nucleus behaves like a liquid drop. Nucleons
+                        (protons and neutrons) move within the nucleus like molecules in a water droplet. Surface
+                        tension holds the drop together. This is analogous to the strong nuclear force.
+                    </p>
+                    <p>
+                        A spherical drop is stable. But if you add energy, the drop oscillates. It can elongate. If the
+                        oscillation is large enough, the drop splits into two smaller drops. This is what happens in
+                        nuclear fission. The absorbed neutron adds energy. The uranium-236 nucleus oscillates. It
+                        elongates. Electromagnetic repulsion between protons overcomes the nuclear force. The nucleus
+                        splits.
+                    </p>
+                    <p>
+                        Lise Meitner was the first to apply this model to explain uranium splitting. Bohr had speculated
+                        in 1936 that uranium might "explode" under certain conditions. But he did not predict fission.
+                        Lise connected Bohr's model to Hahn's experimental results. She calculated the energy balance.
+                        She proved that fission was energetically favorable. The theory matched reality perfectly.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <div class="section-header">
+                <div class="section-number">03 — Early Life</div>
+                <h2 class="section-title">From Vienna to Berlin</h2>
+            </div>
+            <div class="section-content">
+                <div></div>
+                <div class="content-text">
+                    <p>
+                        Lise grew up in a liberal Jewish family in Vienna. Her father supported her education. This was
+                        unusual. Most families did not educate daughters beyond basic schooling. Lise kept a notebook
+                        under her pillow. She recorded observations about natural phenomena. She wanted to understand
+                        how things worked.
+                    </p>
+                    <p>
+                        Women could not attend gymnasium in Austria. Lise finished school at 14. She was expected to
+                        become a teacher. She studied French. In 1897, the rules changed. Universities opened to women.
+                        Lise was already 20. She needed to pass the Matura exam. This required eight years of gymnasium
+                        education. She hired private tutors. She studied intensively for two years. She passed in 1901.
+                    </p>
+                    <p>
+                        She enrolled at the University of Vienna. Ludwig Boltzmann taught theoretical physics. He was a
+                        pioneer of statistical mechanics. His lectures transformed how Lise thought about atoms. She
+                        earned her doctorate in 1906. Her thesis examined heat conduction in inhomogeneous materials. It
+                        was solid but not groundbreaking. She wanted to do more.
+                    </p>
+                    <p>
+                        Max Planck had discovered the quantum of action in 1900. Physics was changing. Lise wanted to
+                        learn from Planck. She traveled to Berlin in 1907. Planck was initially skeptical about women in
+                        science. He met with Lise. Her knowledge impressed him. He allowed her to attend his lectures
+                        unofficially. In 1912, he made her his assistant. She became one of the few women in German
+                        physics.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Major Discoveries Timeline -->
+        <section class="content-section">
+            <div class="section-header">
+                <div class="section-number">04 — Discoveries</div>
+                <h2 class="section-title">30 Years of Breakthrough Research</h2>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-year">1909</div>
+                    <div class="timeline-content">
+                        <h3>Radioactive Recoil Discovery</h3>
+                        <p>
+                            Lise and Otto Hahn discovered radioactive recoil. When an atom ejects an alpha particle, the
+                            atom itself recoils. This is conservation of momentum at the atomic level. The recoil energy
+                            is small but measurable. This discovery helped establish that radioactive decay involves
+                            real particles being ejected from the nucleus.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1918</div>
+                    <div class="timeline-content">
+                        <h3>Discovery of Protactinium</h3>
+                        <p>
+                            Lise and Hahn isolated element 91. They named it protactinium. It sits between thorium and
+                            uranium in the actinide series. The discovery required processing tons of pitchblende ore.
+                            Chemical separation techniques were painstaking. The work took two years. Protactinium is
+                            extremely rare. Its most stable isotope has a half-life of 32,000 years. Finding it proved
+                            Lise and Hahn were masters of radiochemistry.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1923</div>
+                    <div class="timeline-content">
+                        <h3>The Auger Effect</h3>
+                        <p>
+                            Lise discovered a phenomenon where an atom ejects an electron after an inner-shell electron
+                            is removed. The process is non-radiative. No photon is emitted. Energy transfers directly to
+                            the ejected electron. Pierre Auger independently discovered this in 1925. The effect is now
+                            named after him. Lise's priority is historically documented but rarely acknowledged. The
+                            pattern repeated throughout her career.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1926</div>
+                    <div class="timeline-content">
+                        <h3>First Female Physics Professor in Germany</h3>
+                        <p>
+                            The University of Berlin appointed Lise as professor. She was the first woman to hold this
+                            position in Germany. She had her own physics section at the Kaiser Wilhelm Institute. She
+                            supervised doctoral students. She published papers on beta decay and nuclear structure. She
+                            was at the peak of her career. Then the Nazis gained power in 1933.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1933</div>
+                    <div class="timeline-content">
+                        <h3>Nazi Racial Laws</h3>
+                        <p>
+                            The Nazi Civil Service Law dismissed Jews from government positions. Universities were
+                            included. Lise lost her university professorship. But she kept her position at the Kaiser
+                            Wilhelm Institute. Her Austrian citizenship protected her. The institute leadership valued
+                            her work. She continued research for five more years. She later regretted staying. She felt
+                            she gave legitimacy to the Nazi regime by not leaving immediately.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1938</div>
+                    <div class="timeline-content">
+                        <h3>Escape From Nazi Germany</h3>
+                        <p>
+                            Austria merged with Germany in March 1938. Lise became a German citizen subject to racial
+                            laws. She could be arrested at any time. On July 13, Dutch physicist Dirk Coster helped her
+                            escape. They took a train to the Dutch border. She had no valid passport. Border guards
+                            could have arrested her. They checked her old Austrian passport and let her through. She
+                            flew to Copenhagen. Then she went to Stockholm. She left behind her career, her equipment,
+                            and 30 years of research.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1939</div>
+                    <div class="timeline-content">
+                        <h3>Nuclear Fission Explained</h3>
+                        <p>
+                            In February, Nature published Lise and Frisch's paper: "Disintegration of Uranium by
+                            Neutrons: A New Type of Nuclear Reaction." They explained that uranium-235 absorbs a neutron
+                            and becomes unstable uranium-236. The nucleus splits into two fragments. About 200 MeV of
+                            energy releases. Two or three neutrons eject. These can cause more fissions. A chain
+                            reaction is possible. Within months, physicists worldwide replicated the experiments. The
+                            nuclear age had begun.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1944</div>
+                    <div class="timeline-content">
+                        <h3>Nobel Prize to Hahn Alone</h3>
+                        <p>
+                            The Nobel Committee awarded Otto Hahn the Chemistry Prize. The citation read: "for his
+                            discovery of the fission of heavy nuclei." It mentioned no collaborators. Lise Meitner's
+                            name appeared nowhere. The committee had the February 1939 Nature paper. They knew about
+                            Lise's theoretical work. They chose to ignore it. Years later, documents revealed committee
+                            members believed chemistry deserved priority over physics. Hahn did the chemistry. Meitner
+                            did the physics. Therefore, Hahn alone deserved credit. The reasoning was absurd. The
+                            injustice was deliberate.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="modern-impact-section">
+            <div class="context-container">
+                <div class="modern-impact-header">
+                    <div class="context-number">05 — Modern Impact</div>
+                    <h2 class="modern-title">How Nuclear Fission Shapes the World</h2>
+                    <p class="modern-subtitle">
+                        Lise Meitner's theoretical explanation of nuclear fission created entire industries. Nuclear
+                        power plants generate electricity. Medical isotopes treat cancer. Her work fundamentally altered
+                        human civilization.
+                    </p>
+                </div>
+
+                <div class="impact-grid">
+                    <div class="impact-card" data-image="atomic">
+                        <img src="../../assets/icons/nuclear-explosion-icon.png" alt="Atomic weapons"
+                            class="impact-icon">
+                        <h3 class="impact-title">Nuclear Weapons Development</h3>
+                        <p class="impact-description">
+                            Within six years of Lise's fission explanation, nuclear weapons existed. The Manhattan
+                            Project cost two billion dollars. It employed 130,000 people. The first test at Trinity Site
+                            on July 16, 1945 confirmed that chain reactions could produce enormous explosions. Hiroshima
+                            and Nagasaki followed weeks later. The weapons killed over 200,000 people. Lise opposed this
+                            use. She refused to participate in weapons research. But her physics made the bombs
+                            possible.
+                        </p>
+                    </div>
+
+                    <div class="impact-card" data-image="reactor">
+                        <img src="../../assets/icons/nuclear-plant-icon.png" alt="Nuclear power" class="impact-icon">
+                        <h3 class="impact-title">Nuclear Power Generation</h3>
+                        <p class="impact-description">
+                            The first nuclear reactor, Chicago Pile-1, went critical on December 2, 1942. Enrico Fermi
+                            led the project. The reactor used uranium and graphite. It demonstrated controlled fission
+                            chain reactions. Today, about 440 nuclear reactors operate worldwide. They generate 10% of
+                            global electricity. France gets 70% of its power from nuclear fission. Nuclear submarines
+                            use compact reactors for propulsion. All of this stems from understanding fission.
+                        </p>
+                    </div>
+
+                    <div class="impact-card" data-image="medicine">
+                        <img src="../../assets/icons/medical-isotope-icon.png" alt="Medical isotopes"
+                            class="impact-icon">
+                        <h3 class="impact-title">Medical Isotopes</h3>
+                        <p class="impact-description">
+                            Nuclear reactors produce medical isotopes. Technetium-99m is used in 40 million medical
+                            procedures annually. It helps diagnose heart disease, cancer, and bone disorders. Iodine-131
+                            treats thyroid cancer. Cobalt-60 sterilizes medical equipment. Molybdenum-99 produces
+                            technetium-99m. All these isotopes come from fission products or neutron activation in
+                            reactors. Lise's physics enabled modern nuclear medicine.
+                        </p>
+                    </div>
+
+                    <div class="impact-card" data-image="element">
+                        <img src="../../assets/icons/meitnerium-icon.png" alt="Element 109" class="impact-icon">
+                        <h3 class="impact-title">Element 109: Meitnerium</h3>
+                        <p class="impact-description">
+                            In 1982, German scientists at GSI Darmstadt synthesized element 109. They bombarded
+                            bismuth-209 with iron-58 ions. One nucleus formed. It lasted milliseconds. In 1997, the
+                            element was officially named meitnerium (Mt). It is the only element named solely after a
+                            non-mythological woman scientist. Curium honors both Marie and Pierre Curie. Meitnerium
+                            honors Lise alone. It was recognition the Nobel Committee never gave her.
+                        </p>
+                    </div>
+
+                    <div class="impact-card" data-image="women">
+                        <img src="../../assets/icons/female-physicist-icon.png" alt="Women in physics"
+                            class="impact-icon">
+                        <h3 class="impact-title">Symbol of Scientific Injustice</h3>
+                        <p class="impact-description">
+                            Lise Meitner's Nobel Prize exclusion is the most cited example of gender bias in science
+                            awards. She was nominated 48 times. The committee ignored every nomination. Her story
+                            appears in textbooks as a cautionary tale. Organizations now scrutinize scientific credit
+                            more carefully. The European Physical Society created an award in her name. The injustice is
+                            finally recognized, even if it can never be corrected.
+                        </p>
+                    </div>
+
+                    <div class="impact-card" data-image="nobel">
+                        <img src="../../assets/icons/justice-balance-icon.png" alt="Historical justice"
+                            class="impact-icon">
+                        <h3 class="impact-title">Rethinking Scientific Credit</h3>
+                        <p class="impact-description">
+                            Lise's exclusion forced examination of how credit is assigned in collaborative science.
+                            Experimentalists and theorists both contribute. Chemistry and physics both matter. Hahn
+                            measured barium. Lise explained why barium appeared. Neither discovery works without the
+                            other. Modern scientific practice emphasizes inclusive authorship. Collaboration receives
+                            explicit recognition. Lise's case taught science to do better.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <div class="quote-section">
+                <p class="quote-text">
+                    Science makes people reach selflessly for truth and objectivity. It teaches people to accept
+                    reality, with wonder and admiration, not to mention the deep awe and joy that the natural order of
+                    things brings.
+                </p>
+                <div class="quote-attribution">Lise Meitner</div>
+            </div>
+        </section>
+
+        <footer class="footer-nav">
+            <div class="footer-content">
+                <a href="../chien-shiung-wu/" class="nav-button">Next: Chien-Shiung Wu</a>
+                <a href="../../dashboard/" class="nav-button">Back to Dashboard</a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Background particles script -->
+    <script>
+        // ===== VERIFIED DATA FROM AUTHORITATIVE SOURCES =====
+        // U-235: 92 protons + 143 neutrons (MIT Nuclear Lab, Britannica)
+        // Ba-141: 56 protons + 85 neutrons (World Nuclear Association)
+        // Kr-92: 36 protons + 56 neutrons (World Nuclear Association)
+        // Energy: 202.5 MeV total (World Nuclear Association)
+        // Neutrons ejected: 2-3 per fission (MIT Nuclear Lab)
+
+        // ===== CUSTOM CURSOR =====
+        const cursor = document.getElementById('cursor');
+        let mouseX = 0, mouseY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function animateCursor() {
+            cursor.style.left = mouseX - 10 + 'px';
+            cursor.style.top = mouseY - 10 + 'px';
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        const hoverElements = document.querySelectorAll('a, button, .impact-card, .context-card, .timeline-content');
+        hoverElements.forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        });
+
+        // ===== BACKGROUND CANVAS PARTICLES =====
+        const bgCanvas = document.getElementById('bg-canvas');
+        const bgCtx = bgCanvas.getContext('2d');
+
+        function resizeCanvas() {
+            bgCanvas.width = window.innerWidth;
+            bgCanvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const bgParticles = [];
+        const particleCount = 50;
+        const nuclearSymbols = ['U', 'Ba', 'Kr', 'n', 'E'];
+
+        for (let i = 0; i < particleCount; i++) {
+            bgParticles.push({
+                x: Math.random() * bgCanvas.width,
+                y: Math.random() * bgCanvas.height,
+                vx: (Math.random() - 0.5) * 0.4,
+                vy: (Math.random() - 0.5) * 0.4,
+                size: Math.random() * 2 + 1,
+                opacity: Math.random() * 0.3 + 0.1,
+                symbol: nuclearSymbols[Math.floor(Math.random() * nuclearSymbols.length)]
+            });
+        }
+
+        function animateBgParticles() {
+            bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+            bgParticles.forEach(particle => {
+                particle.x += particle.vx;
+                particle.y += particle.vy;
+
+                if (particle.x < 0 || particle.x > bgCanvas.width) particle.vx *= -1;
+                if (particle.y < 0 || particle.y > bgCanvas.height) particle.vy *= -1;
+
+                bgCtx.globalAlpha = particle.opacity;
+                bgCtx.font = `${particle.size * 12}px 'Space Mono', monospace`;
+                bgCtx.fillStyle = '#00d9ff';
+                bgCtx.fillText(particle.symbol, particle.x, particle.y);
+            });
+
+            requestAnimationFrame(animateBgParticles);
+        }
+
+        animateBgParticles();
+
+        // ===== ANIMATION CONTROLS =====
+        let animationSpeed = 1.0;
+        let isPaused = false;
+
+        const speedControl = document.getElementById('speed-control');
+        const pauseButton = document.getElementById('pause-button');
+
+        speedControl.addEventListener('input', (e) => {
+            animationSpeed = parseFloat(e.target.value);
+        });
+
+        pauseButton.addEventListener('click', () => {
+            isPaused = !isPaused;
+            pauseButton.textContent = isPaused ? 'Resume' : 'Pause';
+            pauseButton.classList.toggle('paused');
+        });
+
+        // ===== 3D URANIUM FISSION VISUALIZATION =====
+        const fissionCanvas = document.getElementById('fission-3d-canvas');
+        const fissionScene = new THREE.Scene();
+        const fissionCamera = new THREE.PerspectiveCamera(
+            60,
+            fissionCanvas.clientWidth / fissionCanvas.clientHeight,
+            0.1,
+            1000
+        );
+        const fissionRenderer = new THREE.WebGLRenderer({
+            canvas: fissionCanvas,
+            antialias: true,
+            alpha: true
+        });
+
+        fissionRenderer.setSize(fissionCanvas.clientWidth, fissionCanvas.clientHeight);
+        fissionRenderer.setClearColor(0x000000, 0);
+        fissionCamera.position.set(0, 5, 30);
+
+        const controls = new THREE.OrbitControls(fissionCamera, fissionRenderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.enableZoom = true;
+        controls.enablePan = true;
+        controls.minDistance = 15;
+        controls.maxDistance = 70;
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 0.2;
+
+        const interactiveObjects = [];
+
+        // ===== URANIUM-235 NUCLEUS (92 protons + 143 neutrons) =====
+        const uraniumGroup = new THREE.Group();
+        uraniumGroup.name = 'uranium-235';
+
+        const protonGeometry = new THREE.SphereGeometry(0.25, 16, 16);
+        const uraniumProtonMaterial = new THREE.MeshPhongMaterial({
+            color: 0xff5533,
+            emissive: 0xff3311,
+            emissiveIntensity: 0.2,
+            shininess: 90
+        });
+
+        const neutronGeometry = new THREE.SphereGeometry(0.25, 16, 16);
+        const uraniumNeutronMaterial = new THREE.MeshPhongMaterial({
+            color: 0x3388ff,
+            emissive: 0x2266dd,
+            emissiveIntensity: 0.2,
+            shininess: 90
+        });
+
+        // 92 protons in uranium-235
+        for (let i = 0; i < 92; i++) {
+            const proton = new THREE.Mesh(protonGeometry, uraniumProtonMaterial);
+            const phi = Math.acos(-1 + (2 * i) / 92);
+            const theta = Math.sqrt(92 * Math.PI) * phi;
+            const radius = 3.0;
+            proton.position.setFromSphericalCoords(radius, phi, theta);
+            proton.userData = {
+                type: 'uranium-proton',
+                name: 'Uranium-235 Proton',
+                symbol: 'U p⁺',
+                charge: '+1 elementary charge',
+                mass: '1.007276 amu',
+                detail: 'Total: 92 protons in U-235',
+                element: 'uranium'
+            };
+            uraniumGroup.add(proton);
+            interactiveObjects.push(proton);
+        }
+
+        // 143 neutrons in uranium-235
+        for (let i = 0; i < 143; i++) {
+            const neutron = new THREE.Mesh(neutronGeometry, uraniumNeutronMaterial);
+            const phi = Math.acos(-1 + (2 * i) / 143);
+            const theta = Math.sqrt(143 * Math.PI) * phi;
+            const radius = 3.3;
+            neutron.position.setFromSphericalCoords(radius, phi, theta);
+            neutron.userData = {
+                type: 'uranium-neutron',
+                name: 'Uranium-235 Neutron',
+                symbol: 'U n⁰',
+                charge: '0 (neutral)',
+                mass: '1.008665 amu',
+                detail: 'Total: 143 neutrons in U-235',
+                element: 'uranium'
+            };
+            uraniumGroup.add(neutron);
+            interactiveObjects.push(neutron);
+        }
+
+        fissionScene.add(uraniumGroup);
+
+        // ===== INCOMING NEUTRON (triggers fission) =====
+        const incomingNeutronGeometry = new THREE.SphereGeometry(0.4, 16, 16);
+        const incomingNeutronMaterial = new THREE.MeshPhongMaterial({
+            color: 0x00ff00,
+            emissive: 0x00ff00,
+            emissiveIntensity: 0.5
+        });
+
+        const incomingNeutron = new THREE.Mesh(incomingNeutronGeometry, incomingNeutronMaterial);
+        incomingNeutron.position.set(20, 0, 0);
+        incomingNeutron.userData = {
+            type: 'trigger-neutron',
+            name: 'Trigger Neutron',
+            symbol: 'n⁰',
+            charge: '0 (neutral)',
+            mass: '1.008665 amu',
+            detail: 'Slow neutron that triggers fission',
+            element: 'neutron'
+        };
+        fissionScene.add(incomingNeutron);
+        interactiveObjects.push(incomingNeutron);
+
+        // ===== FISSION PRODUCTS: BARIUM-141 (56p + 85n) =====
+        const bariumGroup = new THREE.Group();
+        bariumGroup.name = 'barium-141';
+        bariumGroup.visible = false;
+
+        const bariumProtonMaterial = new THREE.MeshPhongMaterial({
+            color: 0xff8844,
+            emissive: 0xff6622,
+            emissiveIntensity: 0.2,
+            shininess: 90
+        });
+
+        const bariumNeutronMaterial = new THREE.MeshPhongMaterial({
+            color: 0x44aaff,
+            emissive: 0x3388dd,
+            emissiveIntensity: 0.2,
+            shininess: 90
+        });
+
+        // 56 protons in barium-141
+        for (let i = 0; i < 56; i++) {
+            const proton = new THREE.Mesh(protonGeometry, bariumProtonMaterial);
+            const phi = Math.acos(-1 + (2 * i) / 56);
+            const theta = Math.sqrt(56 * Math.PI) * phi;
+            proton.position.setFromSphericalCoords(2.2, phi, theta);
+            proton.userData = {
+                type: 'barium-proton',
+                name: 'Barium-141 Proton',
+                symbol: 'Ba p⁺',
+                charge: '+1 elementary charge',
+                mass: '1.007276 amu',
+                detail: 'Total: 56 protons in Ba-141',
+                element: 'barium'
+            };
+            bariumGroup.add(proton);
+            interactiveObjects.push(proton);
+        }
+
+        // 85 neutrons in barium-141
+        for (let i = 0; i < 85; i++) {
+            const neutron = new THREE.Mesh(neutronGeometry, bariumNeutronMaterial);
+            const phi = Math.acos(-1 + (2 * i) / 85);
+            const theta = Math.sqrt(85 * Math.PI) * phi;
+            neutron.position.setFromSphericalCoords(2.4, phi, theta);
+            neutron.userData = {
+                type: 'barium-neutron',
+                name: 'Barium-141 Neutron',
+                symbol: 'Ba n⁰',
+                charge: '0 (neutral)',
+                mass: '1.008665 amu',
+                detail: 'Total: 85 neutrons in Ba-141',
+                element: 'barium'
+            };
+            bariumGroup.add(neutron);
+            interactiveObjects.push(neutron);
+        }
+
+        fissionScene.add(bariumGroup);
+
+        // ===== FISSION PRODUCTS: KRYPTON-92 (36p + 56n) =====
+        const kryptonGroup = new THREE.Group();
+        kryptonGroup.name = 'krypton-92';
+        kryptonGroup.visible = false;
+
+        const kryptonProtonMaterial = new THREE.MeshPhongMaterial({
+            color: 0xffaa44,
+            emissive: 0xff8822,
+            emissiveIntensity: 0.2,
+            shininess: 90
+        });
+
+        const kryptonNeutronMaterial = new THREE.MeshPhongMaterial({
+            color: 0x44ccff,
+            emissive: 0x33aaee,
+            emissiveIntensity: 0.2,
+            shininess: 90
+        });
+
+        // 36 protons in krypton-92
+        for (let i = 0; i < 36; i++) {
+            const proton = new THREE.Mesh(protonGeometry, kryptonProtonMaterial);
+            const phi = Math.acos(-1 + (2 * i) / 36);
+            const theta = Math.sqrt(36 * Math.PI) * phi;
+            proton.position.setFromSphericalCoords(1.8, phi, theta);
+            proton.userData = {
+                type: 'krypton-proton',
+                name: 'Krypton-92 Proton',
+                symbol: 'Kr p⁺',
+                charge: '+1 elementary charge',
+                mass: '1.007276 amu',
+                detail: 'Total: 36 protons in Kr-92',
+                element: 'krypton'
+            };
+            kryptonGroup.add(proton);
+            interactiveObjects.push(proton);
+        }
+
+        // 56 neutrons in krypton-92
+        for (let i = 0; i < 56; i++) {
+            const neutron = new THREE.Mesh(neutronGeometry, kryptonNeutronMaterial);
+            const phi = Math.acos(-1 + (2 * i) / 56);
+            const theta = Math.sqrt(56 * Math.PI) * phi;
+            neutron.position.setFromSphericalCoords(2.0, phi, theta);
+            neutron.userData = {
+                type: 'krypton-neutron',
+                name: 'Krypton-92 Neutron',
+                symbol: 'Kr n⁰',
+                charge: '0 (neutral)',
+                mass: '1.008665 amu',
+                detail: 'Total: 56 neutrons in Kr-92',
+                element: 'krypton'
+            };
+            kryptonGroup.add(neutron);
+            interactiveObjects.push(neutron);
+        }
+
+        fissionScene.add(kryptonGroup);
+
+        // ===== EJECTED FISSION NEUTRONS (3 neutrons) =====
+        const fissionNeutrons = [];
+        const fissionNeutronGeometry = new THREE.SphereGeometry(0.35, 12, 12);
+        const fissionNeutronMaterial = new THREE.MeshBasicMaterial({
+            color: 0x00ff9f,
+            transparent: true,
+            opacity: 1
+        });
+
+        for (let i = 0; i < 3; i++) {
+            const neutron = new THREE.Mesh(fissionNeutronGeometry, fissionNeutronMaterial.clone());
+            const angle = (Math.PI * 2 * i) / 3 + Math.PI / 6;
+            neutron.position.set(0, 0, 0);
+            neutron.visible = false;
+
+            neutron.userData = {
+                type: 'ejected-neutron',
+                name: 'Ejected Neutron',
+                symbol: 'n⁰',
+                charge: '0 (neutral)',
+                mass: '1.008665 amu',
+                detail: 'Released during fission, can trigger chain reaction',
+                element: 'neutron'
+            };
+
+            fissionNeutrons.push({
+                mesh: neutron,
+                angle: angle,
+                active: false,
+                distance: 0
+            });
+
+            fissionScene.add(neutron);
+            interactiveObjects.push(neutron);
+        }
+
+        // ===== LIGHTING =====
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        fissionScene.add(ambientLight);
+
+        const uraniumLight = new THREE.PointLight(0x4a90e2, 2, 60);
+        uraniumLight.position.set(0, 0, 0);
+        fissionScene.add(uraniumLight);
+
+        const fissionLight = new THREE.PointLight(0x00ff9f, 0, 80);
+        fissionLight.position.set(0, 0, 0);
+        fissionScene.add(fissionLight);
+
+        const rimLight = new THREE.PointLight(0xd4af37, 0.8, 100);
+        rimLight.position.set(15, 15, 15);
+        fissionScene.add(rimLight);
+
+        // ===== TOOLTIP SYSTEM =====
+        const tooltip = document.createElement('div');
+        tooltip.className = 'fission-tooltip';
+        document.body.appendChild(tooltip);
+
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        let hoveredObject = null;
+
+        fissionCanvas.addEventListener('mousemove', (event) => {
+            const rect = fissionCanvas.getBoundingClientRect();
+            mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, fissionCamera);
+
+            // Only check visible objects based on fission state
+            const visibleObjects = interactiveObjects.filter(obj => {
+                if (obj === incomingNeutron) return obj.visible;
+                if (obj.parent === uraniumGroup) return uraniumGroup.visible;
+                if (obj.parent === bariumGroup) return bariumGroup.visible;
+                if (obj.parent === kryptonGroup) return kryptonGroup.visible;
+                if (obj.userData.type === 'ejected-neutron') return obj.visible;
+                return false;
+            });
+
+            const intersects = raycaster.intersectObjects(visibleObjects);
+
+            if (intersects.length > 0) {
+                const object = intersects[0].object;
+                const data = object.userData;
+
+                if (hoveredObject !== object) {
+                    hoveredObject = object;
+
+                    let tooltipHTML = `<strong>${data.name}</strong>`;
+                    tooltipHTML += `<span class="tooltip-detail">Symbol: ${data.symbol}</span>`;
+                    tooltipHTML += `<span class="tooltip-detail">Charge: ${data.charge}</span>`;
+                    tooltipHTML += `<span class="tooltip-detail">Mass: ${data.mass}</span>`;
+                    tooltipHTML += `<span class="tooltip-detail">${data.detail}</span>`;
+
+                    tooltip.innerHTML = tooltipHTML;
+                }
+
+                tooltip.style.left = (event.clientX + 15) + 'px';
+                tooltip.style.top = (event.clientY + 15) + 'px';
+                tooltip.classList.add('visible');
+
+                fissionCanvas.style.cursor = 'pointer';
+                controls.autoRotate = false;
+            } else {
+                hoveredObject = null;
+                tooltip.classList.remove('visible');
+                fissionCanvas.style.cursor = 'grab';
+                controls.autoRotate = true;
+            }
+        });
+
+        fissionCanvas.addEventListener('mouseleave', () => {
+            tooltip.classList.remove('visible');
+            hoveredObject = null;
+            controls.autoRotate = true;
+        });
+
+        fissionCanvas.addEventListener('mousedown', () => {
+            fissionCanvas.style.cursor = 'grabbing';
+        });
+
+        fissionCanvas.addEventListener('mouseup', () => {
+            fissionCanvas.style.cursor = hoveredObject ? 'pointer' : 'grab';
+        });
+
+        // ===== FISSION ANIMATION STATE =====
+        let fissionState = 'approaching';
+        let fissionProgress = 0;
+        let time = 0;
+
+        function animateFission() {
+            requestAnimationFrame(animateFission);
+
+            if (!isPaused) {
+                time += 0.016 * animationSpeed;
+                fissionProgress += 0.008 * animationSpeed;
+            }
+
+            controls.update();
+
+            // Gentle nucleus rotation
+            if (uraniumGroup.visible) {
+                uraniumGroup.rotation.x += 0.001 * animationSpeed;
+                uraniumGroup.rotation.y += 0.002 * animationSpeed;
+            }
+
+            uraniumLight.intensity = 1.5 + Math.sin(time * 2) * 0.3;
+
+            // === FISSION SEQUENCE (CORRECTED) ===
+            if (!isPaused) {
+                if (fissionState === 'approaching') {
+                    // Phase 1: Neutron approaches uranium
+                    incomingNeutron.position.x -= 0.12 * animationSpeed;
+
+                    if (incomingNeutron.position.x <= 3.5) {
+                        fissionState = 'absorbed';
+                        fissionProgress = 0;
+                        incomingNeutron.visible = false;
+
+                        // Pulse to show absorption
+                        uraniumLight.intensity = 3;
+                    }
+                } else if (fissionState === 'absorbed') {
+                    // Phase 2: Neutron absorbed, nucleus unstable (hold briefly)
+                    fissionProgress += 0.02 * animationSpeed;
+
+                    // Oscillate uranium nucleus
+                    const wobble = Math.sin(fissionProgress * 20) * 0.3;
+                    uraniumGroup.scale.set(1 + wobble, 1 - wobble * 0.5, 1 + wobble * 0.3);
+
+                    if (fissionProgress > 1.5) {
+                        fissionState = 'splitting';
+                        fissionProgress = 0;
+
+                        // CRITICAL: Hide uranium, show fission products
+                        uraniumGroup.visible = false;
+                        bariumGroup.visible = true;
+                        kryptonGroup.visible = true;
+
+                        bariumGroup.position.set(0, 0, 0);
+                        kryptonGroup.position.set(0, 0, 0);
+                        bariumGroup.scale.set(1, 1, 1);
+                        kryptonGroup.scale.set(1, 1, 1);
+
+                        // Show ejected neutrons
+                        fissionNeutrons.forEach(fn => {
+                            fn.mesh.visible = true;
+                            fn.active = true;
+                            fn.mesh.position.set(0, 0, 0);
+                            fn.distance = 0;
+                        });
+
+                        // Bright fission flash
+                        fissionLight.intensity = 6;
+                    }
+                } else if (fissionState === 'splitting') {
+                    // Phase 3: Fragments fly apart
+                    fissionProgress += 0.015 * animationSpeed;
+
+                    // Move fragments in opposite directions
+                    bariumGroup.position.x = fissionProgress * 8;
+                    kryptonGroup.position.x = -fissionProgress * 10;
+
+                    // Rotate fragments
+                    bariumGroup.rotation.y += 0.015 * animationSpeed;
+                    kryptonGroup.rotation.y -= 0.02 * animationSpeed;
+
+                    // Eject neutrons in different directions
+                    fissionNeutrons.forEach((fn, idx) => {
+                        if (fn.active) {
+                            fn.distance += 0.18 * animationSpeed;
+                            const x = Math.cos(fn.angle) * fn.distance;
+                            const y = Math.sin(fn.angle) * fn.distance;
+                            const z = Math.sin(fn.angle * 1.3) * fn.distance * 0.4;
+                            fn.mesh.position.set(x, y, z);
+
+                            // Fade neutrons at distance
+                            if (fn.distance > 15) {
+                                fn.mesh.material.opacity = Math.max(0, 1 - (fn.distance - 15) / 10);
+                            }
+                        }
+                    });
+
+                    // Fade fission flash
+                    fissionLight.intensity *= 0.94;
+
+                    // Hold separated state
+                    if (fissionProgress > 4) {
+                        fissionState = 'separated';
+                        fissionProgress = 0;
+                    }
+                } else if (fissionState === 'separated') {
+                    // Phase 4: Hold for observation
+                    fissionProgress += 0.02 * animationSpeed;
+
+                    // Reset after 3 seconds
+                    if (fissionProgress > 3) {
+                        fissionState = 'approaching';
+                        fissionProgress = 0;
+
+                        // Reset to uranium
+                        uraniumGroup.visible = true;
+                        uraniumGroup.scale.set(1, 1, 1);
+                        bariumGroup.visible = false;
+                        kryptonGroup.visible = false;
+
+                        bariumGroup.position.set(0, 0, 0);
+                        kryptonGroup.position.set(0, 0, 0);
+
+                        incomingNeutron.visible = true;
+                        incomingNeutron.position.set(20, 0, 0);
+
+                        fissionNeutrons.forEach(fn => {
+                            fn.mesh.visible = false;
+                            fn.active = false;
+                            fn.distance = 0;
+                            fn.mesh.material.opacity = 1;
+                        });
+                    }
+                }
+            }
+
+            fissionRenderer.render(fissionScene, fissionCamera);
+        }
+
+        animateFission();
+
+        window.addEventListener('resize', () => {
+            fissionCamera.aspect = fissionCanvas.clientWidth / fissionCanvas.clientHeight;
+            fissionCamera.updateProjectionMatrix();
+            fissionRenderer.setSize(fissionCanvas.clientWidth, fissionCanvas.clientHeight);
+        });
+
+        // ===== SCROLL ANIMATIONS =====
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.timeline-item, .impact-card, .context-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.6s ease';
+            observer.observe(el);
+        });
+
+        console.log('Lise Meitner page loaded.');
+        console.log('U-235: 92p + 143n → Ba-141 (56p + 85n) + Kr-92 (36p + 56n) + 3n + 202.5 MeV');
+        console.log('Data verified from: MIT Nuclear Lab, World Nuclear Association, Britannica');
+    </script>
+</body>
+
+</html>
