@@ -1,19 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rosalind Franklin - The DNA Pioneer | The HER Thesis</title>
     <link rel="icon" type="image/png" href="../../favicon.png">
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
+    <!-- Three.js (r128) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <!-- Postprocessing (for subtle bloom) -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+
+    <!-- Post-processing & loaders for three@0.128.0 (non-module builds) -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/FXAAShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+
+    <!-- Add in <head> (after your other <script> tags is fine) -->
+    <script src="https://3dmol.org/build/3Dmol-min.js"></script>
+
+
 
     <style>
         :root {
@@ -36,7 +61,8 @@
             box-sizing: border-box;
         }
 
-        html, body {
+        html,
+        body {
             height: 100%;
             font-family: 'Inter', system-ui, sans-serif;
             background: var(--bg-dark);
@@ -306,6 +332,7 @@
             background: rgba(74, 144, 226, 0.02);
             border: 1px solid rgba(74, 144, 226, 0.2);
             cursor: grab;
+            display: block;
         }
 
         #dna-3d-canvas:active {
@@ -339,9 +366,40 @@
             border: 1px solid rgba(74, 144, 226, 0.3);
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 16px;
             z-index: 10;
         }
+
+        .dna-legend {
+            position: absolute;
+            bottom: 16px;
+            left: 16px;
+            background: rgba(0, 0, 0, 0.85);
+            border: 1px solid rgba(74, 144, 226, 0.3);
+            border-radius: 8px;
+            padding: 10px 12px;
+            display: flex;
+            gap: 12px;
+            z-index: 11;
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: var(--text-dim);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .legend-item .swatch {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            display: inline-block;
+        }
+
 
         .control-label {
             font-family: 'Space Mono', monospace;
@@ -459,20 +517,26 @@
         .dna-tooltip .tooltip-detail {
             display: block;
             font-size: 12px;
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(255, 255, 255, 0.85);
             margin-top: 2px;
         }
 
-        .historical-context, .content-section, .science-deep-dive, .modern-impact-section {
+        .historical-context,
+        .content-section,
+        .science-deep-dive,
+        .modern-impact-section {
             padding: 100px 40px;
         }
 
-        .context-container, .science-container {
+        .context-container,
+        .science-container {
             max-width: 1200px;
             margin: 0 auto;
         }
 
-        .context-header, .science-header, .modern-impact-header {
+        .context-header,
+        .science-header,
+        .modern-impact-header {
             text-align: center;
             margin-bottom: 80px;
         }
@@ -486,14 +550,18 @@
             margin-bottom: 20px;
         }
 
-        .context-title, .science-title, .modern-title {
+        .context-title,
+        .science-title,
+        .modern-title {
             font-family: 'Playfair Display', serif;
             font-size: 3.5rem;
             font-weight: 700;
             margin-bottom: 30px;
         }
 
-        .context-subtitle, .science-intro, .modern-subtitle {
+        .context-subtitle,
+        .science-intro,
+        .modern-subtitle {
             font-size: 20px;
             color: var(--text-dim);
             max-width: 700px;
@@ -516,7 +584,8 @@
             margin: 60px auto 0;
         }
 
-        .context-card, .impact-card {
+        .context-card,
+        .impact-card {
             background: var(--glass);
             border: 1px solid var(--border);
             border-radius: 16px;
@@ -533,7 +602,8 @@
             padding: 30px;
         }
 
-        .context-card::before, .impact-card::before {
+        .context-card::before,
+        .impact-card::before {
             content: '';
             position: absolute;
             top: 0;
@@ -547,18 +617,20 @@
             transition: opacity 0.4s ease;
         }
 
-        .context-card:hover::before, .impact-card:hover::before {
-            opacity: 0.25;
+        .context-card:hover::before,
+        .impact-card:hover::before {
+            opacity: 1;
         }
 
-        .context-card::after, .impact-card::after {
+        .context-card::after,
+        .impact-card::after {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.75));
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.15));
             z-index: -1;
         }
 
@@ -567,7 +639,7 @@
         }
 
         .context-card[data-image="cambridge"]::before {
-            background-image: url('../../assets/images/context/cambridge-university-1941.jpg');
+            background-image: url('../../assets/images/context/cambridge-university-1941.png');
         }
 
         .context-card[data-image="kings"]::before {
@@ -587,7 +659,7 @@
         }
 
         .impact-card[data-image="medicine"]::before {
-            background-image: url('../../assets/images/impact/gene-therapy-crispr.jpg');
+            background-image: url('../../assets/images/impact/gene-therapy-crispr.png');
         }
 
         .impact-card[data-image="forensics"]::before {
@@ -602,13 +674,15 @@
             background-image: url('../../assets/images/impact/rosalind-franklin-university.jpg');
         }
 
-        .context-card:hover, .impact-card:hover {
+        .context-card:hover,
+        .impact-card:hover {
             transform: translateY(-8px);
             border-color: var(--accent);
             box-shadow: 0 30px 60px rgba(212, 175, 55, 0.2);
         }
 
-        .context-icon, .impact-icon {
+        .context-icon,
+        .impact-icon {
             width: 60px;
             height: 60px;
             margin-bottom: 20px;
@@ -623,7 +697,8 @@
             height: 50px;
         }
 
-        .context-card-title, .impact-title {
+        .context-card-title,
+        .impact-title {
             font-family: 'Playfair Display', serif;
             font-size: 1.5rem;
             font-weight: 700;
@@ -637,12 +712,18 @@
             margin-bottom: 12px;
         }
 
-        .context-card-text, .impact-description {
+        .context-card-text,
+        .impact-description {
             font-size: 16px;
             line-height: 1.7;
             color: var(--text-dim);
             position: relative;
             z-index: 1;
+        }
+        
+        .context-card:hover .context-card-text,
+        .impact-card:hover .impact-description {
+            opacity: 0.1;
         }
 
         .impact-description {
@@ -781,8 +862,15 @@
         }
 
         @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 10px var(--dna-blue); }
-            50% { box-shadow: 0 0 30px var(--dna-blue); }
+
+            0%,
+            100% {
+                box-shadow: 0 0 10px var(--dna-blue);
+            }
+
+            50% {
+                box-shadow: 0 0 30px var(--dna-blue);
+            }
         }
 
         .timeline-content {
@@ -893,6 +981,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -900,6 +989,7 @@
         }
 
         @media (max-width: 1024px) {
+
             .hero-content,
             .dna-container {
                 grid-template-columns: 1fr;
@@ -966,6 +1056,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="custom-cursor" id="cursor"></div>
     <canvas id="bg-canvas"></canvas>
@@ -989,7 +1080,9 @@
                     <div class="hero-subtitle">X-Ray Crystallographer · 1920-1958</div>
                     <h1 class="hero-title">Rosalind Franklin</h1>
                     <p class="hero-description">
-                        The chemist whose Photo 51 revealed DNA's double helix structure. Maurice Wilkins showed her data to Watson and Crick without her knowledge or permission. They published first, winning the Nobel Prize. Franklin died of cancer at 37, four years before the award.
+                        The chemist whose Photo 51 revealed DNA's double helix structure. Maurice Wilkins showed her
+                        data to Watson and Crick without her knowledge or permission. They published first, winning the
+                        Nobel Prize. Franklin died of cancer at 37, four years before the award.
                     </p>
                     <div class="hero-stats">
                         <div class="stat-item">
@@ -1011,7 +1104,8 @@
                     </div>
                 </div>
                 <div class="hero-visual">
-                    <img src="../../assets/images/rosalind-franklin-portrait.jpg" alt="Rosalind Franklin" class="hero-image">
+                    <img src="../../assets/images/rosalind-franklin-portrait.jpg" alt="Rosalind Franklin"
+                        class="hero-image">
                     <div class="image-overlay">
                         <div class="image-caption">Rosalind Franklin, 1955</div>
                     </div>
@@ -1025,32 +1119,77 @@
                     <div class="context-number">01 — Historical Context</div>
                     <h2 class="context-title">Where Did the Idea Come From?</h2>
                     <p class="context-subtitle">
-                        In 1951, scientists knew DNA carried genetic information but not how. Multiple labs raced to solve the structure. Franklin brought X-ray crystallography expertise from Paris. Watson and Crick built models. Wilkins showed them Franklin's data without her consent. The rest is contested history.
+                        In 1951, scientists knew DNA carried genetic information but not how. Multiple labs raced to
+                        solve the structure. Franklin brought X-ray crystallography expertise from Paris. Watson and
+                        Crick built models. Wilkins showed them Franklin's data without her consent. The rest is
+                        contested history.
                     </p>
                 </div>
-                
+
                 <div class="context-grid">
                     <div class="context-card" data-image="london">
-                        <img src="../../assets/icons/london-family-icon.png" alt="London upbringing" class="context-icon">
+                        <img src="../../assets/icons/london-family-icon.png" alt="London upbringing"
+                            class="context-icon">
                         <h3 class="context-card-title">London 1920: Born Into Privilege</h3>
                         <p class="context-card-text">
-                            Rosalind Elsie Franklin was born on July 25, 1920, at 50 Chepstow Villas in Notting Hill, London. Her family was affluent and influential. Her father Ellis Franklin was a merchant banker who taught at the Working Men's College. Her mother Muriel came from the prominent Waley family. Rosalind was the second of five children. Her paternal great-uncle Herbert Samuel served in the British Cabinet. Her aunt Helen Franklin was active in trade unions and women's suffrage. The family helped settle Jewish refugees from Nazi Europe. They took in two children from the Kindertransport. Rosalind showed exceptional intelligence early. At age six, her aunt noted she spent all her time doing arithmetic for pleasure. At nine, she attended Lindores School near the seaside for her delicate health. At eleven, she entered St Paul's Girls' School, one of few London schools teaching physics and chemistry to girls. She excelled in science and languages, becoming fluent in French and German. She topped her class and won annual awards. With six distinctions, she passed matriculation in 1938. She won a university scholarship. Her father asked her to give it to a refugee student instead.
+                            Rosalind Elsie Franklin was born on July 25, 1920, at 50 Chepstow Villas in Notting Hill,
+                            London. Her family was affluent and influential. Her father Ellis Franklin was a merchant
+                            banker who taught at the Working Men's College. Her mother Muriel came from the prominent
+                            Waley family. Rosalind was the second of five children. Her paternal great-uncle Herbert
+                            Samuel served in the British Cabinet. Her aunt Helen Franklin was active in trade unions and
+                            women's suffrage. The family helped settle Jewish refugees from Nazi Europe. They took in
+                            two children from the Kindertransport. Rosalind showed exceptional intelligence early. At
+                            age six, her aunt noted she spent all her time doing arithmetic for pleasure. At nine, she
+                            attended Lindores School near the seaside for her delicate health. At eleven, she entered St
+                            Paul's Girls' School, one of few London schools teaching physics and chemistry to girls. She
+                            excelled in science and languages, becoming fluent in French and German. She topped her
+                            class and won annual awards. With six distinctions, she passed matriculation in 1938. She
+                            won a university scholarship. Her father asked her to give it to a refugee student instead.
                         </p>
                     </div>
 
                     <div class="context-card" data-image="cambridge">
-                        <img src="../../assets/icons/cambridge-university-icon.png" alt="Cambridge education" class="context-icon">
+                        <img src="../../assets/icons/cambridge-university-icon.png" alt="Cambridge education"
+                            class="context-icon">
                         <h3 class="context-card-title">Cambridge 1938: War and Science</h3>
                         <p class="context-card-text">
-                            Franklin entered Newnham College at Cambridge University in 1938 to study physical chemistry. Her father actively discouraged this career. Women scientists faced enormous barriers. But Franklin was determined. She held herself to high standards. During World War II, bombs fell on London during the Blitz. Franklin refused to leave Cambridge for safer ground. She volunteered as an air raid warden while continuing her studies. She debated British foreign policy in letters home. She graduated in 1941 with honors. She won a graduate research scholarship. She worked under R.G.W. Norrish. She discovered a fundamental error in his research project. Norrish refused to accept her findings. He demanded she repeat experiments. Franklin wrote that Norrish "became most offensive" when she stood up to him. Norrish later told a biographer he disapproved of "raising the status of her sex to equality with men." In 1942, Franklin left Cambridge. She joined the British Coal Utilisation Research Association. She studied microstructures of coal and graphite. This work benefited the Allied war effort. She published several papers. She earned her PhD in 1945. Her expertise in physical chemistry and material structure prepared her for X-ray crystallography.
+                            Franklin entered Newnham College at Cambridge University in 1938 to study physical
+                            chemistry. Her father actively discouraged this career. Women scientists faced enormous
+                            barriers. But Franklin was determined. She held herself to high standards. During World War
+                            II, bombs fell on London during the Blitz. Franklin refused to leave Cambridge for safer
+                            ground. She volunteered as an air raid warden while continuing her studies. She debated
+                            British foreign policy in letters home. She graduated in 1941 with honors. She won a
+                            graduate research scholarship. She worked under R.G.W. Norrish. She discovered a fundamental
+                            error in his research project. Norrish refused to accept her findings. He demanded she
+                            repeat experiments. Franklin wrote that Norrish "became most offensive" when she stood up to
+                            him. Norrish later told a biographer he disapproved of "raising the status of her sex to
+                            equality with men." In 1942, Franklin left Cambridge. She joined the British Coal
+                            Utilisation Research Association. She studied microstructures of coal and graphite. This
+                            work benefited the Allied war effort. She published several papers. She earned her PhD in
+                            1945. Her expertise in physical chemistry and material structure prepared her for X-ray
+                            crystallography.
                         </p>
                     </div>
 
                     <div class="context-card" data-image="kings">
-                        <img src="../../assets/icons/xray-lab-icon.png" alt="King's College laboratory" class="context-icon">
+                        <img src="../../assets/icons/xray-lab-icon.png" alt="King's College laboratory"
+                            class="context-icon">
                         <h3 class="context-card-title">King's College 1951: The DNA Race</h3>
                         <p class="context-card-text">
-                            After the war, Franklin worked in Paris at the Laboratoire Central des Services Chimiques. Jacques Mering trained her in X-ray crystallography. She mastered the technique. By 1951, she had become a respected authority. She felt pulled to return to England. John Randall at King's College London offered her a fellowship. She would set up and improve the X-ray crystallography unit. Maurice Wilkins was already there studying DNA. But there was confusion about roles. Randall wrote Franklin before her arrival stating she would be "the only person responsible for the X-ray DNA studies." Wilkins did not know this. He thought Franklin was his assistant. This misunderstanding poisoned their relationship from the start. Franklin arrived with her PhD student Raymond Gosling. She began taking systematic X-ray diffraction images of DNA fibers. She discovered DNA had two forms. The "A-form" appeared at low humidity. The "B-form" appeared at high humidity. The B-form showed a much clearer helical pattern. She took hundreds of photographs under different conditions. She measured dimensions precisely. She believed in calculating structure directly from data, not building speculative models like Watson and Crick were doing at Cambridge.
+                            After the war, Franklin worked in Paris at the Laboratoire Central des Services Chimiques.
+                            Jacques Mering trained her in X-ray crystallography. She mastered the technique. By 1951,
+                            she had become a respected authority. She felt pulled to return to England. John Randall at
+                            King's College London offered her a fellowship. She would set up and improve the X-ray
+                            crystallography unit. Maurice Wilkins was already there studying DNA. But there was
+                            confusion about roles. Randall wrote Franklin before her arrival stating she would be "the
+                            only person responsible for the X-ray DNA studies." Wilkins did not know this. He thought
+                            Franklin was his assistant. This misunderstanding poisoned their relationship from the
+                            start. Franklin arrived with her PhD student Raymond Gosling. She began taking systematic
+                            X-ray diffraction images of DNA fibers. She discovered DNA had two forms. The "A-form"
+                            appeared at low humidity. The "B-form" appeared at high humidity. The B-form showed a much
+                            clearer helical pattern. She took hundreds of photographs under different conditions. She
+                            measured dimensions precisely. She believed in calculating structure directly from data, not
+                            building speculative models like Watson and Crick were doing at Cambridge.
                         </p>
                     </div>
 
@@ -1058,7 +1197,20 @@
                         <img src="../../assets/icons/photo51-icon.png" alt="X-ray diffraction" class="context-icon">
                         <h3 class="context-card-title">May 1952: Photo 51</h3>
                         <p class="context-card-text">
-                            On Friday, May 2, 1952, Franklin and Gosling set up the camera to photograph DNA at high humidity. The B-form. They exposed the sample to X-rays for 62 hours total. On Tuesday, May 6, they developed the film. It was photograph number 51 in their series. It was the clearest DNA image ever produced. The pattern showed an unmistakable X-shaped cross. This cross pattern is the signature of a helix viewed from the side. The spots revealed the helix pitch and diameter. Franklin recorded everything in her lab notebook. She drafted papers analyzing the data. But she did not immediately publish Photo 51. She wanted to complete her analysis of the A-form first. Meanwhile, James Watson visited King's College in January 1953. Wilkins showed him Photo 51. Franklin did not know. Wilkins later claimed he assumed Watson had seen similar patterns before. But Photo 51 was far clearer than anything else. Watson immediately recognized the helical structure. He and Crick also obtained a report Franklin had written. It contained crucial measurements. They used this data to build their model. They published in Nature on April 25, 1953. Franklin published her Photo 51 the same day, in a separate paper. But Watson and Crick got the credit.
+                            On Friday, May 2, 1952, Franklin and Gosling set up the camera to photograph DNA at high
+                            humidity. The B-form. They exposed the sample to X-rays for 62 hours total. On Tuesday, May
+                            6, they developed the film. It was photograph number 51 in their series. It was the clearest
+                            DNA image ever produced. The pattern showed an unmistakable X-shaped cross. This cross
+                            pattern is the signature of a helix viewed from the side. The spots revealed the helix pitch
+                            and diameter. Franklin recorded everything in her lab notebook. She drafted papers analyzing
+                            the data. But she did not immediately publish Photo 51. She wanted to complete her analysis
+                            of the A-form first. Meanwhile, James Watson visited King's College in January 1953. Wilkins
+                            showed him Photo 51. Franklin did not know. Wilkins later claimed he assumed Watson had seen
+                            similar patterns before. But Photo 51 was far clearer than anything else. Watson immediately
+                            recognized the helical structure. He and Crick also obtained a report Franklin had written.
+                            It contained crucial measurements. They used this data to build their model. They published
+                            in Nature on April 25, 1953. Franklin published her Photo 51 the same day, in a separate
+                            paper. But Watson and Crick got the credit.
                         </p>
                     </div>
                 </div>
@@ -1068,27 +1220,44 @@
         <section class="dna-3d-section">
             <div class="dna-container">
                 <div class="dna-canvas-wrapper">
-                    <canvas id="dna-3d-canvas"></canvas>
+                    <div id="dna-3d-canvas"></div>
                     <div class="dna-controls-hint">Drag to rotate · Scroll to zoom · Hover for details</div>
                     <div class="dna-controls">
-                        <span class="control-label">Speed</span>
-                        <input type="range" min="0.1" max="2" step="0.1" value="1" class="speed-slider" id="speed-control">
                         <button class="pause-button" id="pause-button">Pause</button>
+                        <button class="pause-button" id="reset-view-button">Reset View</button>
+                    </div>
+                    <div class="dna-legend" id="dna-legend">
+                        <div class="legend-item"><span class="swatch" style="background:#43a047"></span><span>A —
+                                Adenine</span></div>
+                        <div class="legend-item"><span class="swatch" style="background:#e53935"></span><span>T —
+                                Thymine</span></div>
+                        <div class="legend-item"><span class="swatch" style="background:#fdd835"></span><span>G —
+                                Guanine</span></div>
+                        <div class="legend-item"><span class="swatch" style="background:#1e88e5"></span><span>C —
+                                Cytosine</span></div>
                     </div>
                 </div>
                 <div class="dna-explanation">
                     <h2 class="dna-title">Understanding the Double Helix</h2>
                     <p class="dna-text">
-                        <strong>DNA</strong> consists of two strands wound around each other. Each strand has a sugar-phosphate backbone. The strands run in opposite directions. Between them, base pairs connect like rungs on a twisted ladder.
+                        <strong>DNA</strong> consists of two strands wound around each other. Each strand has a
+                        sugar-phosphate backbone. The strands run in opposite directions. Between them, base pairs
+                        connect like rungs on a twisted ladder.
                     </p>
                     <p class="dna-text">
-                        <strong>Base pairing is specific</strong>. Adenine (A) always pairs with thymine (T) through two hydrogen bonds. Guanine (G) always pairs with cytosine (C) through three hydrogen bonds. This complementary pairing enables DNA replication.
+                        <strong>Base pairing is specific</strong>. Adenine (A) always pairs with thymine (T) through two
+                        hydrogen bonds. Guanine (G) always pairs with cytosine (C) through three hydrogen bonds. This
+                        complementary pairing enables DNA replication.
                     </p>
                     <p class="dna-text">
-                        <strong>Photo 51 revealed</strong> the helical structure. The X-shaped cross pattern showed DNA was a helix. The spacing between spots indicated 10 base pairs per complete turn. The diameter was 2 nanometers. These measurements were crucial for Watson and Crick's model.
+                        <strong>Photo 51 revealed</strong> the helical structure. The X-shaped cross pattern showed DNA
+                        was a helix. The spacing between spots indicated 10 base pairs per complete turn. The diameter
+                        was 2 nanometers. These measurements were crucial for Watson and Crick's model.
                     </p>
                     <p class="dna-text">
-                        Franklin calculated these dimensions from her X-ray data. She recorded them in her reports. Without her knowledge, this information reached Watson and Crick. They used it to construct their famous model. They acknowledged her contribution only vaguely in their paper.
+                        Franklin calculated these dimensions from her X-ray data. She recorded them in her reports.
+                        Without her knowledge, this information reached Watson and Crick. They used it to construct
+                        their famous model. They acknowledged her contribution only vaguely in their paper.
                     </p>
                 </div>
             </div>
@@ -1100,24 +1269,39 @@
                     <div class="context-number">02 — The Science</div>
                     <h2 class="science-title">What Is X-Ray Crystallography?</h2>
                     <p class="science-intro">
-                        X-ray crystallography reveals molecular structure by analyzing how X-rays scatter off atoms. Franklin used this technique to photograph DNA fibers. The resulting patterns contained encoded information about DNA's three-dimensional architecture.
+                        X-ray crystallography reveals molecular structure by analyzing how X-rays scatter off atoms.
+                        Franklin used this technique to photograph DNA fibers. The resulting patterns contained encoded
+                        information about DNA's three-dimensional architecture.
                     </p>
                 </div>
 
                 <div class="science-subsection">
                     <h3>The Technique</h3>
                     <p>
-                        X-ray crystallography directs X-rays at a crystalline sample. X-rays have wavelengths comparable to distances between atoms. When X-rays encounter electrons in atoms, they scatter. If atoms are arranged regularly, scattered X-rays interfere with each other. Some directions have constructive interference, creating bright spots. Other directions have destructive interference, creating darkness.
+                        X-ray crystallography directs X-rays at a crystalline sample. X-rays have wavelengths comparable
+                        to distances between atoms. When X-rays encounter electrons in atoms, they scatter. If atoms are
+                        arranged regularly, scattered X-rays interfere with each other. Some directions have
+                        constructive interference, creating bright spots. Other directions have destructive
+                        interference, creating darkness.
                     </p>
                     <p>
-                        The pattern of spots encodes information about atomic positions. Regular repeating structures produce regular patterns. A helix viewed from the side has a zigzag appearance. This creates the characteristic X-shaped cross pattern. The spacing between spots indicates the repeat distance. The intensity of spots indicates how many atoms scatter in that direction.
+                        The pattern of spots encodes information about atomic positions. Regular repeating structures
+                        produce regular patterns. A helix viewed from the side has a zigzag appearance. This creates the
+                        characteristic X-shaped cross pattern. The spacing between spots indicates the repeat distance.
+                        The intensity of spots indicates how many atoms scatter in that direction.
                     </p>
                     <p>
-                        Franklin drew DNA into thin fibers less than one millimeter in diameter. Each fiber contained hundreds of thousands of DNA molecules oriented parallel to each other. She mounted fibers perpendicular to the X-ray beam. She controlled humidity precisely. At high humidity, DNA adopted the B-form. At low humidity, it switched to the A-form. The B-form gave much clearer helical patterns.
+                        Franklin drew DNA into thin fibers less than one millimeter in diameter. Each fiber contained
+                        hundreds of thousands of DNA molecules oriented parallel to each other. She mounted fibers
+                        perpendicular to the X-ray beam. She controlled humidity precisely. At high humidity, DNA
+                        adopted the B-form. At low humidity, it switched to the A-form. The B-form gave much clearer
+                        helical patterns.
                     </p>
                     <div class="science-highlight-box">
                         <p>
-                            <strong>Photo 51 specifications:</strong> Exposed May 2-6, 1952. Total X-ray exposure: 62 hours. Sample: B-form DNA at high humidity. Result: Clear X-shaped cross pattern indicating helical structure with 10 base pairs per turn and 3.4 nm pitch.
+                            <strong>Photo 51 specifications:</strong> Exposed May 2-6, 1952. Total X-ray exposure: 62
+                            hours. Sample: B-form DNA at high humidity. Result: Clear X-shaped cross pattern indicating
+                            helical structure with 10 base pairs per turn and 3.4 nm pitch.
                         </p>
                     </div>
                 </div>
@@ -1125,42 +1309,73 @@
                 <div class="science-subsection">
                     <h3>Reading the Pattern</h3>
                     <p>
-                        The X-shaped cross in Photo 51 immediately suggested a helix. The arms of the X come from the regular zigzag pattern created by helical structure. The vertical spacing between spots on the X arms relates to the helix pitch. The horizontal spacing relates to the helix diameter. Franklin measured these carefully.
+                        The X-shaped cross in Photo 51 immediately suggested a helix. The arms of the X come from the
+                        regular zigzag pattern created by helical structure. The vertical spacing between spots on the X
+                        arms relates to the helix pitch. The horizontal spacing relates to the helix diameter. Franklin
+                        measured these carefully.
                     </p>
                     <p>
-                        The large diffuse spots at top and bottom of Photo 51 arise from regular stacking of bases inside the helix. The distance from the center to these spots, compared to the X-arm spacing, revealed that there are 10 bases per helical turn. This was a crucial measurement. It meant one complete rotation of the helix spans 10 base pairs.
+                        The large diffuse spots at top and bottom of Photo 51 arise from regular stacking of bases
+                        inside the helix. The distance from the center to these spots, compared to the X-arm spacing,
+                        revealed that there are 10 bases per helical turn. This was a crucial measurement. It meant one
+                        complete rotation of the helix spans 10 base pairs.
                     </p>
                     <p>
-                        Franklin also determined that DNA strands ran antiparallel. One strand goes 5-prime to 3-prime in one direction. The other goes 3-prime to 5-prime in the opposite direction. She deduced this from systematic analysis of diffraction patterns. Watson and Crick initially missed this. They built their first model with parallel strands. Franklin told them it was wrong.
+                        Franklin also determined that DNA strands ran antiparallel. One strand goes 5-prime to 3-prime
+                        in one direction. The other goes 3-prime to 5-prime in the opposite direction. She deduced this
+                        from systematic analysis of diffraction patterns. Watson and Crick initially missed this. They
+                        built their first model with parallel strands. Franklin told them it was wrong.
                     </p>
                 </div>
 
                 <div class="science-subsection">
                     <h3>The Double Helix Model</h3>
                     <p>
-                        Watson and Crick built their double helix model using metal plates and wire. They tried different arrangements of bases. They knew from Erwin Chargaff that adenine and thymine appeared in equal amounts. Guanine and cytosine also appeared in equal amounts. This suggested base pairing. But which bases paired with which?
+                        Watson and Crick built their double helix model using metal plates and wire. They tried
+                        different arrangements of bases. They knew from Erwin Chargaff that adenine and thymine appeared
+                        in equal amounts. Guanine and cytosine also appeared in equal amounts. This suggested base
+                        pairing. But which bases paired with which?
                     </p>
                     <p>
-                        Watson realized adenine-thymine and guanine-cytosine pairs had identical widths. This allowed the two strands to maintain constant diameter throughout the helix. The bases formed hydrogen bonds. Adenine bonded to thymine with two hydrogen bonds. Guanine bonded to cytosine with three hydrogen bonds. This specific pairing explained Chargaff's rules.
+                        Watson realized adenine-thymine and guanine-cytosine pairs had identical widths. This allowed
+                        the two strands to maintain constant diameter throughout the helix. The bases formed hydrogen
+                        bonds. Adenine bonded to thymine with two hydrogen bonds. Guanine bonded to cytosine with three
+                        hydrogen bonds. This specific pairing explained Chargaff's rules.
                     </p>
                     <p>
-                        The model had bases stacked inside like steps on a spiral staircase. Sugar-phosphate backbones ran along the outside. The strands twisted around each other with a right-hand sense. The helix made one complete turn every 10 base pairs. The distance between base pairs was 0.34 nanometers. The helix diameter was 2 nanometers. All these measurements came from Franklin's Photo 51.
+                        The model had bases stacked inside like steps on a spiral staircase. Sugar-phosphate backbones
+                        ran along the outside. The strands twisted around each other with a right-hand sense. The helix
+                        made one complete turn every 10 base pairs. The distance between base pairs was 0.34 nanometers.
+                        The helix diameter was 2 nanometers. All these measurements came from Franklin's Photo 51.
                     </p>
                     <p>
-                        Watson and Crick published their model on April 25, 1953, in Nature. The paper was one page. They acknowledged being "stimulated by the unpublished results and ideas" of Wilkins and Franklin. This vague phrase barely credited Franklin's crucial contribution. Franklin published her Photo 51 data the same day, in a separate paper immediately following Watson and Crick's. But their model paper came first and got the attention.
+                        Watson and Crick published their model on April 25, 1953, in Nature. The paper was one page.
+                        They acknowledged being "stimulated by the unpublished results and ideas" of Wilkins and
+                        Franklin. This vague phrase barely credited Franklin's crucial contribution. Franklin published
+                        her Photo 51 data the same day, in a separate paper immediately following Watson and Crick's.
+                        But their model paper came first and got the attention.
                     </p>
                 </div>
 
                 <div class="science-subsection">
                     <h3>The Implications</h3>
                     <p>
-                        The double helix structure immediately suggested how DNA replicates. If the strands separate, each can serve as a template for a new complementary strand. Adenine on one strand specifies thymine on the new strand. Guanine specifies cytosine. This base-pairing rule enables faithful copying of genetic information.
+                        The double helix structure immediately suggested how DNA replicates. If the strands separate,
+                        each can serve as a template for a new complementary strand. Adenine on one strand specifies
+                        thymine on the new strand. Guanine specifies cytosine. This base-pairing rule enables faithful
+                        copying of genetic information.
                     </p>
                     <p>
-                        The structure also explained how DNA stores information. The sequence of bases along one strand encodes genes. Different sequences specify different genes. Because base pairing is specific, knowing one strand's sequence determines the other strand's sequence. This redundancy protects genetic information from damage.
+                        The structure also explained how DNA stores information. The sequence of bases along one strand
+                        encodes genes. Different sequences specify different genes. Because base pairing is specific,
+                        knowing one strand's sequence determines the other strand's sequence. This redundancy protects
+                        genetic information from damage.
                     </p>
                     <p>
-                        Within a decade, scientists decoded how DNA sequences specify protein sequences. The genetic code uses three-base codons. Each codon specifies one amino acid. Proteins are chains of amino acids. Different protein sequences give different protein functions. This explains how DNA controls cell behavior. The double helix structure was the foundation for all molecular biology.
+                        Within a decade, scientists decoded how DNA sequences specify protein sequences. The genetic
+                        code uses three-base codons. Each codon specifies one amino acid. Proteins are chains of amino
+                        acids. Different protein sequences give different protein functions. This explains how DNA
+                        controls cell behavior. The double helix structure was the foundation for all molecular biology.
                     </p>
                 </div>
             </div>
@@ -1175,16 +1390,32 @@
                 <div></div>
                 <div class="content-text">
                     <p>
-                        Franklin grew up in a family that valued education and public service. Her father taught evening classes to working men. Her aunts fought for women's suffrage. The family sheltered Jewish refugees. This environment shaped Franklin's sense of justice. She believed in using science to benefit humanity. She also believed women deserved equal opportunities in science.
+                        Franklin grew up in a family that valued education and public service. Her father taught evening
+                        classes to working men. Her aunts fought for women's suffrage. The family sheltered Jewish
+                        refugees. This environment shaped Franklin's sense of justice. She believed in using science to
+                        benefit humanity. She also believed women deserved equal opportunities in science.
                     </p>
                     <p>
-                        At Cambridge, she clashed with her thesis supervisor who dismissed her findings and disapproved of women scientists. But the war created new opportunities. Labor shortages opened positions for women in research and industry. Franklin joined the British Coal Utilisation Research Association in 1942. She studied how coal structure affects its properties. This work was important for the war effort. It also let her work independently without hostile supervision.
+                        At Cambridge, she clashed with her thesis supervisor who dismissed her findings and disapproved
+                        of women scientists. But the war created new opportunities. Labor shortages opened positions for
+                        women in research and industry. Franklin joined the British Coal Utilisation Research
+                        Association in 1942. She studied how coal structure affects its properties. This work was
+                        important for the war effort. It also let her work independently without hostile supervision.
                     </p>
                     <p>
-                        Franklin published five papers on coal structure between 1946 and 1950. She earned her PhD in 1945. Her coal work established her as an expert in material structure using physical chemistry methods. When she went to Paris in 1947, she brought this expertise. Jacques Mering taught her X-ray diffraction techniques. She combined this with her structural analysis skills. She became exceptionally proficient at interpreting diffraction patterns.
+                        Franklin published five papers on coal structure between 1946 and 1950. She earned her PhD in
+                        1945. Her coal work established her as an expert in material structure using physical chemistry
+                        methods. When she went to Paris in 1947, she brought this expertise. Jacques Mering taught her
+                        X-ray diffraction techniques. She combined this with her structural analysis skills. She became
+                        exceptionally proficient at interpreting diffraction patterns.
                     </p>
                     <p>
-                        Franklin thrived in Paris. The laboratory had less formality than British institutions. Scientists collaborated as equals. Gender mattered less. She made lifelong friends. She learned French scientific culture. She published papers on carbon structures. By 1951, she was recognized as an authority on X-ray crystallography. This reputation led to the King's College offer. She expected to lead the DNA crystallography work. The confusion about her role with Wilkins created immediate tension.
+                        Franklin thrived in Paris. The laboratory had less formality than British institutions.
+                        Scientists collaborated as equals. Gender mattered less. She made lifelong friends. She learned
+                        French scientific culture. She published papers on carbon structures. By 1951, she was
+                        recognized as an authority on X-ray crystallography. This reputation led to the King's College
+                        offer. She expected to lead the DNA crystallography work. The confusion about her role with
+                        Wilkins created immediate tension.
                     </p>
                 </div>
             </div>
@@ -1201,7 +1432,12 @@
                     <div class="timeline-content">
                         <h3>Arriving at King's College</h3>
                         <p>
-                            Franklin joined King's College London in January 1951. John Randall hired her to lead X-ray crystallography studies of DNA. But Maurice Wilkins thought she was his assistant. This miscommunication created immediate tension. Franklin set up the X-ray equipment. She trained her graduate student Raymond Gosling. Together they systematically photographed DNA fibers. Franklin discovered DNA had two forms depending on humidity. The B-form at high humidity gave much clearer patterns.
+                            Franklin joined King's College London in January 1951. John Randall hired her to lead X-ray
+                            crystallography studies of DNA. But Maurice Wilkins thought she was his assistant. This
+                            miscommunication created immediate tension. Franklin set up the X-ray equipment. She trained
+                            her graduate student Raymond Gosling. Together they systematically photographed DNA fibers.
+                            Franklin discovered DNA had two forms depending on humidity. The B-form at high humidity
+                            gave much clearer patterns.
                         </p>
                     </div>
                 </div>
@@ -1211,7 +1447,12 @@
                     <div class="timeline-content">
                         <h3>Photo 51 - The Crucial Image</h3>
                         <p>
-                            On May 2, 1952, Franklin and Gosling set up DNA fibers at high humidity. They exposed the sample to X-rays for 62 hours total. On May 6, they developed photograph number 51. It showed the clearest helical pattern ever seen. The X-shaped cross was unmistakable. Franklin measured the helix pitch and diameter from spot spacings. She recorded everything methodically. She planned to publish after completing her A-form analysis. She did not know Wilkins would show her data to Watson without her permission.
+                            On May 2, 1952, Franklin and Gosling set up DNA fibers at high humidity. They exposed the
+                            sample to X-rays for 62 hours total. On May 6, they developed photograph number 51. It
+                            showed the clearest helical pattern ever seen. The X-shaped cross was unmistakable. Franklin
+                            measured the helix pitch and diameter from spot spacings. She recorded everything
+                            methodically. She planned to publish after completing her A-form analysis. She did not know
+                            Wilkins would show her data to Watson without her permission.
                         </p>
                     </div>
                 </div>
@@ -1221,7 +1462,13 @@
                     <div class="timeline-content">
                         <h3>Watson and Crick Publish First</h3>
                         <p>
-                            In January 1953, Wilkins showed Photo 51 to James Watson during a casual visit. Watson immediately recognized the helical structure. Watson and Francis Crick also obtained Franklin's research report through Max Perutz. This report contained critical measurements. Using Franklin's data, they built their double helix model. They published in Nature on April 25, 1953. Franklin published her Photo 51 data the same day in a companion paper. But Watson and Crick got the credit. Their paper appeared first and described the complete structure.
+                            In January 1953, Wilkins showed Photo 51 to James Watson during a casual visit. Watson
+                            immediately recognized the helical structure. Watson and Francis Crick also obtained
+                            Franklin's research report through Max Perutz. This report contained critical measurements.
+                            Using Franklin's data, they built their double helix model. They published in Nature on
+                            April 25, 1953. Franklin published her Photo 51 data the same day in a companion paper. But
+                            Watson and Crick got the credit. Their paper appeared first and described the complete
+                            structure.
                         </p>
                     </div>
                 </div>
@@ -1231,7 +1478,13 @@
                     <div class="timeline-content">
                         <h3>Moving to Birkbeck College</h3>
                         <p>
-                            Franklin left King's College in March 1953. The environment had become intolerable. She moved to Birkbeck College to study viruses with J.D. Bernal. She brought her student Aaron Klug with her. They studied tobacco mosaic virus structure using X-ray crystallography. Franklin determined that virus RNA lies in a hollow core inside a protein shell. This work laid foundations for structural virology. She published 17 papers on virus structure between 1953 and 1958. She received recognition for this work, being invited to international conferences.
+                            Franklin left King's College in March 1953. The environment had become intolerable. She
+                            moved to Birkbeck College to study viruses with J.D. Bernal. She brought her student Aaron
+                            Klug with her. They studied tobacco mosaic virus structure using X-ray crystallography.
+                            Franklin determined that virus RNA lies in a hollow core inside a protein shell. This work
+                            laid foundations for structural virology. She published 17 papers on virus structure between
+                            1953 and 1958. She received recognition for this work, being invited to international
+                            conferences.
                         </p>
                     </div>
                 </div>
@@ -1241,7 +1494,12 @@
                     <div class="timeline-content">
                         <h3>First Signs of Illness</h3>
                         <p>
-                            In fall 1956, Franklin noticed abdominal swelling. She ignored it initially, focused on her virus research. By spring 1957, the symptoms worsened. She consulted doctors. They diagnosed ovarian cancer. She underwent surgery in September 1957. The cancer had already spread. She received radiation therapy. The cancer likely resulted from her extensive X-ray work. She had spent years with minimal shielding, photographing samples at close range. But she did not blame her work. She loved science.
+                            In fall 1956, Franklin noticed abdominal swelling. She ignored it initially, focused on her
+                            virus research. By spring 1957, the symptoms worsened. She consulted doctors. They diagnosed
+                            ovarian cancer. She underwent surgery in September 1957. The cancer had already spread. She
+                            received radiation therapy. The cancer likely resulted from her extensive X-ray work. She
+                            had spent years with minimal shielding, photographing samples at close range. But she did
+                            not blame her work. She loved science.
                         </p>
                     </div>
                 </div>
@@ -1251,7 +1509,13 @@
                     <div class="timeline-content">
                         <h3>Death at 37</h3>
                         <p>
-                            Franklin died on April 16, 1958, at age 37. She had continued working almost until the end. She published papers from her hospital bed. Her virus structure work was incomplete but revolutionary. Aaron Klug continued the research. He won the Nobel Prize in Chemistry in 1982 for work building on Franklin's foundations. The DNA Nobel Prize went to Watson, Crick, and Wilkins in 1962. Nobel rules prohibit posthumous awards. But even if Franklin had lived, she likely would have been excluded. The Nobel Committee awarded only the model builders, not the experimentalist who provided crucial data.
+                            Franklin died on April 16, 1958, at age 37. She had continued working almost until the end.
+                            She published papers from her hospital bed. Her virus structure work was incomplete but
+                            revolutionary. Aaron Klug continued the research. He won the Nobel Prize in Chemistry in
+                            1982 for work building on Franklin's foundations. The DNA Nobel Prize went to Watson, Crick,
+                            and Wilkins in 1962. Nobel rules prohibit posthumous awards. But even if Franklin had lived,
+                            she likely would have been excluded. The Nobel Committee awarded only the model builders,
+                            not the experimentalist who provided crucial data.
                         </p>
                     </div>
                 </div>
@@ -1261,7 +1525,13 @@
                     <div class="timeline-content">
                         <h3>Watson's Book Controversy</h3>
                         <p>
-                            James Watson published "The Double Helix" in 1968. The book described the DNA discovery as a race. Watson portrayed Franklin harshly. He called her "Rosy" though she never used that name. He described her appearance critically. He portrayed her as difficult and emotional. He claimed she could not interpret her own data. He wrote that Wilkins showing Photo 51 to him was justified because Franklin was leaving King's College anyway. The book shocked Franklin's friends and colleagues. They knew her as brilliant, careful, and professional. Many scientists criticized Watson's portrayal as sexist and unfair.
+                            James Watson published "The Double Helix" in 1968. The book described the DNA discovery as a
+                            race. Watson portrayed Franklin harshly. He called her "Rosy" though she never used that
+                            name. He described her appearance critically. He portrayed her as difficult and emotional.
+                            He claimed she could not interpret her own data. He wrote that Wilkins showing Photo 51 to
+                            him was justified because Franklin was leaving King's College anyway. The book shocked
+                            Franklin's friends and colleagues. They knew her as brilliant, careful, and professional.
+                            Many scientists criticized Watson's portrayal as sexist and unfair.
                         </p>
                     </div>
                 </div>
@@ -1271,7 +1541,13 @@
                     <div class="timeline-content">
                         <h3>50th Anniversary Recognition</h3>
                         <p>
-                            On the 50th anniversary of the DNA structure publication, the scientific community reassessed Franklin's contribution. King's College London installed a blue plaque honoring her work. The Royal Society posthumously recognized her achievements. Historians examined the evidence. They concluded Franklin was on track to solve DNA structure independently. She had all the data. She was analyzing it systematically. Watson and Crick succeeded partly through model building but crucially through accessing Franklin's unpublished data without her knowledge. This is now widely acknowledged as intellectual theft.
+                            On the 50th anniversary of the DNA structure publication, the scientific community
+                            reassessed Franklin's contribution. King's College London installed a blue plaque honoring
+                            her work. The Royal Society posthumously recognized her achievements. Historians examined
+                            the evidence. They concluded Franklin was on track to solve DNA structure independently. She
+                            had all the data. She was analyzing it systematically. Watson and Crick succeeded partly
+                            through model building but crucially through accessing Franklin's unpublished data without
+                            her knowledge. This is now widely acknowledged as intellectual theft.
                         </p>
                     </div>
                 </div>
@@ -1284,24 +1560,37 @@
                     <div class="context-number">05 — Modern Impact</div>
                     <h2 class="modern-title">How DNA Structure Changed Everything</h2>
                     <p class="modern-subtitle">
-                        Franklin's Photo 51 revealed the double helix structure that unlocked molecular biology. Today, DNA sequencing enables personalized medicine, genetic engineering, and forensic science. Understanding DNA structure was the foundation for all these applications.
+                        Franklin's Photo 51 revealed the double helix structure that unlocked molecular biology. Today,
+                        DNA sequencing enables personalized medicine, genetic engineering, and forensic science.
+                        Understanding DNA structure was the foundation for all these applications.
                     </p>
                 </div>
-                
+
                 <div class="impact-grid">
                     <div class="impact-card" data-image="double-helix">
                         <img src="../../assets/icons/double-helix-icon.png" alt="Double helix" class="impact-icon">
                         <h3 class="impact-title">Molecular Biology Foundation</h3>
                         <p class="impact-description">
-                            The double helix structure enabled scientists to understand how DNA replicates and how genetic information transfers from parent to offspring. This launched molecular biology as a discipline. Within a decade, scientists decoded the genetic code. They discovered how DNA sequences specify protein sequences. They learned how cells regulate gene expression. All modern biology builds on this foundation. Textbooks worldwide show Watson and Crick's model. Few mention Franklin's Photo 51 that made the model possible.
+                            The double helix structure enabled scientists to understand how DNA replicates and how
+                            genetic information transfers from parent to offspring. This launched molecular biology as a
+                            discipline. Within a decade, scientists decoded the genetic code. They discovered how DNA
+                            sequences specify protein sequences. They learned how cells regulate gene expression. All
+                            modern biology builds on this foundation. Textbooks worldwide show Watson and Crick's model.
+                            Few mention Franklin's Photo 51 that made the model possible.
                         </p>
                     </div>
 
                     <div class="impact-card" data-image="genetics">
-                        <img src="../../assets/icons/genetic-engineering-icon.png" alt="Genetic engineering" class="impact-icon">
+                        <img src="../../assets/icons/genetic-engineering-icon.png" alt="Genetic engineering"
+                            class="impact-icon">
                         <h3 class="impact-title">Genetic Engineering</h3>
                         <p class="impact-description">
-                            Understanding DNA structure enabled genetic engineering. Scientists can now cut DNA at specific sequences. They can insert genes from one organism into another. They create bacteria that produce human insulin. They modify crops to resist pests. They edit genomes to correct genetic diseases. None of this would be possible without knowing how DNA stores information in its sequence. The double helix structure revealed how sequences determine function. Franklin's crystallography showed where atoms sit in space.
+                            Understanding DNA structure enabled genetic engineering. Scientists can now cut DNA at
+                            specific sequences. They can insert genes from one organism into another. They create
+                            bacteria that produce human insulin. They modify crops to resist pests. They edit genomes to
+                            correct genetic diseases. None of this would be possible without knowing how DNA stores
+                            information in its sequence. The double helix structure revealed how sequences determine
+                            function. Franklin's crystallography showed where atoms sit in space.
                         </p>
                     </div>
 
@@ -1309,7 +1598,12 @@
                         <img src="../../assets/icons/gene-therapy-icon.png" alt="Gene therapy" class="impact-icon">
                         <h3 class="impact-title">Personalized Medicine</h3>
                         <p class="impact-description">
-                            DNA sequencing now costs less than one thousand dollars per human genome. Doctors sequence patient DNA to diagnose genetic diseases. They predict drug responses. They identify cancer mutations. CRISPR gene editing can correct genetic defects. This personalized medicine approach relies on understanding DNA structure. Scientists needed to know the double helix architecture to develop sequencing technologies. They needed base-pairing rules to design molecular tools. Franklin's work was the first step toward modern genomic medicine.
+                            DNA sequencing now costs less than one thousand dollars per human genome. Doctors sequence
+                            patient DNA to diagnose genetic diseases. They predict drug responses. They identify cancer
+                            mutations. CRISPR gene editing can correct genetic defects. This personalized medicine
+                            approach relies on understanding DNA structure. Scientists needed to know the double helix
+                            architecture to develop sequencing technologies. They needed base-pairing rules to design
+                            molecular tools. Franklin's work was the first step toward modern genomic medicine.
                         </p>
                     </div>
 
@@ -1317,23 +1611,40 @@
                         <img src="../../assets/icons/dna-forensics-icon.png" alt="DNA forensics" class="impact-icon">
                         <h3 class="impact-title">DNA Fingerprinting</h3>
                         <p class="impact-description">
-                            Police use DNA evidence to solve crimes. Paternity tests determine biological relationships. DNA identifies disaster victims. These applications depend on understanding that each person has a unique DNA sequence. The double helix structure showed how DNA stores individual variation. Forensic scientists amplify DNA from tiny samples. They compare specific regions that vary between individuals. This would be impossible without knowing DNA's structure and how it replicates. Franklin's crystallography revealed the molecular details.
+                            Police use DNA evidence to solve crimes. Paternity tests determine biological relationships.
+                            DNA identifies disaster victims. These applications depend on understanding that each person
+                            has a unique DNA sequence. The double helix structure showed how DNA stores individual
+                            variation. Forensic scientists amplify DNA from tiny samples. They compare specific regions
+                            that vary between individuals. This would be impossible without knowing DNA's structure and
+                            how it replicates. Franklin's crystallography revealed the molecular details.
                         </p>
                     </div>
 
                     <div class="impact-card" data-image="women-science">
-                        <img src="../../assets/icons/women-crystallography-icon.png" alt="Women in science" class="impact-icon">
+                        <img src="../../assets/icons/women-crystallography-icon.png" alt="Women in science"
+                            class="impact-icon">
                         <h3 class="impact-title">Women in Structural Biology</h3>
                         <p class="impact-description">
-                            Franklin pioneered X-ray crystallography of biological molecules. This field is now crucial for drug discovery and understanding disease. Many women followed her path into structural biology. Dorothy Hodgkin won the Nobel Prize for vitamin B12 structure. Ada Yonath won for ribosome structure. Jennifer Doudna won for CRISPR structure and mechanism. These women built on Franklin's techniques. But they received recognition Franklin never got. Her story teaches how institutional sexism denied credit to women scientists.
+                            Franklin pioneered X-ray crystallography of biological molecules. This field is now crucial
+                            for drug discovery and understanding disease. Many women followed her path into structural
+                            biology. Dorothy Hodgkin won the Nobel Prize for vitamin B12 structure. Ada Yonath won for
+                            ribosome structure. Jennifer Doudna won for CRISPR structure and mechanism. These women
+                            built on Franklin's techniques. But they received recognition Franklin never got. Her story
+                            teaches how institutional sexism denied credit to women scientists.
                         </p>
                     </div>
 
                     <div class="impact-card" data-image="recognition">
-                        <img src="../../assets/icons/scientific-recognition-icon.png" alt="Scientific recognition" class="impact-icon">
+                        <img src="../../assets/icons/scientific-recognition-icon.png" alt="Scientific recognition"
+                            class="impact-icon">
                         <h3 class="impact-title">Posthumous Recognition</h3>
                         <p class="impact-description">
-                            Rosalind Franklin University of Medicine and Science in Chicago bears her name. The European Space Agency named a Mars rover after her. King's College London erected a memorial plaque. The Royal Society created the Rosalind Franklin Award. Scientists now teach her story as a cautionary tale about scientific credit and gender discrimination. But recognition came decades too late. She died believing her DNA work was a footnote. She never knew Photo 51 was the most important scientific photograph of the 20th century.
+                            Rosalind Franklin University of Medicine and Science in Chicago bears her name. The European
+                            Space Agency named a Mars rover after her. King's College London erected a memorial plaque.
+                            The Royal Society created the Rosalind Franklin Award. Scientists now teach her story as a
+                            cautionary tale about scientific credit and gender discrimination. But recognition came
+                            decades too late. She died believing her DNA work was a footnote. She never knew Photo 51
+                            was the most important scientific photograph of the 20th century.
                         </p>
                     </div>
                 </div>
@@ -1357,457 +1668,341 @@
         </footer>
     </div>
 
-    <!-- Background particles script -->
+    <!-- Background particles + 3D DNA script (high-fidelity) -->
     <script>
-    // ===== VERIFIED DNA DATA FROM AUTHORITATIVE SOURCES =====
-    // Double helix: 2 antiparallel strands
-    // Base pairs: A-T (2 H-bonds), G-C (3 H-bonds)
-    // Helix pitch: 3.4 nm per turn (10 base pairs)
-    // Diameter: 2.0 nm
-    // Backbone: Deoxyribose sugar + phosphate groups
+        // ===== VERIFIED DNA DATA FROM AUTHORITATIVE SOURCES =====
+        // Double helix: 2 antiparallel strands
+        // Base pairs: A-T (2 H-bonds), G-C (3 H-bonds)
+        // Helix pitch: 3.4 nm per turn (10 base pairs)
+        // Diameter: 2.0 nm
+        // Backbone: Deoxyribose sugar + phosphate groups
 
-    // ===== CUSTOM CURSOR =====
-    const cursor = document.getElementById('cursor');
-    let mouseX = 0, mouseY = 0;
+        // ===== CUSTOM CURSOR =====
+        const cursor = document.getElementById('cursor');
+        let mouseX = 0, mouseY = 0;
 
-    document.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-    });
-
-    function animateCursor() {
-        cursor.style.left = mouseX - 10 + 'px';
-        cursor.style.top = mouseY - 10 + 'px';
-        requestAnimationFrame(animateCursor);
-    }
-    animateCursor();
-
-    const hoverElements = document.querySelectorAll('a, button, .impact-card, .context-card, .timeline-content');
-    hoverElements.forEach(el => {
-        el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
-        el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
-    });
-
-    // ===== BACKGROUND CANVAS PARTICLES =====
-    const bgCanvas = document.getElementById('bg-canvas');
-    const bgCtx = bgCanvas.getContext('2d');
-
-    function resizeCanvas() {
-        bgCanvas.width = window.innerWidth;
-        bgCanvas.height = window.innerHeight;
-    }
-
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    const bgParticles = [];
-    const particleCount = 50;
-    const dnaSymbols = ['A', 'T', 'G', 'C', 'DNA'];
-
-    for (let i = 0; i < particleCount; i++) {
-        bgParticles.push({
-            x: Math.random() * bgCanvas.width,
-            y: Math.random() * bgCanvas.height,
-            vx: (Math.random() - 0.5) * 0.4,
-            vy: (Math.random() - 0.5) * 0.4,
-            size: Math.random() * 2 + 1,
-            opacity: Math.random() * 0.3 + 0.1,
-            symbol: dnaSymbols[Math.floor(Math.random() * dnaSymbols.length)]
-        });
-    }
-
-    function animateBgParticles() {
-        bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
-        
-        bgParticles.forEach(particle => {
-            particle.x += particle.vx;
-            particle.y += particle.vy;
-            
-            if (particle.x < 0 || particle.x > bgCanvas.width) particle.vx *= -1;
-            if (particle.y < 0 || particle.y > bgCanvas.height) particle.vy *= -1;
-            
-            bgCtx.globalAlpha = particle.opacity;
-            bgCtx.font = `${particle.size * 12}px 'Space Mono', monospace`;
-            bgCtx.fillStyle = '#4a90e2';
-            bgCtx.fillText(particle.symbol, particle.x, particle.y);
-        });
-        
-        requestAnimationFrame(animateBgParticles);
-    }
-    
-    animateBgParticles();
-
-    // ===== ANIMATION CONTROLS =====
-    let animationSpeed = 1.0;
-    let isPaused = false;
-
-    const speedControl = document.getElementById('speed-control');
-    const pauseButton = document.getElementById('pause-button');
-
-    speedControl.addEventListener('input', (e) => {
-        animationSpeed = parseFloat(e.target.value);
-    });
-
-    pauseButton.addEventListener('click', () => {
-        isPaused = !isPaused;
-        pauseButton.textContent = isPaused ? 'Resume' : 'Pause';
-        pauseButton.classList.toggle('paused');
-    });
-
-    // ===== 3D DNA DOUBLE HELIX VISUALIZATION =====
-    const dnaCanvas = document.getElementById('dna-3d-canvas');
-    const dnaScene = new THREE.Scene();
-    const dnaCamera = new THREE.PerspectiveCamera(
-        60,
-        dnaCanvas.clientWidth / dnaCanvas.clientHeight,
-        0.1,
-        1000
-    );
-    const dnaRenderer = new THREE.WebGLRenderer({ 
-        canvas: dnaCanvas, 
-        antialias: true, 
-        alpha: true 
-    });
-    
-    dnaRenderer.setSize(dnaCanvas.clientWidth, dnaCanvas.clientHeight);
-    dnaRenderer.setClearColor(0x000000, 0);
-    dnaCamera.position.set(0, 0, 30);
-
-    const controls = new THREE.OrbitControls(dnaCamera, dnaRenderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.enableZoom = true;
-    controls.enablePan = true;
-    controls.minDistance = 15;
-    controls.maxDistance = 70;
-    controls.autoRotate = true;
-    controls.autoRotateSpeed = 0.3;
-
-    const interactiveObjects = [];
-
-    // ===== DNA HELIX PARAMETERS =====
-    const helixRadius = 2.5;
-    const helixPitch = 3.4; // 3.4 nm per turn
-    const basesPerTurn = 10;
-    const totalBases = 20; // Show 2 complete turns
-    const baseSpacing = helixPitch / basesPerTurn;
-
-    // Base pair sequence (A-T and G-C pairing)
-    const baseSequence = ['A', 'T', 'G', 'C', 'A', 'T', 'C', 'G', 'A', 'T', 
-                          'G', 'C', 'T', 'A', 'C', 'G', 'A', 'T', 'G', 'C'];
-
-    function getComplementBase(base) {
-        const pairs = { 'A': 'T', 'T': 'A', 'G': 'C', 'C': 'G' };
-        return pairs[base];
-    }
-
-    // ===== SUGAR-PHOSPHATE BACKBONE =====
-    const backbone1 = new THREE.Group();
-    const backbone2 = new THREE.Group();
-
-    const phosphateGeometry = new THREE.SphereGeometry(0.3, 16, 16);
-    const phosphateMaterial = new THREE.MeshPhongMaterial({ 
-        color: 0xffaa44,
-        emissive: 0xff8822,
-        emissiveIntensity: 0.2
-    });
-
-    const sugarGeometry = new THREE.SphereGeometry(0.25, 12, 12);
-    const sugarMaterial = new THREE.MeshPhongMaterial({ 
-        color: 0xaaaaff,
-        emissive: 0x8888dd,
-        emissiveIntensity: 0.2
-    });
-
-    for (let i = 0; i < totalBases; i++) {
-        const angle = (i / basesPerTurn) * Math.PI * 2;
-        const y = i * baseSpacing - (totalBases * baseSpacing) / 2;
-
-        // Strand 1 backbone (clockwise)
-        const x1 = Math.cos(angle) * helixRadius;
-        const z1 = Math.sin(angle) * helixRadius;
-
-        const phosphate1 = new THREE.Mesh(phosphateGeometry, phosphateMaterial);
-        phosphate1.position.set(x1, y, z1);
-        phosphate1.userData = {
-            type: 'phosphate',
-            name: 'Phosphate Group',
-            symbol: 'PO₄³⁻',
-            detail: 'Forms backbone with sugar molecules',
-            element: 'phosphate'
-        };
-        backbone1.add(phosphate1);
-        interactiveObjects.push(phosphate1);
-
-        const sugar1 = new THREE.Mesh(sugarGeometry, sugarMaterial);
-        sugar1.position.set(x1 * 0.85, y + 0.15, z1 * 0.85);
-        sugar1.userData = {
-            type: 'sugar',
-            name: 'Deoxyribose Sugar',
-            symbol: 'C₅H₁₀O₄',
-            detail: '5-carbon sugar lacking one oxygen',
-            element: 'sugar'
-        };
-        backbone1.add(sugar1);
-        interactiveObjects.push(sugar1);
-
-        // Strand 2 backbone (antiparallel - counter-clockwise)
-        const angle2 = angle + Math.PI;
-        const x2 = Math.cos(angle2) * helixRadius;
-        const z2 = Math.sin(angle2) * helixRadius;
-
-        const phosphate2 = new THREE.Mesh(phosphateGeometry, phosphateMaterial);
-        phosphate2.position.set(x2, y, z2);
-        phosphate2.userData = {
-            type: 'phosphate',
-            name: 'Phosphate Group',
-            symbol: 'PO₄³⁻',
-            detail: 'Forms backbone with sugar molecules',
-            element: 'phosphate'
-        };
-        backbone2.add(phosphate2);
-        interactiveObjects.push(phosphate2);
-
-        const sugar2 = new THREE.Mesh(sugarGeometry, sugarMaterial);
-        sugar2.position.set(x2 * 0.85, y + 0.15, z2 * 0.85);
-        sugar2.userData = {
-            type: 'sugar',
-            name: 'Deoxyribose Sugar',
-            symbol: 'C₅H₁₀O₄',
-            detail: '5-carbon sugar lacking one oxygen',
-            element: 'sugar'
-        };
-        backbone2.add(sugar2);
-        interactiveObjects.push(sugar2);
-    }
-
-    dnaScene.add(backbone1);
-    dnaScene.add(backbone2);
-
-    // ===== BASE PAIRS =====
-    const basePairs = new THREE.Group();
-
-    const baseAGeometry = new THREE.BoxGeometry(0.6, 0.3, 0.3);
-    const baseTGeometry = new THREE.BoxGeometry(0.6, 0.3, 0.3);
-    const baseGGeometry = new THREE.BoxGeometry(0.6, 0.3, 0.3);
-    const baseCGeometry = new THREE.BoxGeometry(0.6, 0.3, 0.3);
-
-    const baseAMaterial = new THREE.MeshPhongMaterial({ color: 0xff4444 }); // Adenine - red
-    const baseTMaterial = new THREE.MeshPhongMaterial({ color: 0x44ff44 }); // Thymine - green
-    const baseGMaterial = new THREE.MeshPhongMaterial({ color: 0x4444ff }); // Guanine - blue
-    const baseCMaterial = new THREE.MeshPhongMaterial({ color: 0xffff44 }); // Cytosine - yellow
-
-    function getBaseMaterial(base) {
-        const materials = { 'A': baseAMaterial, 'T': baseTMaterial, 'G': baseGMaterial, 'C': baseCMaterial };
-        return materials[base];
-    }
-
-    function getBaseGeometry(base) {
-        const geometries = { 'A': baseAGeometry, 'T': baseTGeometry, 'G': baseGGeometry, 'C': baseCGeometry };
-        return geometries[base];
-    }
-
-    function getHydrogenBonds(base1, base2) {
-        if ((base1 === 'A' && base2 === 'T') || (base1 === 'T' && base2 === 'A')) return 2;
-        if ((base1 === 'G' && base2 === 'C') || (base1 === 'C' && base2 === 'G')) return 3;
-        return 0;
-    }
-
-    for (let i = 0; i < totalBases; i++) {
-        const angle = (i / basesPerTurn) * Math.PI * 2;
-        const y = i * baseSpacing - (totalBases * baseSpacing) / 2;
-
-        const base1Type = baseSequence[i];
-        const base2Type = getComplementBase(base1Type);
-        const hBonds = getHydrogenBonds(base1Type, base2Type);
-
-        // Base on strand 1
-        const x1 = Math.cos(angle) * helixRadius * 0.7;
-        const z1 = Math.sin(angle) * helixRadius * 0.7;
-
-        const base1 = new THREE.Mesh(getBaseGeometry(base1Type), getBaseMaterial(base1Type));
-        base1.position.set(x1, y, z1);
-        base1.lookAt(0, y, 0);
-        base1.userData = {
-            type: 'base',
-            name: base1Type === 'A' ? 'Adenine' : base1Type === 'T' ? 'Thymine' : base1Type === 'G' ? 'Guanine' : 'Cytosine',
-            symbol: base1Type,
-            detail: `Pairs with ${base2Type} via ${hBonds} hydrogen bonds`,
-            element: 'base'
-        };
-        basePairs.add(base1);
-        interactiveObjects.push(base1);
-
-        // Base on strand 2 (opposite side)
-        const angle2 = angle + Math.PI;
-        const x2 = Math.cos(angle2) * helixRadius * 0.7;
-        const z2 = Math.sin(angle2) * helixRadius * 0.7;
-
-        const base2 = new THREE.Mesh(getBaseGeometry(base2Type), getBaseMaterial(base2Type));
-        base2.position.set(x2, y, z2);
-        base2.lookAt(0, y, 0);
-        base2.userData = {
-            type: 'base',
-            name: base2Type === 'A' ? 'Adenine' : base2Type === 'T' ? 'Thymine' : base2Type === 'G' ? 'Guanine' : 'Cytosine',
-            symbol: base2Type,
-            detail: `Pairs with ${base1Type} via ${hBonds} hydrogen bonds`,
-            element: 'base'
-        };
-        basePairs.add(base2);
-        interactiveObjects.push(base2);
-
-        // Hydrogen bonds connecting bases
-        const bondMaterial = new THREE.LineBasicMaterial({ 
-            color: 0xffffff,
-            transparent: true,
-            opacity: 0.3
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
         });
 
-        for (let b = 0; b < hBonds; b++) {
-            const offset = (b - (hBonds - 1) / 2) * 0.15;
-            const points = [
-                new THREE.Vector3(x1, y + offset, z1),
-                new THREE.Vector3(x2, y + offset, z2)
-            ];
-            const bondGeometry = new THREE.BufferGeometry().setFromPoints(points);
-            const bond = new THREE.Line(bondGeometry, bondMaterial);
-            basePairs.add(bond);
+        (function animateCursor() {
+            cursor.style.left = mouseX - 10 + 'px';
+            cursor.style.top = mouseY - 10 + 'px';
+            requestAnimationFrame(animateCursor);
+        })();
+
+        document.querySelectorAll('a, button, .impact-card, .context-card, .timeline-content').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        });
+
+        // ===== BACKGROUND CANVAS PARTICLES =====
+        const bgCanvas = document.getElementById('bg-canvas');
+        const bgCtx = bgCanvas.getContext('2d');
+
+        function resizeCanvas() {
+            bgCanvas.width = window.innerWidth;
+            bgCanvas.height = window.innerHeight;
         }
-    }
 
-    dnaScene.add(basePairs);
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
 
-    // ===== LIGHTING =====
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-    dnaScene.add(ambientLight);
+        const bgParticles = [];
+        const particleCount = 50;
+        const dnaSymbols = ['A', 'T', 'G', 'C', 'DNA'];
 
-    const dnaLight1 = new THREE.PointLight(0x4a90e2, 2, 60);
-    dnaLight1.position.set(10, 10, 10);
-    dnaScene.add(dnaLight1);
+        for (let i = 0; i < particleCount; i++) {
+            bgParticles.push({
+                x: Math.random() * bgCanvas.width,
+                y: Math.random() * bgCanvas.height,
+                vx: (Math.random() - 0.5) * 0.4,
+                vy: (Math.random() - 0.5) * 0.4,
+                size: Math.random() * 2 + 1,
+                opacity: Math.random() * 0.3 + 0.1,
+                symbol: dnaSymbols[Math.floor(Math.random() * dnaSymbols.length)]
+            });
+        }
 
-    const dnaLight2 = new THREE.PointLight(0xe24a5a, 1.5, 60);
-    dnaLight2.position.set(-10, -10, 10);
-    dnaScene.add(dnaLight2);
+        (function animateBgParticles() {
+            bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
 
-    const rimLight = new THREE.PointLight(0xd4af37, 0.8, 100);
-    rimLight.position.set(0, 20, -20);
-    dnaScene.add(rimLight);
+            bgParticles.forEach(particle => {
+                particle.x += particle.vx;
+                particle.y += particle.vy;
 
-    // ===== TOOLTIP SYSTEM =====
-    const tooltip = document.createElement('div');
-    tooltip.className = 'dna-tooltip';
-    document.body.appendChild(tooltip);
+                if (particle.x < 0 || particle.x > bgCanvas.width) particle.vx *= -1;
+                if (particle.y < 0 || particle.y > bgCanvas.height) particle.vy *= -1;
 
-    const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
-    let hoveredObject = null;
+                bgCtx.globalAlpha = particle.opacity;
+                bgCtx.font = `${particle.size * 12}px 'Space Mono', monospace`;
+                bgCtx.fillStyle = '#4a90e2';
+                bgCtx.fillText(particle.symbol, particle.x, particle.y);
+            });
 
-    dnaCanvas.addEventListener('mousemove', (event) => {
-        const rect = dnaCanvas.getBoundingClientRect();
-        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+            requestAnimationFrame(animateBgParticles);
+        })();
 
-        raycaster.setFromCamera(mouse, dnaCamera);
-        const intersects = raycaster.intersectObjects(interactiveObjects);
+        // ===== UI refs for the DNA viewer (handlers are attached inside the 3Dmol block) =====
+        const pauseButton = document.getElementById('pause-button');
+        const resetViewButton = document.getElementById('reset-view-button');
 
-        if (intersects.length > 0) {
-            const object = intersects[0].object;
-            const data = object.userData;
-            
-            if (hoveredObject !== object) {
-                hoveredObject = object;
-                
-                let tooltipHTML = `<strong>${data.name}</strong>`;
-                if (data.symbol) {
-                    tooltipHTML += `<span class="tooltip-detail">Symbol: ${data.symbol}</span>`;
+
+        // ===== ACCURATE B-DNA (3Dmol.js + PDB 1BNA) — dbl-click details, lockable tooltip, working Pause/Reset =====
+        (() => {
+            const container = document.getElementById('dna-3d-canvas');
+            const pauseBtn = document.getElementById('pause-button');
+            const resetBtn = document.getElementById('reset-view-button');
+
+            // Ensure container has size
+            container.style.position = container.style.position || 'relative';
+            if (!container.clientHeight) container.style.height = '600px';
+
+            // Tooltip (re-use your .dna-tooltip style)
+            let tooltipEl = document.querySelector('.dna-tooltip');
+            if (!tooltipEl) {
+                tooltipEl = document.createElement('div');
+                tooltipEl.className = 'dna-tooltip';
+                document.body.appendChild(tooltipEl);
+            }
+
+            // Maps
+            const RESN2B = { DA: 'A', DT: 'T', DG: 'G', DC: 'C', A: 'A', T: 'T', G: 'G', C: 'C' };
+            const COMP = { A: 'T', T: 'A', G: 'C', C: 'G' };
+            const HB = { A: 2, T: 2, G: 3, C: 3 };
+            const BASE_COLORS = { A: '#43a047', T: '#e53935', G: '#fdd835', C: '#1e88e5' };
+
+            // Add dashed H-bonds by short cylinders (robust on all builds)
+            function addDashedBonds(viewer, p, q, nLines) {
+                const dir = { x: q.x - p.x, y: q.y - p.y, z: q.z - p.z };
+                const L = Math.hypot(dir.x, dir.y, dir.z) || 1;
+                const u = { x: dir.x / L, y: dir.y / L, z: dir.z / L };
+
+                // perpendicular
+                let up = { x: 0, y: 1, z: 0 };
+                let prp = { x: u.y * up.z - u.z * up.y, y: u.z * up.x - u.x * up.z, z: u.x * up.y - u.y * up.x };
+                let pl = Math.hypot(prp.x, prp.y, prp.z);
+                if (pl < 1e-4) { up = { x: 1, y: 0, z: 0 }; prp = { x: u.y * up.z - u.z * up.y, y: u.z * up.x - u.x * up.z, z: u.x * up.y - u.y * up.x }; pl = Math.hypot(prp.x, prp.y, prp.z); }
+                prp = { x: prp.x / pl, y: prp.y / pl, z: prp.z / pl };
+
+                const spread = 0.25;           // spacing between the parallel lines
+                const segments = 7;            // dash segments per line
+                const dashFrac = 0.6;          // dash:gap inside each segment
+                const radius = 0.06;
+
+                for (let k = 0; k < nLines; k++) {
+                    const t = (k - (nLines - 1) / 2) * spread;
+                    const off = { x: prp.x * t, y: prp.y * t, z: prp.z * t };
+                    for (let i = 0; i < segments; i++) {
+                        const a0 = i / segments, a1 = a0 + (dashFrac / segments);
+                        const s = { x: p.x + off.x + u.x * (a0 * L), y: p.y + off.y + u.y * (a0 * L), z: p.z + off.z + u.z * (a0 * L) };
+                        const e = { x: p.x + off.x + u.x * (a1 * L), y: p.y + off.y + u.y * (a1 * L), z: p.z + off.z + u.z * (a1 * L) };
+                        viewer.addCylinder({ start: s, end: e, radius, color: '#ddddff', opacity: 0.95 });
+                    }
                 }
-                tooltipHTML += `<span class="tooltip-detail">${data.detail}</span>`;
-                
-                tooltip.innerHTML = tooltipHTML;
             }
-            
-            tooltip.style.left = (event.clientX + 15) + 'px';
-            tooltip.style.top = (event.clientY + 15) + 'px';
-            tooltip.classList.add('visible');
-            
-            dnaCanvas.style.cursor = 'pointer';
-            controls.autoRotate = false;
-        } else {
-            hoveredObject = null;
-            tooltip.classList.remove('visible');
-            dnaCanvas.style.cursor = 'grab';
-            controls.autoRotate = true;
-        }
-    });
 
-    dnaCanvas.addEventListener('mouseleave', () => {
-        tooltip.classList.remove('visible');
-        hoveredObject = null;
-        controls.autoRotate = true;
-    });
-
-    dnaCanvas.addEventListener('mousedown', () => {
-        dnaCanvas.style.cursor = 'grabbing';
-    });
-
-    dnaCanvas.addEventListener('mouseup', () => {
-        dnaCanvas.style.cursor = hoveredObject ? 'pointer' : 'grab';
-    });
-
-    // ===== ANIMATION =====
-    let time = 0;
-
-    function animateDNA() {
-        requestAnimationFrame(animateDNA);
-        
-        if (!isPaused) {
-            time += 0.005 * animationSpeed;
-        }
-
-        controls.update();
-
-        // Gentle helix rotation
-        backbone1.rotation.y = time;
-        backbone2.rotation.y = time;
-        basePairs.rotation.y = time;
-
-        dnaRenderer.render(dnaScene, dnaCamera);
-    }
-
-    animateDNA();
-
-    window.addEventListener('resize', () => {
-        dnaCamera.aspect = dnaCanvas.clientWidth / dnaCanvas.clientHeight;
-        dnaCamera.updateProjectionMatrix();
-        dnaRenderer.setSize(dnaCanvas.clientWidth, dnaCanvas.clientHeight);
-    });
-
-    // ===== SCROLL ANIMATIONS =====
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
+            // Show/hide tooltip
+            function showTipForAtom(atom, pageX, pageY) {
+                const base = RESN2B[atom.resn] || 'N';
+                const comp = COMP[base] || '—';
+                const bonds = HB[base] || '—';
+                tooltipEl.innerHTML =
+                    `<strong>${base}</strong>` +
+                    `<span class="tooltip-detail">Residue ${atom.resi} · Chain ${atom.chain || ''}</span>` +
+                    `<span class="tooltip-detail">Pairs with ${comp} · ${bonds} hydrogen bonds</span>`;
+                tooltipEl.style.left = (pageX + 15) + 'px';
+                tooltipEl.style.top = (pageY + 15) + 'px';
+                tooltipEl.classList.add('visible');
             }
+            function hideTip() { tooltipEl.classList.remove('visible'); }
+
+            // Spin loop (don’t use viewer.setSpin — not present in your build)
+            let spinning = true;
+            const spinAxis = 'y';
+            const spinDegPerFrame = 0.35;  // gentle, looks nice with your UI
+
+            function spinFrame() {
+                if (spinning && window.viewer3dmol) {
+                    // rotate accepts degrees; axis: 'x' | 'y' | 'z'
+                    window.viewer3dmol.rotate(spinDegPerFrame, spinAxis);
+                    window.viewer3dmol.render();
+                }
+                requestAnimationFrame(spinFrame);
+            }
+
+            function initViewer() {
+                const viewer = $3Dmol.createViewer(container, { antialias: true, backgroundAlpha: 0 });
+                window.viewer3dmol = viewer; // expose for spin loop & debugging
+
+                $3Dmol.download('pdb:1BNA', viewer, {}, function () {
+                    // Cartoon backbones (color matches your theme)
+                    viewer.setStyle({ chain: 'A' }, { cartoon: { color: 0x4a90e2, opacity: 1 } });
+                    viewer.setStyle({ chain: 'B' }, { cartoon: { color: 0xe24a5a, opacity: 1 } });
+
+                    // Colored bases as sticks by type
+                    for (const [resn, base] of Object.entries({ DA: 'A', DT: 'T', DG: 'G', DC: 'C' })) {
+                        viewer.addStyle({ resn }, { stick: { radius: 0.18, color: BASE_COLORS[base] } });
+                    }
+
+                    // Collect residue centroids (for H-bond lines)
+                    const model = viewer.getModel();
+                    function collect(chainID) {
+                        const atoms = model.selectedAtoms({ chain: chainID, resn: ['DA', 'DT', 'DG', 'DC'] });
+                        const buckets = new Map();
+                        atoms.forEach(a => {
+                            const key = `${chainID}:${a.resi}`;
+                            if (!buckets.has(key)) buckets.set(key, []);
+                            buckets.get(key).push(a);
+                        });
+                        const residues = [];
+                        for (const [key, arr] of buckets.entries()) {
+                            const base = RESN2B[arr[0].resn] || 'N';
+                            const c = arr.reduce((acc, a) => ({ x: acc.x + a.x, y: acc.y + a.y, z: acc.z + a.z }), { x: 0, y: 0, z: 0 });
+                            const n = arr.length || 1;
+                            residues.push({
+                                key, chain: chainID, resi: arr[0].resi, base,
+                                centroid: { x: c.x / n, y: c.y / n, z: c.z / n }
+                            });
+                        }
+                        residues.sort((a, b) => a.resi - b.resi);
+                        return residues;
+                    }
+                    const resA = collect('A'), resB = collect('B');
+
+                    // Pair by nearest centroid and draw dashed bonds (2 for A-T, 3 for G-C)
+                    const usedB = new Set();
+                    function nearest(a) {
+                        let best = null, bestd = 1e9, idx = -1;
+                        for (let i = 0; i < resB.length; i++) {
+                            if (usedB.has(i)) continue;
+                            const b = resB[i];
+                            const dx = a.centroid.x - b.centroid.x, dy = a.centroid.y - b.centroid.y, dz = a.centroid.z - b.centroid.z;
+                            const d = dx * dx + dy * dy + dz * dz;
+                            if (d < bestd) { best = b; bestd = d; idx = i; }
+                        }
+                        if (best) usedB.add(idx);
+                        return best;
+                    }
+                    resA.forEach(a => {
+                        const b = nearest(a); if (!b) return;
+                        addDashedBonds(viewer, a.centroid, b.centroid, HB[a.base] || 2);
+                    });
+
+                    // Initial camera and start spin loop
+                    viewer.zoomTo();
+                    requestAnimationFrame(spinFrame);
+
+                    // ----- Interactions -----
+                    // Hover: thicken sticks, keep base color, center (no zoom), show tooltip
+                    let lastHoverAtom = null;
+                    let focusThrottle = false;
+
+                    viewer.setHoverable(
+                        { resn: ['DA', 'DT', 'DG', 'DC'] },
+                        true,
+                        function (atom, v, event) {
+                            lastHoverAtom = atom;
+
+                            const base = RESN2B[atom.resn] || 'N';
+                            // highlight hovered residue: thicker, same base color (prevents “rainbow”)
+                            v.setStyle(
+                                { chain: atom.chain, resi: atom.resi },
+                                { stick: { radius: 0.30, color: BASE_COLORS[base] } }
+                            );
+                            // keep everyone else at normal style
+                            v.render();
+
+                            // soft focus: center on residue, but don't zoom
+                            if (!focusThrottle) {
+                                focusThrottle = true;
+                                v.center({ chain: atom.chain, resi: atom.resi }, 280); // ms animate
+                                setTimeout(() => { focusThrottle = false; }, 320);
+                            }
+
+                            // tooltip on hover (no click-to-lock)
+                            showTipForAtom(atom, event.pageX, event.pageY);
+                        },
+                        function (atom, v) {
+                            const base = RESN2B[atom.resn] || 'N';
+                            v.setStyle(
+                                { chain: atom.chain, resi: atom.resi },
+                                { stick: { radius: 0.18, color: BASE_COLORS[base] } }
+                            );
+                            hideTip();
+                            v.render();
+                        }
+                    );
+
+
+                    // Pause/Resume (works on our custom spin loop)
+                    if (pauseBtn) {
+                        pauseBtn.addEventListener('click', () => {
+                            spinning = !spinning;
+                            pauseBtn.textContent = spinning ? 'Pause' : 'Resume';
+                            pauseBtn.classList.toggle('paused', !spinning);
+                            // If resuming, unlock/hide details so UI isn’t stuck
+                            if (spinning) { lockedDetails = false; hideTip(); }
+                        });
+                    }
+
+                    // Reset view: recenter and (optionally) resume spin
+                    if (resetBtn) {
+                        resetBtn.addEventListener('click', () => {
+                            viewer.zoomTo({}, 450);
+                            // Don’t force spinning on; keep user’s pause state
+                            if (!spinning) { /* keep paused */ }
+                            lockedDetails = false;
+                            hideTip();
+                        });
+                    }
+
+                    // ESC to close locked tooltip (keeps pause state)
+                    window.addEventListener('keydown', (e) => {
+                        if (e.key === 'Escape') { lockedDetails = false; hideTip(); }
+                    });
+
+                    // Resize handler
+                    const onResize = () => { viewer.resize(); viewer.render(); };
+                    window.addEventListener('resize', onResize);
+                    onResize();
+                });
+            }
+
+            // Ensure 3Dmol is present, then init
+            function ensure3DmolAndInit() {
+                if (window.$3Dmol) return initViewer();
+                const s = document.createElement('script');
+                s.src = 'https://3dmol.org/build/3Dmol-min.js';
+                s.onload = initViewer;
+                s.onerror = () => console.error('Failed to load 3Dmol.js');
+                document.head.appendChild(s);
+            }
+            ensure3DmolAndInit();
+        })();
+
+
+
+        // ===== SCROLL REVEALS =====
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+        document.querySelectorAll('.timeline-item, .impact-card, .context-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.6s ease';
+            observer.observe(el);
         });
-    }, observerOptions);
 
-    document.querySelectorAll('.timeline-item, .impact-card, .context-card').forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(30px)';
-        el.style.transition = 'all 0.6s ease';
-        observer.observe(el);
-    });
-
-    console.log('Rosalind Franklin page loaded.');
-    console.log('DNA structure: Double helix, antiparallel strands, A-T and G-C base pairing');
-    console.log('Photo 51: May 1952, 62-hour X-ray exposure, revealed helical structure');
-    console.log('Data verified from: King\'s College London, Nature archives, NIH');
+        console.log('Rosalind Franklin page (HQ DNA) loaded.');
     </script>
 </body>
+
 </html>

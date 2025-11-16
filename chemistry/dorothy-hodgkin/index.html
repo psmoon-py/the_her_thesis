@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dorothy Hodgkin - The Molecular Architect | The HER Thesis</title>
     <link rel="icon" type="image/png" href="../../favicon.png">
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -36,7 +40,8 @@
             box-sizing: border-box;
         }
 
-        html, body {
+        html,
+        body {
             height: 100%;
             font-family: 'Inter', system-ui, sans-serif;
             background: var(--bg-dark);
@@ -453,16 +458,22 @@
             margin-top: 2px;
         }
 
-        .historical-context, .content-section, .science-deep-dive, .modern-impact-section {
+        .historical-context,
+        .content-section,
+        .science-deep-dive,
+        .modern-impact-section {
             padding: 100px 40px;
         }
 
-        .context-container, .science-container {
+        .context-container,
+        .science-container {
             max-width: 1200px;
             margin: 0 auto;
         }
 
-        .context-header, .science-header, .modern-impact-header {
+        .context-header,
+        .science-header,
+        .modern-impact-header {
             text-align: center;
             margin-bottom: 80px;
         }
@@ -476,14 +487,18 @@
             margin-bottom: 20px;
         }
 
-        .context-title, .science-title, .modern-title {
+        .context-title,
+        .science-title,
+        .modern-title {
             font-family: 'Playfair Display', serif;
             font-size: 3.5rem;
             font-weight: 700;
             margin-bottom: 30px;
         }
 
-        .context-subtitle, .science-intro, .modern-subtitle {
+        .context-subtitle,
+        .science-intro,
+        .modern-subtitle {
             font-size: 20px;
             color: var(--text-dim);
             max-width: 700px;
@@ -491,7 +506,8 @@
             line-height: 1.6;
         }
 
-        .context-grid, .impact-grid {
+        .context-grid,
+        .impact-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 40px;
@@ -505,7 +521,8 @@
             margin: 60px auto 0;
         }
 
-        .context-card, .impact-card {
+        .context-card,
+        .impact-card {
             background: var(--glass);
             border: 1px solid var(--border);
             border-radius: 16px;
@@ -522,13 +539,93 @@
             padding: 30px;
         }
 
-        .context-card:hover, .impact-card:hover {
+        .context-card::before,
+        .impact-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            z-index: -1;
+            transition: opacity 0.4s ease;
+        }
+
+        .context-card:hover::before,
+        .impact-card:hover::before {
+            opacity: 1;
+        }
+
+        .context-card::after,
+        .impact-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.15));
+            z-index: -1;
+        }
+
+        /* ==========================================================================
+   IMAGE CARD BACKGROUNDS (CONTEXT & IMPACT)
+   ========================================================================== */
+
+        /* Context Cards */
+        .context-card[data-image="cairo-egypt"]::before {
+            background-image: url('../../assets/images/context/cairo-egypt.jpg');
+        }
+
+        .context-card[data-image="cambridge-research"]::before {
+            background-image: url('../../assets/images/context/cambridge-research.webp');
+        }
+
+        .context-card[data-image="penicillin-research"]::before {
+            background-image: url('../../assets/images/context/wartime-penicillin.jpg');
+        }
+
+        .context-card[data-image="vitamin-b12"]::before {
+            background-image: url('../../assets/images/context/b12-molecule.png');
+        }
+
+        /* Impact Cards */
+        .impact-card[data-image="antibiotic-development"]::before {
+            background-image: url('../../assets/images/impact/antibiotic-development.jpg');
+        }
+
+        .impact-card[data-image="drug-design"]::before {
+            background-image: url('../../assets/images/impact/drug-design.jpg');
+        }
+
+        .impact-card[data-image="diabetes-treatment"]::before {
+            background-image: url('../../assets/images/impact/diabetes-treatment.webp');
+        }
+
+        .impact-card[data-image="structural-biology"]::before {
+            background-image: url('../../assets/images/impact/structural-biology.jpg');
+        }
+
+        .impact-card[data-image="women-in-science"]::before {
+            background-image: url('../../assets/images/impact/women-science.jpg');
+        }
+
+        .impact-card[data-image="computational-biology"]::before {
+            background-image: url('../../assets/images/impact/computational-biology.jpg');
+        }
+
+        .context-card:hover,
+        .impact-card:hover {
             transform: translateY(-8px);
             border-color: var(--accent);
             box-shadow: 0 30px 60px rgba(212, 175, 55, 0.2);
         }
 
-        .context-icon, .impact-icon {
+        .context-icon,
+        .impact-icon {
             width: 60px;
             height: 60px;
             margin-bottom: 20px;
@@ -543,7 +640,8 @@
             height: 50px;
         }
 
-        .context-card-title, .impact-title {
+        .context-card-title,
+        .impact-title {
             font-family: 'Playfair Display', serif;
             font-size: 1.5rem;
             font-weight: 700;
@@ -557,12 +655,18 @@
             margin-bottom: 12px;
         }
 
-        .context-card-text, .impact-description {
+        .context-card-text,
+        .impact-description {
             font-size: 16px;
             line-height: 1.7;
             color: var(--text-dim);
             position: relative;
             z-index: 1;
+        }
+        
+        .context-card:hover .context-card-text,
+        .impact-card:hover .impact-description {
+            opacity: 0.1;
         }
 
         .impact-description {
@@ -807,6 +911,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -814,12 +919,16 @@
         }
 
         @media (max-width: 1024px) {
-            .hero-content, .b12-container {
+
+            .hero-content,
+            .b12-container {
                 grid-template-columns: 1fr;
                 gap: 60px;
             }
 
-            .section-header, .section-content, .timeline-item {
+            .section-header,
+            .section-content,
+            .timeline-item {
                 grid-template-columns: 1fr;
                 gap: 30px;
             }
@@ -833,7 +942,8 @@
                 right: auto;
             }
 
-            .context-grid, .impact-grid {
+            .context-grid,
+            .impact-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -847,11 +957,18 @@
                 padding: 100px 20px 60px;
             }
 
-            .content-section, .b12-3d-section, .historical-context, .modern-impact-section, .science-deep-dive {
+            .content-section,
+            .b12-3d-section,
+            .historical-context,
+            .modern-impact-section,
+            .science-deep-dive {
                 padding: 60px 20px;
             }
 
-            .hero-title, .context-title, .modern-title, .science-title {
+            .hero-title,
+            .context-title,
+            .modern-title,
+            .science-title {
                 font-size: 2.5rem;
             }
 
@@ -869,6 +986,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="custom-cursor" id="cursor"></div>
     <canvas id="bg-canvas"></canvas>
@@ -891,7 +1009,9 @@
                     <div class="hero-subtitle">X-Ray Crystallographer · 1910-1994</div>
                     <h1 class="hero-title">Dorothy Hodgkin</h1>
                     <p class="hero-description">
-                        The chemist who determined 3D structures of penicillin, vitamin B12, and insulin through X-ray crystallography. Her wartime penicillin work saved millions. She became the third woman and only British woman to win a Nobel Prize in Chemistry.
+                        The chemist who determined 3D structures of penicillin, vitamin B12, and insulin through X-ray
+                        crystallography. Her wartime penicillin work saved millions. She became the third woman and only
+                        British woman to win a Nobel Prize in Chemistry.
                     </p>
                     <div class="hero-stats">
                         <div class="stat-item">
@@ -913,7 +1033,8 @@
                     </div>
                 </div>
                 <div class="hero-visual">
-                    <img src="../../assets/images/dorothy-hodgkin-portrait.jpg" alt="Dorothy Hodgkin" class="hero-image">
+                    <img src="../../assets/images/dorothy-hodgkin-portrait.jpg" alt="Dorothy Hodgkin"
+                        class="hero-image">
                     <div class="image-overlay">
                         <div class="image-caption">Dorothy Hodgkin examining crystallography data, Oxford, 1960s</div>
                     </div>
@@ -927,40 +1048,72 @@
                     <div class="context-number">01 — Historical Context</div>
                     <h2 class="context-title">Where Did the Idea Come From?</h2>
                     <p class="context-subtitle">
-                        X-ray crystallography shines X-rays through crystals. Atoms scatter X-rays in patterns revealing molecular structure. Before Hodgkin, only small molecules were solved. She tackled huge biological molecules thought impossible to analyze. Her work opened structural biology.
+                        X-ray crystallography shines X-rays through crystals. Atoms scatter X-rays in patterns revealing
+                        molecular structure. Before Hodgkin, only small molecules were solved. She tackled huge
+                        biological molecules thought impossible to analyze. Her work opened structural biology.
                     </p>
                 </div>
-                
+
                 <div class="context-grid">
-                    <div class="context-card">
+                    <div class="context-card" data-image="cairo-egypt">
                         <img src="../../assets/icons/cairo-egypt-icon.png" alt="Cairo Egypt" class="context-icon">
                         <h3 class="context-card-title">Cairo 1910: Born Abroad</h3>
                         <p class="context-card-text">
-                            Dorothy Mary Crowfoot was born May 12, 1910, in Cairo, Egypt. Her father John Crowfoot was an archaeologist and colonial administrator. Her mother Grace Hood Crowfoot was a botanist who studied ancient textiles. Dorothy spent early years moving between Egypt, Sudan, and England. She received chemistry set at age 10. She grew crystals and analyzed them. At 16, she attended lectures on X-ray crystallography. She read about William Henry Bragg's work determining crystal structures. She decided to become crystallographer before university. At Somerville College Oxford, she was one of four women studying chemistry. She graduated with honors in 1932. J.D. Bernal invited her to Cambridge.
+                            Dorothy Mary Crowfoot was born May 12, 1910, in Cairo, Egypt. Her father John Crowfoot was
+                            an archaeologist and colonial administrator. Her mother Grace Hood Crowfoot was a botanist
+                            who studied ancient textiles. Dorothy spent early years moving between Egypt, Sudan, and
+                            England. She received chemistry set at age 10. She grew crystals and analyzed them. At 16,
+                            she attended lectures on X-ray crystallography. She read about William Henry Bragg's work
+                            determining crystal structures. She decided to become crystallographer before university. At
+                            Somerville College Oxford, she was one of four women studying chemistry. She graduated with
+                            honors in 1932. J.D. Bernal invited her to Cambridge.
                         </p>
                     </div>
 
-                    <div class="context-card">
-                        <img src="../../assets/icons/cambridge-research-icon.png" alt="Cambridge research" class="context-icon">
+                    <div class="context-card" data-image="cambridge-research">
+                        <img src="../../assets/icons/cambridge-research-icon.png" alt="Cambridge research"
+                            class="context-icon">
                         <h3 class="context-card-title">Cambridge 1933: Crystallography Training</h3>
                         <p class="context-card-text">
-                            Bernal's lab at Cambridge was crystallography frontier. He had just solved pepsin structure. Hodgkin learned cutting-edge techniques. She photographed protein crystals using X-ray diffraction. She developed methods for handling fragile biological samples. In 1934, she received first X-ray diffraction photos of protein crystals. These suggested proteins had ordered structures, not random tangles. But calculating atomic positions from diffraction patterns required enormous effort. Each photo gave partial information. Multiple photos from different angles were needed. Manual calculations took months per structure. She earned PhD in 1937. Oxford offered fellowship at Somerville College.
+                            Bernal's lab at Cambridge was crystallography frontier. He had just solved pepsin structure.
+                            Hodgkin learned cutting-edge techniques. She photographed protein crystals using X-ray
+                            diffraction. She developed methods for handling fragile biological samples. In 1934, she
+                            received first X-ray diffraction photos of protein crystals. These suggested proteins had
+                            ordered structures, not random tangles. But calculating atomic positions from diffraction
+                            patterns required enormous effort. Each photo gave partial information. Multiple photos from
+                            different angles were needed. Manual calculations took months per structure. She earned PhD
+                            in 1937. Oxford offered fellowship at Somerville College.
                         </p>
                     </div>
 
-                    <div class="context-card">
-                        <img src="../../assets/icons/wartime-penicillin-icon.png" alt="Penicillin research" class="context-icon">
+                    <div class="context-card" data-image="penicillin-research">
+                        <img src="../../assets/icons/wartime-penicillin-icon.png" alt="Penicillin research"
+                            class="context-icon">
                         <h3 class="context-card-title">Oxford 1942: Wartime Penicillin</h3>
                         <p class="context-card-text">
-                            Fleming discovered penicillin in 1928. Florey and Chain made extracts in 1940. But chemical structure remained unknown. Pharmaceutical companies needed structure to synthesize penicillin in quantity. World War II raged. Wounded soldiers needed antibiotics. Churchill's government requested Hodgkin determine penicillin structure urgently. She received tiny penicillin crystals. She took thousands of X-ray photos. She calculated atomic positions manually. By 1945, she proved penicillin contained beta-lactam ring. This four-membered ring was unexpected. Chemists doubted beta-lactam stability. But Hodgkin's data was certain. Synthesis became possible. Mass production saved countless lives.
+                            Fleming discovered penicillin in 1928. Florey and Chain made extracts in 1940. But chemical
+                            structure remained unknown. Pharmaceutical companies needed structure to synthesize
+                            penicillin in quantity. World War II raged. Wounded soldiers needed antibiotics. Churchill's
+                            government requested Hodgkin determine penicillin structure urgently. She received tiny
+                            penicillin crystals. She took thousands of X-ray photos. She calculated atomic positions
+                            manually. By 1945, she proved penicillin contained beta-lactam ring. This four-membered ring
+                            was unexpected. Chemists doubted beta-lactam stability. But Hodgkin's data was certain.
+                            Synthesis became possible. Mass production saved countless lives.
                         </p>
                     </div>
 
-                    <div class="context-card">
+                    <div class="context-card" data-image="vitamin-b12">
                         <img src="../../assets/icons/b12-molecule-icon.png" alt="Vitamin B12" class="context-icon">
                         <h3 class="context-card-title">1956: Vitamin B12 Structure</h3>
                         <p class="context-card-text">
-                            Vitamin B12 treats pernicious anemia. Isolation earned 1948 Nobel Prize. But structure was unknown. Molecule contained cobalt atom. This was first biological cobalt compound discovered. Pharmaceutical companies wanted synthetic B12. Hodgkin began work in 1948. B12 has 181 atoms. Previous crystallography solved molecules with 30 atoms maximum. Calculations would require decades. Hodgkin obtained computer access. She programmed EDSAC computer at Cambridge. First biological molecule solved by computer. She determined complete structure in 1956. Eight years total. Corrin ring surrounds central cobalt. This work won 1964 Nobel Prize.
+                            Vitamin B12 treats pernicious anemia. Isolation earned 1948 Nobel Prize. But structure was
+                            unknown. Molecule contained cobalt atom. This was first biological cobalt compound
+                            discovered. Pharmaceutical companies wanted synthetic B12. Hodgkin began work in 1948. B12
+                            has 181 atoms. Previous crystallography solved molecules with 30 atoms maximum. Calculations
+                            would require decades. Hodgkin obtained computer access. She programmed EDSAC computer at
+                            Cambridge. First biological molecule solved by computer. She determined complete structure
+                            in 1956. Eight years total. Corrin ring surrounds central cobalt. This work won 1964 Nobel
+                            Prize.
                         </p>
                     </div>
                 </div>
@@ -974,23 +1127,31 @@
                     <div class="b12-controls-hint">Drag to rotate · Scroll to zoom · Hover for details</div>
                     <div class="b12-controls">
                         <span class="control-label">Speed</span>
-                        <input type="range" min="0.1" max="2" step="0.1" value="1" class="speed-slider" id="speed-control">
+                        <input type="range" min="0.1" max="2" step="0.1" value="1" class="speed-slider"
+                            id="speed-control">
                         <button class="pause-button" id="pause-button">Pause</button>
                     </div>
                 </div>
                 <div class="b12-explanation">
                     <h2 class="b12-title">Understanding Vitamin B12</h2>
                     <p class="b12-text">
-                        <strong>Cobalt atom</strong> (pink sphere) sits at the molecule's center. This is the only cobalt-containing vitamin in humans. Cobalt coordinates with four nitrogen atoms in the corrin ring.
+                        <strong>Cobalt atom</strong> (pink sphere) sits at the molecule's center. This is the only
+                        cobalt-containing vitamin in humans. Cobalt coordinates with four nitrogen atoms in the corrin
+                        ring.
                     </p>
                     <p class="b12-text">
-                        <strong>Corrin ring</strong> (blue carbon atoms) forms planar structure around cobalt. Four pyrrole-like units link together. This resembles porphyrin but with one fewer carbon. Methyl groups project from ring.
+                        <strong>Corrin ring</strong> (blue carbon atoms) forms planar structure around cobalt. Four
+                        pyrrole-like units link together. This resembles porphyrin but with one fewer carbon. Methyl
+                        groups project from ring.
                     </p>
                     <p class="b12-text">
-                        <strong>Dimethylbenzimidazole</strong> (lower ligand) connects below cobalt through nitrogen atom. Ribose sugar and phosphate link benzimidazole to corrin ring.
+                        <strong>Dimethylbenzimidazole</strong> (lower ligand) connects below cobalt through nitrogen
+                        atom. Ribose sugar and phosphate link benzimidazole to corrin ring.
                     </p>
                     <p class="b12-text">
-                        <strong>Cyano group</strong> (-CN) binds above cobalt. This makes cyanocobalamin, the stable commercial form. In body, methyl or adenosyl groups replace cyano group, creating active coenzymes.
+                        <strong>Cyano group</strong> (-CN) binds above cobalt. This makes cyanocobalamin, the stable
+                        commercial form. In body, methyl or adenosyl groups replace cyano group, creating active
+                        coenzymes.
                     </p>
                 </div>
             </div>
@@ -1002,24 +1163,38 @@
                     <div class="context-number">02 — The Science</div>
                     <h2 class="science-title">What Is X-Ray Crystallography?</h2>
                     <p class="science-intro">
-                        X-ray crystallography determines atomic positions in molecules. X-rays scatter off electrons in atoms. Scattered waves interfere constructively or destructively. The pattern encodes molecular structure. Hodgkin pioneered this technique for complex biological molecules.
+                        X-ray crystallography determines atomic positions in molecules. X-rays scatter off electrons in
+                        atoms. Scattered waves interfere constructively or destructively. The pattern encodes molecular
+                        structure. Hodgkin pioneered this technique for complex biological molecules.
                     </p>
                 </div>
 
                 <div class="science-subsection">
                     <h3>The Technique</h3>
                     <p>
-                        First, purify the molecule and grow crystals. Crystals contain millions of molecules aligned identically. This amplifies signal. Mount crystal on goniometer. Shine X-ray beam through crystal at specific angle. Atoms scatter X-rays. Scattered waves create diffraction pattern on detector. Pattern contains spots at specific positions with varying intensities.
+                        First, purify the molecule and grow crystals. Crystals contain millions of molecules aligned
+                        identically. This amplifies signal. Mount crystal on goniometer. Shine X-ray beam through
+                        crystal at specific angle. Atoms scatter X-rays. Scattered waves create diffraction pattern on
+                        detector. Pattern contains spots at specific positions with varying intensities.
                     </p>
                     <p>
-                        Rotate crystal and take another diffraction photo. Repeat for many angles. Each photo gives partial structural information. Combine data from all photos. Apply mathematical transformations called Fourier synthesis. This converts diffraction pattern into electron density map. Electron density shows where atoms are located.
+                        Rotate crystal and take another diffraction photo. Repeat for many angles. Each photo gives
+                        partial structural information. Combine data from all photos. Apply mathematical transformations
+                        called Fourier synthesis. This converts diffraction pattern into electron density map. Electron
+                        density shows where atoms are located.
                     </p>
                     <p>
-                        The challenge: diffraction patterns lose phase information. Phases describe wave timing. Without phases, structure cannot be calculated directly. This is crystallography's phase problem. Hodgkin used heavy atom method. Add heavy metal atoms to crystal. Heavy atoms create strong diffraction. Compare patterns with and without heavy atoms. This reveals phases. Modern crystallography uses computational methods, but Hodgkin did calculations manually.
+                        The challenge: diffraction patterns lose phase information. Phases describe wave timing. Without
+                        phases, structure cannot be calculated directly. This is crystallography's phase problem.
+                        Hodgkin used heavy atom method. Add heavy metal atoms to crystal. Heavy atoms create strong
+                        diffraction. Compare patterns with and without heavy atoms. This reveals phases. Modern
+                        crystallography uses computational methods, but Hodgkin did calculations manually.
                     </p>
                     <div class="science-highlight-box">
                         <p>
-                            <strong>B12 specifications:</strong> Molecular formula C₆₃H₈₈CoN₁₄O₁₄P. Molecular weight 1,355 Daltons. 181 atoms total. Cobalt oxidation state +3. Corrin ring planar. Structure solved 1956 after 8 years work using EDSAC computer.
+                            <strong>B12 specifications:</strong> Molecular formula C₆₃H₈₈CoN₁₄O₁₄P. Molecular weight
+                            1,355 Daltons. 181 atoms total. Cobalt oxidation state +3. Corrin ring planar. Structure
+                            solved 1956 after 8 years work using EDSAC computer.
                         </p>
                     </div>
                 </div>
@@ -1027,36 +1202,64 @@
                 <div class="science-subsection">
                     <h3>Penicillin Beta-Lactam Ring</h3>
                     <p>
-                        Penicillin structure determination took three years during World War II. Pharmaceutical chemists proposed several structures. Most included thiazolidine ring fused to five-membered ring. Hodgkin's data contradicted this. Her electron density maps showed four-membered beta-lactam ring fused to five-membered thiazolidine ring.
+                        Penicillin structure determination took three years during World War II. Pharmaceutical chemists
+                        proposed several structures. Most included thiazolidine ring fused to five-membered ring.
+                        Hodgkin's data contradicted this. Her electron density maps showed four-membered beta-lactam
+                        ring fused to five-membered thiazolidine ring.
                     </p>
                     <p>
-                        Beta-lactam rings were considered too strained to exist. Four-membered rings have bond angles far from ideal 109.5 degrees. Ring strain stores energy. Chemists thought such molecules would decompose immediately. But Hodgkin's crystallography data was unambiguous. Penicillin contained beta-lactam ring. Later work showed this strain is crucial for penicillin's antibiotic activity. Beta-lactam ring reacts with bacterial enzyme. Ring opens, inactivating enzyme. Bacteria cannot build cell walls. They die.
+                        Beta-lactam rings were considered too strained to exist. Four-membered rings have bond angles
+                        far from ideal 109.5 degrees. Ring strain stores energy. Chemists thought such molecules would
+                        decompose immediately. But Hodgkin's crystallography data was unambiguous. Penicillin contained
+                        beta-lactam ring. Later work showed this strain is crucial for penicillin's antibiotic activity.
+                        Beta-lactam ring reacts with bacterial enzyme. Ring opens, inactivating enzyme. Bacteria cannot
+                        build cell walls. They die.
                     </p>
                     <p>
-                        Knowing structure enabled synthesis. Pharmaceutical companies produced penicillin derivatives. Different side chains attached to beta-lactam core created antibiotic family. Ampicillin, amoxicillin, and methicillin all descend from Hodgkin's structure determination. Her work directly enabled modern antibiotic medicine.
+                        Knowing structure enabled synthesis. Pharmaceutical companies produced penicillin derivatives.
+                        Different side chains attached to beta-lactam core created antibiotic family. Ampicillin,
+                        amoxicillin, and methicillin all descend from Hodgkin's structure determination. Her work
+                        directly enabled modern antibiotic medicine.
                     </p>
                 </div>
 
                 <div class="science-subsection">
                     <h3>Insulin Marathon</h3>
                     <p>
-                        Hodgkin began insulin work in 1934. She obtained first insulin crystal photos at Cambridge. But insulin is enormous. Fifty-one amino acids in two chains. Molecular weight 5,808 Daltons. Far larger than anything previously solved. Early computers lacked power for insulin calculations. She worked on insulin intermittently for 35 years.
+                        Hodgkin began insulin work in 1934. She obtained first insulin crystal photos at Cambridge. But
+                        insulin is enormous. Fifty-one amino acids in two chains. Molecular weight 5,808 Daltons. Far
+                        larger than anything previously solved. Early computers lacked power for insulin calculations.
+                        She worked on insulin intermittently for 35 years.
                     </p>
                     <p>
-                        By 1969, computers advanced sufficiently. She determined complete insulin structure. Insulin forms hexamers with zinc atoms at center. Six insulin molecules arrange symmetrically around two zinc ions. This stabilizes hormone for storage in pancreas. When secreted, hexamer dissociates into monomers. Monomers are biologically active.
+                        By 1969, computers advanced sufficiently. She determined complete insulin structure. Insulin
+                        forms hexamers with zinc atoms at center. Six insulin molecules arrange symmetrically around two
+                        zinc ions. This stabilizes hormone for storage in pancreas. When secreted, hexamer dissociates
+                        into monomers. Monomers are biologically active.
                     </p>
                     <p>
-                        Insulin structure revealed how hormone binds receptor. It explained diabetes at molecular level. Structure enabled protein engineering. Scientists designed insulin variants with altered properties. Fast-acting insulins dissociate to monomers quickly. Long-acting insulins form stable hexamers. Millions of diabetes patients benefit from these engineered insulins based on Hodgkin's structure.
+                        Insulin structure revealed how hormone binds receptor. It explained diabetes at molecular level.
+                        Structure enabled protein engineering. Scientists designed insulin variants with altered
+                        properties. Fast-acting insulins dissociate to monomers quickly. Long-acting insulins form
+                        stable hexamers. Millions of diabetes patients benefit from these engineered insulins based on
+                        Hodgkin's structure.
                     </p>
                 </div>
 
                 <div class="science-subsection">
                     <h3>Impact on Structural Biology</h3>
                     <p>
-                        Hodgkin proved X-ray crystallography could solve large biological molecules. Before her work, proteins seemed impossibly complex. She developed systematic approaches. Growing high-quality crystals. Collecting complete diffraction data. Using heavy atoms for phasing. Applying computational methods. Her techniques became standard practice.
+                        Hodgkin proved X-ray crystallography could solve large biological molecules. Before her work,
+                        proteins seemed impossibly complex. She developed systematic approaches. Growing high-quality
+                        crystals. Collecting complete diffraction data. Using heavy atoms for phasing. Applying
+                        computational methods. Her techniques became standard practice.
                     </p>
                     <p>
-                        Max Perutz and John Kendrew solved hemoglobin and myoglobin structures using Hodgkin's methods. They won 1962 Nobel Prize. Francis Crick applied crystallography lessons to DNA structure. Modern drug discovery relies on protein crystallography. Scientists determine disease-related protein structures. They design drugs fitting protein active sites. This structure-based drug design directly descends from Hodgkin's pioneering work.
+                        Max Perutz and John Kendrew solved hemoglobin and myoglobin structures using Hodgkin's methods.
+                        They won 1962 Nobel Prize. Francis Crick applied crystallography lessons to DNA structure.
+                        Modern drug discovery relies on protein crystallography. Scientists determine disease-related
+                        protein structures. They design drugs fitting protein active sites. This structure-based drug
+                        design directly descends from Hodgkin's pioneering work.
                     </p>
                 </div>
             </div>
@@ -1071,13 +1274,24 @@
                 <div></div>
                 <div class="content-text">
                     <p>
-                        Hodgkin's parents encouraged intellectual curiosity. Her mother studied ancient textiles and Coptic embroidery. Her father excavated Byzantine churches. She grew up surrounded by artifacts and scientific inquiry. Chemistry fascinated her early. She grew copper sulfate crystals. She analyzed them under microscope. She read about X-ray crystallography at age 16.
+                        Hodgkin's parents encouraged intellectual curiosity. Her mother studied ancient textiles and
+                        Coptic embroidery. Her father excavated Byzantine churches. She grew up surrounded by artifacts
+                        and scientific inquiry. Chemistry fascinated her early. She grew copper sulfate crystals. She
+                        analyzed them under microscope. She read about X-ray crystallography at age 16.
                     </p>
                     <p>
-                        At Oxford, women faced discrimination. Cambridge graduate programs excluded women entirely until 1947. Oxford admitted women to Somerville College but rarely hired them as faculty. Hodgkin married Thomas Hodgkin in 1937. They had three children. She worked throughout pregnancies and childcare. Rheumatoid arthritis struck in her 20s. Her hands became deformed. She developed methods for manipulating crystals despite painful joints.
+                        At Oxford, women faced discrimination. Cambridge graduate programs excluded women entirely until
+                        1947. Oxford admitted women to Somerville College but rarely hired them as faculty. Hodgkin
+                        married Thomas Hodgkin in 1937. They had three children. She worked throughout pregnancies and
+                        childcare. Rheumatoid arthritis struck in her 20s. Her hands became deformed. She developed
+                        methods for manipulating crystals despite painful joints.
                     </p>
                     <p>
-                        She mentored many students. Margaret Thatcher studied chemistry under Hodgkin at Oxford. Thatcher called Hodgkin the person who most influenced her. Hodgkin encouraged young scientists regardless of gender. She believed science should serve humanity. She protested nuclear weapons. She promoted scientific cooperation between nations. Queen Elizabeth II awarded her Order of Merit in 1965, only second woman to receive this honor.
+                        She mentored many students. Margaret Thatcher studied chemistry under Hodgkin at Oxford.
+                        Thatcher called Hodgkin the person who most influenced her. Hodgkin encouraged young scientists
+                        regardless of gender. She believed science should serve humanity. She protested nuclear weapons.
+                        She promoted scientific cooperation between nations. Queen Elizabeth II awarded her Order of
+                        Merit in 1965, only second woman to receive this honor.
                     </p>
                 </div>
             </div>
@@ -1094,7 +1308,8 @@
                     <div class="timeline-content">
                         <h3>First Protein Crystal Photos</h3>
                         <p>
-                            At Cambridge, obtained first X-ray diffraction photos of protein crystals. Images showed proteins had ordered structures. Proved crystallography could tackle biological molecules.
+                            At Cambridge, obtained first X-ray diffraction photos of protein crystals. Images showed
+                            proteins had ordered structures. Proved crystallography could tackle biological molecules.
                         </p>
                     </div>
                 </div>
@@ -1104,7 +1319,9 @@
                     <div class="timeline-content">
                         <h3>Penicillin Structure Solved</h3>
                         <p>
-                            Determined penicillin contained beta-lactam ring during World War II. Churchill's government urgently needed structure for mass production. Work saved millions of lives in war and after.
+                            Determined penicillin contained beta-lactam ring during World War II. Churchill's government
+                            urgently needed structure for mass production. Work saved millions of lives in war and
+                            after.
                         </p>
                     </div>
                 </div>
@@ -1114,7 +1331,9 @@
                     <div class="timeline-content">
                         <h3>Vitamin B12 Complete</h3>
                         <p>
-                            Solved 181-atom B12 structure using computer calculations. First biological molecule determined computationally. Eight years work. Structure revealed cobalt coordination and corrin ring architecture.
+                            Solved 181-atom B12 structure using computer calculations. First biological molecule
+                            determined computationally. Eight years work. Structure revealed cobalt coordination and
+                            corrin ring architecture.
                         </p>
                     </div>
                 </div>
@@ -1124,7 +1343,8 @@
                     <div class="timeline-content">
                         <h3>Nobel Prize in Chemistry</h3>
                         <p>
-                            Became third woman and only British woman to win Nobel Prize in Chemistry. Citation recognized determinations of "the structures of important biochemical substances." Age 54.
+                            Became third woman and only British woman to win Nobel Prize in Chemistry. Citation
+                            recognized determinations of "the structures of important biochemical substances." Age 54.
                         </p>
                     </div>
                 </div>
@@ -1134,7 +1354,9 @@
                     <div class="timeline-content">
                         <h3>Insulin Structure Finally</h3>
                         <p>
-                            Completed insulin structure after 35 years. Revealed hexamer formation with zinc. Structure enabled protein engineering of insulin variants for diabetes treatment. Culmination of life's work.
+                            Completed insulin structure after 35 years. Revealed hexamer formation with zinc. Structure
+                            enabled protein engineering of insulin variants for diabetes treatment. Culmination of
+                            life's work.
                         </p>
                     </div>
                 </div>
@@ -1144,7 +1366,9 @@
                     <div class="timeline-content">
                         <h3>Death at 84</h3>
                         <p>
-                            Died July 29, 1994. Worked until her final years despite severe arthritis. Left legacy of structural biology. Inspired generations of crystallographers. Changed how scientists understand biological molecules.
+                            Died July 29, 1994. Worked until her final years despite severe arthritis. Left legacy of
+                            structural biology. Inspired generations of crystallographers. Changed how scientists
+                            understand biological molecules.
                         </p>
                     </div>
                 </div>
@@ -1157,56 +1381,74 @@
                     <div class="context-number">05 — Modern Impact</div>
                     <h2 class="modern-title">How Crystallography Changed Medicine</h2>
                     <p class="modern-subtitle">
-                        Hodgkin's techniques became foundation of structural biology. Protein structures guide drug discovery. Engineered insulins treat diabetes. Antibiotic derivatives save lives. X-ray crystallography determines thousands of protein structures annually.
+                        Hodgkin's techniques became foundation of structural biology. Protein structures guide drug
+                        discovery. Engineered insulins treat diabetes. Antibiotic derivatives save lives. X-ray
+                        crystallography determines thousands of protein structures annually.
                     </p>
                 </div>
-                
+
                 <div class="impact-grid">
-                    <div class="impact-card">
-                        <img src="../../assets/icons/antibiotic-development-icon.png" alt="Antibiotic development" class="impact-icon">
+                    <div class="impact-card" data-image="antibiotic-development">
+                        <img src="../../assets/icons/antibiotic-development-icon.png" alt="Antibiotic development"
+                            class="impact-icon">
                         <h3 class="impact-title">Antibiotic Medicine</h3>
                         <p class="impact-description">
-                            Penicillin structure enabled synthesis of antibiotic family. Beta-lactam antibiotics treat bacterial infections worldwide. Ampicillin, amoxicillin, cephalosporins all based on her structure. Millions of lives saved annually.
+                            Penicillin structure enabled synthesis of antibiotic family. Beta-lactam antibiotics treat
+                            bacterial infections worldwide. Ampicillin, amoxicillin, cephalosporins all based on her
+                            structure. Millions of lives saved annually.
                         </p>
                     </div>
 
-                    <div class="impact-card">
+                    <div class="impact-card" data-image="drug-design">
                         <img src="../../assets/icons/drug-design-icon.png" alt="Drug design" class="impact-icon">
                         <h3 class="impact-title">Structure-Based Drug Design</h3>
                         <p class="impact-description">
-                            Protein crystallography guides modern drug discovery. Scientists determine disease protein structures. Design molecules fitting active sites. Most new drugs start with X-ray structures. Hodgkin pioneered this approach.
+                            Protein crystallography guides modern drug discovery. Scientists determine disease protein
+                            structures. Design molecules fitting active sites. Most new drugs start with X-ray
+                            structures. Hodgkin pioneered this approach.
                         </p>
                     </div>
 
-                    <div class="impact-card">
-                        <img src="../../assets/icons/diabetes-treatment-icon.png" alt="Diabetes treatment" class="impact-icon">
+                    <div class="impact-card" data-image="diabetes-treatment">
+                        <img src="../../assets/icons/diabetes-treatment-icon.png" alt="Diabetes treatment"
+                            class="impact-icon">
                         <h3 class="impact-title">Engineered Insulins</h3>
                         <p class="impact-description">
-                            Insulin structure enabled protein engineering. Fast-acting insulins dissociate quickly. Long-acting insulins remain stable. Diabetes patients benefit from tailored treatments. All based on molecular structure knowledge.
+                            Insulin structure enabled protein engineering. Fast-acting insulins dissociate quickly.
+                            Long-acting insulins remain stable. Diabetes patients benefit from tailored treatments. All
+                            based on molecular structure knowledge.
                         </p>
                     </div>
 
-                    <div class="impact-card">
-                        <img src="../../assets/icons/structural-biology-icon.png" alt="Structural biology" class="impact-icon">
+                    <div class="impact-card" data-image="structural-biology">
+                        <img src="../../assets/icons/structural-biology-icon.png" alt="Structural biology"
+                            class="impact-icon">
                         <h3 class="impact-title">Structural Biology Field</h3>
                         <p class="impact-description">
-                            Hodgkin proved crystallography works for large biological molecules. Her methods became standard. Protein Data Bank contains 200,000+ structures. Every structure uses techniques she developed. Foundation of modern biology.
+                            Hodgkin proved crystallography works for large biological molecules. Her methods became
+                            standard. Protein Data Bank contains 200,000+ structures. Every structure uses techniques
+                            she developed. Foundation of modern biology.
                         </p>
                     </div>
 
-                    <div class="impact-card">
+                    <div class="impact-card" data-image="women-in-science">
                         <img src="../../assets/icons/women-science-icon.png" alt="Women in science" class="impact-icon">
                         <h3 class="impact-title">Women in Science</h3>
                         <p class="impact-description">
-                            First British woman winning science Nobel Prize. Worked throughout motherhood and arthritis. Mentored generations including Margaret Thatcher. Demonstrated women excel in demanding scientific research. Inspiration globally.
+                            First British woman winning science Nobel Prize. Worked throughout motherhood and arthritis.
+                            Mentored generations including Margaret Thatcher. Demonstrated women excel in demanding
+                            scientific research. Inspiration globally.
                         </p>
                     </div>
 
-                    <div class="impact-card">
-                        <img src="../../assets/icons/computational-biology-icon.png" alt="Computational biology" class="impact-icon">
+                    <div class="impact-card" data-image="computational-biology">
+                        <img src="../../assets/icons/computational-biology-icon.png" alt="Computational biology"
+                            class="impact-icon">
                         <h3 class="impact-title">Computational Crystallography</h3>
                         <p class="impact-description">
-                            First to use computers solving biological structures. B12 determination pioneered computational structural biology. Modern crystallography entirely computational. She foresaw and enabled computer revolution in science.
+                            First to use computers solving biological structures. B12 determination pioneered
+                            computational structural biology. Modern crystallography entirely computational. She foresaw
+                            and enabled computer revolution in science.
                         </p>
                     </div>
                 </div>
@@ -1230,357 +1472,358 @@
     </div>
 
     <script>
-    // ===== VERIFIED DATA FROM AUTHORITATIVE SOURCES =====
-    // Vitamin B12 (cobalamin): C₆₃H₈₈CoN₁₄O₁₄P
-    // Molecular weight: 1,355 Da, 181 atoms total
-    // Central cobalt atom (+3 oxidation state)
-    // Corrin ring: 4 pyrrole units, planar around cobalt
-    // Nobel Prize 1964 for B12, penicillin, insulin structures
+        // ===== VERIFIED DATA FROM AUTHORITATIVE SOURCES =====
+        // Vitamin B12 (cobalamin): C₆₃H₈₈CoN₁₄O₁₄P
+        // Molecular weight: 1,355 Da, 181 atoms total
+        // Central cobalt atom (+3 oxidation state)
+        // Corrin ring: 4 pyrrole units, planar around cobalt
+        // Nobel Prize 1964 for B12, penicillin, insulin structures
 
-    const cursor = document.getElementById('cursor');
-    let mouseX = 0, mouseY = 0;
+        const cursor = document.getElementById('cursor');
+        let mouseX = 0, mouseY = 0;
 
-    document.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-    });
-
-    function animateCursor() {
-        cursor.style.left = mouseX - 10 + 'px';
-        cursor.style.top = mouseY - 10 + 'px';
-        requestAnimationFrame(animateCursor);
-    }
-    animateCursor();
-
-    const hoverElements = document.querySelectorAll('a, button, .impact-card, .context-card, .timeline-content');
-    hoverElements.forEach(el => {
-        el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
-        el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
-    });
-
-    // ===== BACKGROUND CANVAS =====
-    const bgCanvas = document.getElementById('bg-canvas');
-    const bgCtx = bgCanvas.getContext('2d');
-
-    function resizeCanvas() {
-        bgCanvas.width = window.innerWidth;
-        bgCanvas.height = window.innerHeight;
-    }
-
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    const bgParticles = [];
-    const particleCount = 50;
-
-    for (let i = 0; i < particleCount; i++) {
-        bgParticles.push({
-            x: Math.random() * bgCanvas.width,
-            y: Math.random() * bgCanvas.height,
-            vx: (Math.random() - 0.5) * 0.4,
-            vy: (Math.random() - 0.5) * 0.4,
-            size: Math.random() * 2 + 1,
-            opacity: Math.random() * 0.3 + 0.1
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
         });
-    }
 
-    function animateBgParticles() {
-        bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
-        
-        bgParticles.forEach(particle => {
-            particle.x += particle.vx;
-            particle.y += particle.vy;
-            
-            if (particle.x < 0 || particle.x > bgCanvas.width) particle.vx *= -1;
-            if (particle.y < 0 || particle.y > bgCanvas.height) particle.vy *= -1;
-            
-            bgCtx.globalAlpha = particle.opacity;
-            bgCtx.fillStyle = '#5dade2';
-            bgCtx.fillRect(particle.x, particle.y, particle.size, particle.size);
+        function animateCursor() {
+            cursor.style.left = mouseX - 10 + 'px';
+            cursor.style.top = mouseY - 10 + 'px';
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        const hoverElements = document.querySelectorAll('a, button, .impact-card, .context-card, .timeline-content');
+        hoverElements.forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
         });
-        
-        requestAnimationFrame(animateBgParticles);
-    }
-    
-    animateBgParticles();
 
-    // ===== ANIMATION CONTROLS =====
-    let animationSpeed = 1.0;
-    let isPaused = false;
+        // ===== BACKGROUND CANVAS =====
+        const bgCanvas = document.getElementById('bg-canvas');
+        const bgCtx = bgCanvas.getContext('2d');
 
-    const speedControl = document.getElementById('speed-control');
-    const pauseButton = document.getElementById('pause-button');
+        function resizeCanvas() {
+            bgCanvas.width = window.innerWidth;
+            bgCanvas.height = window.innerHeight;
+        }
 
-    speedControl.addEventListener('input', (e) => {
-        animationSpeed = parseFloat(e.target.value);
-    });
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
 
-    pauseButton.addEventListener('click', () => {
-        isPaused = !isPaused;
-        pauseButton.textContent = isPaused ? 'Resume' : 'Pause';
-        pauseButton.classList.toggle('paused');
-    });
+        const bgParticles = [];
+        const particleCount = 50;
 
-    // ===== 3D VITAMIN B12 VISUALIZATION =====
-    const b12Canvas = document.getElementById('b12-3d-canvas');
-    const b12Scene = new THREE.Scene();
-    const b12Camera = new THREE.PerspectiveCamera(
-        60,
-        b12Canvas.clientWidth / b12Canvas.clientHeight,
-        0.1,
-        1000
-    );
-    const b12Renderer = new THREE.WebGLRenderer({ 
-        canvas: b12Canvas, 
-        antialias: true, 
-        alpha: true 
-    });
-    
-    b12Renderer.setSize(b12Canvas.clientWidth, b12Canvas.clientHeight);
-    b12Renderer.setClearColor(0x000000, 0);
-    b12Camera.position.set(0, 5, 20);
+        for (let i = 0; i < particleCount; i++) {
+            bgParticles.push({
+                x: Math.random() * bgCanvas.width,
+                y: Math.random() * bgCanvas.height,
+                vx: (Math.random() - 0.5) * 0.4,
+                vy: (Math.random() - 0.5) * 0.4,
+                size: Math.random() * 2 + 1,
+                opacity: Math.random() * 0.3 + 0.1
+            });
+        }
 
-    const controls = new THREE.OrbitControls(b12Camera, b12Renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.enableZoom = true;
-    controls.minDistance = 10;
-    controls.maxDistance = 50;
-    controls.autoRotate = true;
-    controls.autoRotateSpeed = 0.3;
+        function animateBgParticles() {
+            bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
 
-    const interactiveObjects = [];
+            bgParticles.forEach(particle => {
+                particle.x += particle.vx;
+                particle.y += particle.vy;
 
-    // ===== COBALT CENTER =====
-    const cobaltGeometry = new THREE.SphereGeometry(0.6, 32, 32);
-    const cobaltMaterial = new THREE.MeshPhongMaterial({ 
-        color: 0xff6b9d,
-        emissive: 0xff4477,
-        emissiveIntensity: 0.5,
-        shininess: 100
-    });
-    const cobaltAtom = new THREE.Mesh(cobaltGeometry, cobaltMaterial);
-    cobaltAtom.userData = {
-        type: 'cobalt',
-        name: 'Cobalt (Co)',
-        symbol: 'Co³⁺',
-        detail: 'Central metal ion, +3 oxidation state, coordinates with 4 nitrogen atoms'
-    };
-    b12Scene.add(cobaltAtom);
-    interactiveObjects.push(cobaltAtom);
+                if (particle.x < 0 || particle.x > bgCanvas.width) particle.vx *= -1;
+                if (particle.y < 0 || particle.y > bgCanvas.height) particle.vy *= -1;
 
-    // ===== CORRIN RING (simplified representation) =====
-    const corrinRing = new THREE.Group();
-    const angleStep = (Math.PI * 2) / 4;
-    const ringRadius = 3;
+                bgCtx.globalAlpha = particle.opacity;
+                bgCtx.fillStyle = '#5dade2';
+                bgCtx.fillRect(particle.x, particle.y, particle.size, particle.size);
+            });
 
-    for (let i = 0; i < 4; i++) {
-        const angle = i * angleStep;
-        const x = Math.cos(angle) * ringRadius;
-        const z = Math.sin(angle) * ringRadius;
-        
-        // Nitrogen atoms coordinating cobalt
-        const nGeometry = new THREE.SphereGeometry(0.4, 16, 16);
-        const nMaterial = new THREE.MeshPhongMaterial({ 
-            color: 0x3498db,
-            emissive: 0x2874a6,
+            requestAnimationFrame(animateBgParticles);
+        }
+
+        animateBgParticles();
+
+        // ===== ANIMATION CONTROLS =====
+        let animationSpeed = 1.0;
+        let isPaused = false;
+
+        const speedControl = document.getElementById('speed-control');
+        const pauseButton = document.getElementById('pause-button');
+
+        speedControl.addEventListener('input', (e) => {
+            animationSpeed = parseFloat(e.target.value);
+        });
+
+        pauseButton.addEventListener('click', () => {
+            isPaused = !isPaused;
+            pauseButton.textContent = isPaused ? 'Resume' : 'Pause';
+            pauseButton.classList.toggle('paused');
+        });
+
+        // ===== 3D VITAMIN B12 VISUALIZATION =====
+        const b12Canvas = document.getElementById('b12-3d-canvas');
+        const b12Scene = new THREE.Scene();
+        const b12Camera = new THREE.PerspectiveCamera(
+            60,
+            b12Canvas.clientWidth / b12Canvas.clientHeight,
+            0.1,
+            1000
+        );
+        const b12Renderer = new THREE.WebGLRenderer({
+            canvas: b12Canvas,
+            antialias: true,
+            alpha: true
+        });
+
+        b12Renderer.setSize(b12Canvas.clientWidth, b12Canvas.clientHeight);
+        b12Renderer.setClearColor(0x000000, 0);
+        b12Camera.position.set(0, 5, 20);
+
+        const controls = new THREE.OrbitControls(b12Camera, b12Renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.enableZoom = true;
+        controls.minDistance = 10;
+        controls.maxDistance = 50;
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 0.3;
+
+        const interactiveObjects = [];
+
+        // ===== COBALT CENTER =====
+        const cobaltGeometry = new THREE.SphereGeometry(0.6, 32, 32);
+        const cobaltMaterial = new THREE.MeshPhongMaterial({
+            color: 0xff6b9d,
+            emissive: 0xff4477,
+            emissiveIntensity: 0.5,
+            shininess: 100
+        });
+        const cobaltAtom = new THREE.Mesh(cobaltGeometry, cobaltMaterial);
+        cobaltAtom.userData = {
+            type: 'cobalt',
+            name: 'Cobalt (Co)',
+            symbol: 'Co³⁺',
+            detail: 'Central metal ion, +3 oxidation state, coordinates with 4 nitrogen atoms'
+        };
+        b12Scene.add(cobaltAtom);
+        interactiveObjects.push(cobaltAtom);
+
+        // ===== CORRIN RING (simplified representation) =====
+        const corrinRing = new THREE.Group();
+        const angleStep = (Math.PI * 2) / 4;
+        const ringRadius = 3;
+
+        for (let i = 0; i < 4; i++) {
+            const angle = i * angleStep;
+            const x = Math.cos(angle) * ringRadius;
+            const z = Math.sin(angle) * ringRadius;
+
+            // Nitrogen atoms coordinating cobalt
+            const nGeometry = new THREE.SphereGeometry(0.4, 16, 16);
+            const nMaterial = new THREE.MeshPhongMaterial({
+                color: 0x3498db,
+                emissive: 0x2874a6,
+                emissiveIntensity: 0.3
+            });
+            const nAtom = new THREE.Mesh(nGeometry, nMaterial);
+            nAtom.position.set(x, 0, z);
+            nAtom.userData = {
+                type: 'nitrogen',
+                name: 'Nitrogen (N)',
+                symbol: 'N',
+                detail: `Pyrrole nitrogen ${i + 1}, coordinates with central cobalt`
+            };
+            corrinRing.add(nAtom);
+            interactiveObjects.push(nAtom);
+
+            // Carbon atoms in ring
+            const nextAngle = (i + 1) * angleStep;
+            const midAngle = (angle + nextAngle) / 2;
+            const cx = Math.cos(midAngle) * ringRadius * 1.1;
+            const cz = Math.sin(midAngle) * ringRadius * 1.1;
+
+            const cGeometry = new THREE.SphereGeometry(0.35, 16, 16);
+            const cMaterial = new THREE.MeshPhongMaterial({
+                color: 0x2ecc71,
+                emissive: 0x27ae60,
+                emissiveIntensity: 0.2
+            });
+            const cAtom = new THREE.Mesh(cGeometry, cMaterial);
+            cAtom.position.set(cx, 0, cz);
+            cAtom.userData = {
+                type: 'carbon',
+                name: 'Carbon (C)',
+                symbol: 'C',
+                detail: 'Corrin ring carbon, part of macrocycle structure'
+            };
+            corrinRing.add(cAtom);
+            interactiveObjects.push(cAtom);
+
+            // Bonds
+            const bondGeometry = new THREE.CylinderGeometry(0.08, 0.08, ringRadius * 0.7, 8);
+            const bondMaterial = new THREE.MeshPhongMaterial({ color: 0xcccccc });
+            const bond = new THREE.Mesh(bondGeometry, bondMaterial);
+            bond.position.set((x + cx) / 2, 0, (z + cz) / 2);
+            bond.lookAt(cx, 0, cz);
+            bond.rotateX(Math.PI / 2);
+            corrinRing.add(bond);
+        }
+
+        b12Scene.add(corrinRing);
+
+        // ===== UPPER LIGAND (Cyano group) =====
+        const cyanoGeometry = new THREE.CylinderGeometry(0.15, 0.15, 2, 8);
+        const cyanoMaterial = new THREE.MeshPhongMaterial({
+            color: 0xe74c3c,
+            emissive: 0xc0392b,
             emissiveIntensity: 0.3
         });
-        const nAtom = new THREE.Mesh(nGeometry, nMaterial);
-        nAtom.position.set(x, 0, z);
-        nAtom.userData = {
-            type: 'nitrogen',
-            name: 'Nitrogen (N)',
-            symbol: 'N',
-            detail: `Pyrrole nitrogen ${i+1}, coordinates with central cobalt`
+        const cyano = new THREE.Mesh(cyanoGeometry, cyanoMaterial);
+        cyano.position.y = 1.5;
+        cyano.userData = {
+            type: 'cyano',
+            name: 'Cyano Group (-CN)',
+            symbol: 'CN',
+            detail: 'Upper axial ligand, makes cyanocobalamin (commercial B12)'
         };
-        corrinRing.add(nAtom);
-        interactiveObjects.push(nAtom);
-        
-        // Carbon atoms in ring
-        const nextAngle = (i + 1) * angleStep;
-        const midAngle = (angle + nextAngle) / 2;
-        const cx = Math.cos(midAngle) * ringRadius * 1.1;
-        const cz = Math.sin(midAngle) * ringRadius * 1.1;
-        
-        const cGeometry = new THREE.SphereGeometry(0.35, 16, 16);
-        const cMaterial = new THREE.MeshPhongMaterial({ 
-            color: 0x2ecc71,
-            emissive: 0x27ae60,
-            emissiveIntensity: 0.2
+        b12Scene.add(cyano);
+        interactiveObjects.push(cyano);
+
+        // ===== LOWER LIGAND (Dimethylbenzimidazole) =====
+        const lowerLigandGeometry = new THREE.BoxGeometry(1.5, 0.3, 1.5);
+        const lowerLigandMaterial = new THREE.MeshPhongMaterial({
+            color: 0xf39c12,
+            emissive: 0xe67e22,
+            emissiveIntensity: 0.3
         });
-        const cAtom = new THREE.Mesh(cGeometry, cMaterial);
-        cAtom.position.set(cx, 0, cz);
-        cAtom.userData = {
-            type: 'carbon',
-            name: 'Carbon (C)',
-            symbol: 'C',
-            detail: 'Corrin ring carbon, part of macrocycle structure'
+        const lowerLigand = new THREE.Mesh(lowerLigandGeometry, lowerLigandMaterial);
+        lowerLigand.position.y = -2;
+        lowerLigand.userData = {
+            type: 'ligand',
+            name: 'Dimethylbenzimidazole',
+            symbol: 'DMB',
+            detail: 'Lower axial ligand with ribose-phosphate linker'
         };
-        corrinRing.add(cAtom);
-        interactiveObjects.push(cAtom);
-        
-        // Bonds
-        const bondGeometry = new THREE.CylinderGeometry(0.08, 0.08, ringRadius * 0.7, 8);
-        const bondMaterial = new THREE.MeshPhongMaterial({ color: 0xcccccc });
-        const bond = new THREE.Mesh(bondGeometry, bondMaterial);
-        bond.position.set((x + cx) / 2, 0, (z + cz) / 2);
-        bond.lookAt(cx, 0, cz);
-        bond.rotateX(Math.PI / 2);
-        corrinRing.add(bond);
-    }
+        b12Scene.add(lowerLigand);
+        interactiveObjects.push(lowerLigand);
 
-    b12Scene.add(corrinRing);
+        // ===== LIGHTING =====
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        b12Scene.add(ambientLight);
 
-    // ===== UPPER LIGAND (Cyano group) =====
-    const cyanoGeometry = new THREE.CylinderGeometry(0.15, 0.15, 2, 8);
-    const cyanoMaterial = new THREE.MeshPhongMaterial({ 
-        color: 0xe74c3c,
-        emissive: 0xc0392b,
-        emissiveIntensity: 0.3
-    });
-    const cyano = new THREE.Mesh(cyanoGeometry, cyanoMaterial);
-    cyano.position.y = 1.5;
-    cyano.userData = {
-        type: 'cyano',
-        name: 'Cyano Group (-CN)',
-        symbol: 'CN',
-        detail: 'Upper axial ligand, makes cyanocobalamin (commercial B12)'
-    };
-    b12Scene.add(cyano);
-    interactiveObjects.push(cyano);
+        const light1 = new THREE.PointLight(0x5dade2, 2, 60);
+        light1.position.set(10, 10, 10);
+        b12Scene.add(light1);
 
-    // ===== LOWER LIGAND (Dimethylbenzimidazole) =====
-    const lowerLigandGeometry = new THREE.BoxGeometry(1.5, 0.3, 1.5);
-    const lowerLigandMaterial = new THREE.MeshPhongMaterial({ 
-        color: 0xf39c12,
-        emissive: 0xe67e22,
-        emissiveIntensity: 0.3
-    });
-    const lowerLigand = new THREE.Mesh(lowerLigandGeometry, lowerLigandMaterial);
-    lowerLigand.position.y = -2;
-    lowerLigand.userData = {
-        type: 'ligand',
-        name: 'Dimethylbenzimidazole',
-        symbol: 'DMB',
-        detail: 'Lower axial ligand with ribose-phosphate linker'
-    };
-    b12Scene.add(lowerLigand);
-    interactiveObjects.push(lowerLigand);
+        const light2 = new THREE.PointLight(0xff6b9d, 1.5, 60);
+        light2.position.set(-10, -10, 10);
+        b12Scene.add(light2);
 
-    // ===== LIGHTING =====
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-    b12Scene.add(ambientLight);
+        // ===== TOOLTIP =====
+        const tooltip = document.createElement('div');
+        tooltip.className = 'b12-tooltip';
+        document.body.appendChild(tooltip);
 
-    const light1 = new THREE.PointLight(0x5dade2, 2, 60);
-    light1.position.set(10, 10, 10);
-    b12Scene.add(light1);
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        let hoveredObject = null;
 
-    const light2 = new THREE.PointLight(0xff6b9d, 1.5, 60);
-    light2.position.set(-10, -10, 10);
-    b12Scene.add(light2);
+        b12Canvas.addEventListener('mousemove', (event) => {
+            const rect = b12Canvas.getBoundingClientRect();
+            mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
-    // ===== TOOLTIP =====
-    const tooltip = document.createElement('div');
-    tooltip.className = 'b12-tooltip';
-    document.body.appendChild(tooltip);
+            raycaster.setFromCamera(mouse, b12Camera);
+            const intersects = raycaster.intersectObjects(interactiveObjects);
 
-    const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
-    let hoveredObject = null;
+            if (intersects.length > 0) {
+                const object = intersects[0].object;
+                const data = object.userData;
 
-    b12Canvas.addEventListener('mousemove', (event) => {
-        const rect = b12Canvas.getBoundingClientRect();
-        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+                if (hoveredObject !== object) {
+                    hoveredObject = object;
 
-        raycaster.setFromCamera(mouse, b12Camera);
-        const intersects = raycaster.intersectObjects(interactiveObjects);
+                    let tooltipHTML = `<strong>${data.name}</strong>`;
+                    if (data.symbol) {
+                        tooltipHTML += `<span class="tooltip-detail">Symbol: ${data.symbol}</span>`;
+                    }
+                    tooltipHTML += `<span class="tooltip-detail">${data.detail}</span>`;
 
-        if (intersects.length > 0) {
-            const object = intersects[0].object;
-            const data = object.userData;
-            
-            if (hoveredObject !== object) {
-                hoveredObject = object;
-                
-                let tooltipHTML = `<strong>${data.name}</strong>`;
-                if (data.symbol) {
-                    tooltipHTML += `<span class="tooltip-detail">Symbol: ${data.symbol}</span>`;
+                    tooltip.innerHTML = tooltipHTML;
                 }
-                tooltipHTML += `<span class="tooltip-detail">${data.detail}</span>`;
-                
-                tooltip.innerHTML = tooltipHTML;
-            }
-            
-            tooltip.style.left = (event.clientX + 15) + 'px';
-            tooltip.style.top = (event.clientY + 15) + 'px';
-            tooltip.classList.add('visible');
-            
-            b12Canvas.style.cursor = 'pointer';
-            controls.autoRotate = false;
-        } else {
-            hoveredObject = null;
-            tooltip.classList.remove('visible');
-            b12Canvas.style.cursor = 'grab';
-            controls.autoRotate = true;
-        }
-    });
 
-    b12Canvas.addEventListener('mouseleave', () => {
-        tooltip.classList.remove('visible');
-        hoveredObject = null;
-        controls.autoRotate = true;
-    });
+                tooltip.style.left = (event.clientX + 15) + 'px';
+                tooltip.style.top = (event.clientY + 15) + 'px';
+                tooltip.classList.add('visible');
 
-    // ===== ANIMATION =====
-    let time = 0;
-
-    function animateB12() {
-        requestAnimationFrame(animateB12);
-        
-        if (!isPaused) {
-            time += 0.005 * animationSpeed;
-        }
-
-        controls.update();
-        b12Renderer.render(b12Scene, b12Camera);
-    }
-
-    animateB12();
-
-    window.addEventListener('resize', () => {
-        b12Camera.aspect = b12Canvas.clientWidth / b12Canvas.clientHeight;
-        b12Camera.updateProjectionMatrix();
-        b12Renderer.setSize(b12Canvas.clientWidth, b12Canvas.clientHeight);
-    });
-
-    // ===== SCROLL ANIMATIONS =====
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
+                b12Canvas.style.cursor = 'pointer';
+                controls.autoRotate = false;
+            } else {
+                hoveredObject = null;
+                tooltip.classList.remove('visible');
+                b12Canvas.style.cursor = 'grab';
+                controls.autoRotate = true;
             }
         });
-    }, observerOptions);
 
-    document.querySelectorAll('.timeline-item, .impact-card, .context-card').forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(30px)';
-        el.style.transition = 'all 0.6s ease';
-        observer.observe(el);
-    });
+        b12Canvas.addEventListener('mouseleave', () => {
+            tooltip.classList.remove('visible');
+            hoveredObject = null;
+            controls.autoRotate = true;
+        });
 
-    console.log('Dorothy Hodgkin page loaded.');
-    console.log('Vitamin B12: C₆₃H₈₈CoN₁₄O₁₄P, 1,355 Da, 181 atoms');
-    console.log('Nobel Prize 1964 for crystallography of penicillin, B12, insulin');
-    console.log('Data verified from: Nobel Prize archives, Royal Society, Oxford');
+        // ===== ANIMATION =====
+        let time = 0;
+
+        function animateB12() {
+            requestAnimationFrame(animateB12);
+
+            if (!isPaused) {
+                time += 0.005 * animationSpeed;
+            }
+
+            controls.update();
+            b12Renderer.render(b12Scene, b12Camera);
+        }
+
+        animateB12();
+
+        window.addEventListener('resize', () => {
+            b12Camera.aspect = b12Canvas.clientWidth / b12Canvas.clientHeight;
+            b12Camera.updateProjectionMatrix();
+            b12Renderer.setSize(b12Canvas.clientWidth, b12Canvas.clientHeight);
+        });
+
+        // ===== SCROLL ANIMATIONS =====
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.timeline-item, .impact-card, .context-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.6s ease';
+            observer.observe(el);
+        });
+
+        console.log('Dorothy Hodgkin page loaded.');
+        console.log('Vitamin B12: C₆₃H₈₈CoN₁₄O₁₄P, 1,355 Da, 181 atoms');
+        console.log('Nobel Prize 1964 for crystallography of penicillin, B12, insulin');
+        console.log('Data verified from: Nobel Prize archives, Royal Society, Oxford');
     </script>
 </body>
+
 </html>

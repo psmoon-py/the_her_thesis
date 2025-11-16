@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cecilia Payne-Gaposchkin - The Stellar Composer | The HER Thesis</title>
     <link rel="icon" type="image/png" href="../../favicon.png">
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -37,7 +41,8 @@
             box-sizing: border-box;
         }
 
-        html, body {
+        html,
+        body {
             height: 100%;
             font-family: 'Inter', system-ui, sans-serif;
             background: var(--bg-dark);
@@ -454,16 +459,22 @@
             margin-top: 2px;
         }
 
-        .historical-context, .content-section, .science-deep-dive, .modern-impact-section {
+        .historical-context,
+        .content-section,
+        .science-deep-dive,
+        .modern-impact-section {
             padding: 100px 40px;
         }
 
-        .context-container, .science-container {
+        .context-container,
+        .science-container {
             max-width: 1200px;
             margin: 0 auto;
         }
 
-        .context-header, .science-header, .modern-impact-header {
+        .context-header,
+        .science-header,
+        .modern-impact-header {
             text-align: center;
             margin-bottom: 80px;
         }
@@ -477,14 +488,18 @@
             margin-bottom: 20px;
         }
 
-        .context-title, .science-title, .modern-title {
+        .context-title,
+        .science-title,
+        .modern-title {
             font-family: 'Playfair Display', serif;
             font-size: 3.5rem;
             font-weight: 700;
             margin-bottom: 30px;
         }
 
-        .context-subtitle, .science-intro, .modern-subtitle {
+        .context-subtitle,
+        .science-intro,
+        .modern-subtitle {
             font-size: 20px;
             color: var(--text-dim);
             max-width: 700px;
@@ -492,7 +507,8 @@
             line-height: 1.6;
         }
 
-        .context-grid, .impact-grid {
+        .context-grid,
+        .impact-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 40px;
@@ -506,7 +522,8 @@
             margin: 60px auto 0;
         }
 
-        .context-card, .impact-card {
+        .context-card,
+        .impact-card {
             background: var(--glass);
             border: 1px solid var(--border);
             border-radius: 16px;
@@ -521,13 +538,102 @@
             padding: 30px;
         }
 
-        .context-card:hover, .impact-card:hover {
+        .context-card::before,
+        .impact-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            z-index: -1;
+            transition: opacity 0.4s ease;
+        }
+
+        .context-card:hover::before,
+        .impact-card:hover::before {
+            opacity: 1;
+        }
+
+        .context-card::after,
+        .impact-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.15));
+            z-index: -1;
+        }
+
+        /* ======================================= */
+        /* 01. Context Card Background Images      */
+        /* ======================================= */
+
+        /* NOTE: You MUST add the data-image attributes to your HTML context-card divs for these to work. */
+        /* Example: <div class="context-card" data-image="wendover"> */
+
+        .context-card[data-image="wendover-england"]::before {
+            background-image: url('../../assets/images/context/wendover-england.webp');
+        }
+
+        .context-card[data-image="harvard-observatory"]::before {
+            background-image: url('../../assets/images/context/harvard-observatory.jpg');
+        }
+
+        .context-card[data-image="phd-thesis"]::before {
+            background-image: url('../../assets/images/context/phd-thesis.jpg');
+        }
+
+        .context-card[data-image="scientific-vindication"]::before {
+            background-image: url('../../assets/images/context/russell-vindication.jpg');
+        }
+
+
+        /* ======================================= */
+        /* 02. Impact Card Background Images       */
+        /* ======================================= */
+
+        /* NOTE: You MUST add the data-image attributes to your HTML impact-card divs for these to work. */
+        /* Example: <div class="impact-card" data-image="stellar-physics"> */
+
+        .impact-card[data-image="stellar-physics"]::before {
+            background-image: url('../../assets/images/impact/stellar-physics.webp');
+        }
+
+        .impact-card[data-image="cosmology"]::before {
+            background-image: url('../../assets/images/impact/big-bang-cosmology.jpg');
+        }
+
+        .impact-card[data-image="spectroscopy"]::before {
+            background-image: url('../../assets/images/impact/spectroscopy-analysis.jpg');
+        }
+
+        .impact-card[data-image="nuclear-fusion"]::before {
+            background-image: url('../../assets/images/impact/nuclear-fusion.jpg');
+        }
+
+        .impact-card[data-image="women-in-astronomy"]::before {
+            background-image: url('../../assets/images/impact/women-astronomy.jpg');
+        }
+
+        .impact-card[data-image="thesis-legacy"]::before {
+            background-image: url('../../assets/images/impact/thesis-legacy.jpg');
+        }
+
+        .context-card:hover,
+        .impact-card:hover {
             transform: translateY(-8px);
             border-color: var(--accent);
             box-shadow: 0 30px 60px rgba(212, 175, 55, 0.2);
         }
 
-        .context-icon, .impact-icon {
+        .context-icon,
+        .impact-icon {
             width: 60px;
             height: 60px;
             margin-bottom: 20px;
@@ -540,7 +646,8 @@
             height: 50px;
         }
 
-        .context-card-title, .impact-title {
+        .context-card-title,
+        .impact-title {
             font-family: 'Playfair Display', serif;
             font-size: 1.5rem;
             font-weight: 700;
@@ -552,12 +659,13 @@
             margin-bottom: 12px;
         }
 
-        .context-card-text, .impact-description {
+        .context-card-text,
+        .impact-description {
             font-size: 16px;
             line-height: 1.7;
             color: var(--text-dim);
         }
-        
+
         .context-card:hover .context-card-text,
         .impact-card:hover .impact-description {
             opacity: 0.1;
@@ -805,6 +913,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -812,12 +921,16 @@
         }
 
         @media (max-width: 1024px) {
-            .hero-content, .star-container {
+
+            .hero-content,
+            .star-container {
                 grid-template-columns: 1fr;
                 gap: 60px;
             }
 
-            .section-header, .section-content, .timeline-item {
+            .section-header,
+            .section-content,
+            .timeline-item {
                 grid-template-columns: 1fr;
                 gap: 30px;
             }
@@ -831,7 +944,8 @@
                 right: auto;
             }
 
-            .context-grid, .impact-grid {
+            .context-grid,
+            .impact-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -845,11 +959,18 @@
                 padding: 100px 20px 60px;
             }
 
-            .content-section, .star-3d-section, .historical-context, .modern-impact-section, .science-deep-dive {
+            .content-section,
+            .star-3d-section,
+            .historical-context,
+            .modern-impact-section,
+            .science-deep-dive {
                 padding: 60px 20px;
             }
 
-            .hero-title, .context-title, .modern-title, .science-title {
+            .hero-title,
+            .context-title,
+            .modern-title,
+            .science-title {
                 font-size: 2.5rem;
             }
 
@@ -867,6 +988,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="custom-cursor" id="cursor"></div>
     <canvas id="bg-canvas"></canvas>
@@ -889,7 +1011,10 @@
                     <div class="hero-subtitle">Astrophysicist · 1900-1979</div>
                     <h1 class="hero-title">Cecilia Payne-Gaposchkin</h1>
                     <p class="hero-description">
-                        The British-American astronomer who proved stars are primarily hydrogen and helium. Her 1925 PhD thesis revolutionized astrophysics. She determined stellar composition through spectroscopy, contradicting belief that stars resembled Earth. Initially called "impossible," her discovery became fundamental to stellar physics.
+                        The British-American astronomer who proved stars are primarily hydrogen and helium. Her 1925 PhD
+                        thesis revolutionized astrophysics. She determined stellar composition through spectroscopy,
+                        contradicting belief that stars resembled Earth. Initially called "impossible," her discovery
+                        became fundamental to stellar physics.
                     </p>
                     <div class="hero-stats">
                         <div class="stat-item">
@@ -913,7 +1038,8 @@
                 <div class="hero-visual">
                     <img src="../../assets/images/cecilia-payne-portrait.jpg" alt="Cecilia Payne" class="hero-image">
                     <div class="image-overlay">
-                        <div class="image-caption">Cecilia Payne studying stellar spectra, Harvard Observatory, 1925</div>
+                        <div class="image-caption">Cecilia Payne studying stellar spectra, Harvard Observatory, 1925
+                        </div>
                     </div>
                 </div>
             </div>
@@ -925,40 +1051,72 @@
                     <div class="context-number">01 — Historical Context</div>
                     <h2 class="context-title">Where Did the Idea Come From?</h2>
                     <p class="context-subtitle">
-                        Before Payne, astronomers believed stars had Earth-like composition. Stars showed absorption lines in spectra. Scientists interpreted these as proof of familiar elements like iron and silicon. Payne analyzed thousands of spectra. She discovered temperature affects line intensity more than abundance. Stars are nearly pure hydrogen and helium.
+                        Before Payne, astronomers believed stars had Earth-like composition. Stars showed absorption
+                        lines in spectra. Scientists interpreted these as proof of familiar elements like iron and
+                        silicon. Payne analyzed thousands of spectra. She discovered temperature affects line intensity
+                        more than abundance. Stars are nearly pure hydrogen and helium.
                     </p>
                 </div>
-                
+
                 <div class="context-grid">
-                    <div class="context-card">
-                        <img src="../../assets/icons/wendover-england-icon.png" alt="Wendover England" class="context-icon">
+                    <div class="context-card" data-image="wendover-england">
+                        <img src="../../assets/icons/wendover-england-icon.png" alt="Wendover England"
+                            class="context-icon">
                         <h3 class="context-card-title">Wendover 1900: Mathematical Prodigy</h3>
                         <p class="context-card-text">
-                            Cecilia Helena Payne was born May 10, 1900, in Wendover, Buckinghamshire, England. Her father Edward Payne was lawyer and historian. He died when Cecilia was four. Her mother Emma encouraged education despite gender barriers. Cecilia excelled at mathematics early. She won scholarship to Cambridge. Newnham College admitted her in 1919. She studied natural sciences - botany, physics, chemistry. Astronomy lectures by Arthur Eddington changed her path. Eddington presented 1919 solar eclipse results confirming Einstein's relativity. Cecilia decided to become astronomer. But British universities barred women from degrees and faculty positions.
+                            Cecilia Helena Payne was born May 10, 1900, in Wendover, Buckinghamshire, England. Her
+                            father Edward Payne was lawyer and historian. He died when Cecilia was four. Her mother Emma
+                            encouraged education despite gender barriers. Cecilia excelled at mathematics early. She won
+                            scholarship to Cambridge. Newnham College admitted her in 1919. She studied natural sciences
+                            - botany, physics, chemistry. Astronomy lectures by Arthur Eddington changed her path.
+                            Eddington presented 1919 solar eclipse results confirming Einstein's relativity. Cecilia
+                            decided to become astronomer. But British universities barred women from degrees and faculty
+                            positions.
                         </p>
                     </div>
 
-                    <div class="context-card">
-                        <img src="../../assets/icons/harvard-observatory-icon.png" alt="Harvard Observatory" class="context-icon">
+                    <div class="context-card" data-image="harvard-observatory">
+                        <img src="../../assets/icons/harvard-observatory-icon.png" alt="Harvard Observatory"
+                            class="context-icon">
                         <h3 class="context-card-title">Harvard 1923: Stellar Spectroscopy</h3>
                         <p class="context-card-text">
-                            Facing discrimination in Britain, Payne emigrated to America in 1923. Harlow Shapley offered fellowship at Harvard College Observatory. She joined team analyzing stellar spectra. Harvard had photographed thousands of star spectra since 1880s. Astronomers classified stars by spectral type. But composition remained unknown. Payne studied relationship between spectral lines and stellar temperature. She used Saha ionization equation developed in 1920. This equation predicts ionization states of elements at different temperatures. Payne calculated theoretical absorption line strengths. She compared with observed stellar spectra. Results shocked her. Stars contained million times more hydrogen than Earth.
+                            Facing discrimination in Britain, Payne emigrated to America in 1923. Harlow Shapley offered
+                            fellowship at Harvard College Observatory. She joined team analyzing stellar spectra.
+                            Harvard had photographed thousands of star spectra since 1880s. Astronomers classified stars
+                            by spectral type. But composition remained unknown. Payne studied relationship between
+                            spectral lines and stellar temperature. She used Saha ionization equation developed in 1920.
+                            This equation predicts ionization states of elements at different temperatures. Payne
+                            calculated theoretical absorption line strengths. She compared with observed stellar
+                            spectra. Results shocked her. Stars contained million times more hydrogen than Earth.
                         </p>
                     </div>
 
-                    <div class="context-card">
+                    <div class="context-card" data-image="phd-thesis">
                         <img src="../../assets/icons/phd-thesis-icon.png" alt="PhD thesis" class="context-icon">
                         <h3 class="context-card-title">1925 Thesis: Revolutionary Discovery</h3>
                         <p class="context-card-text">
-                            Payne completed PhD thesis "Stellar Atmospheres" in 1925. She was first person to earn astronomy PhD from Radcliffe College (Harvard's women's institution). Thesis proposed stars are 73% hydrogen, 25% helium, 2% heavier elements. This contradicted prevailing belief. Astronomers thought stars resembled Earth chemically. Henry Norris Russell at Princeton reviewed thesis. He called hydrogen abundance "almost certainly not real." Russell forced Payne to add disclaimer calling her main result erroneous. She downplayed discovery to get degree. But privately she knew she was correct. Data was overwhelming.
+                            Payne completed PhD thesis "Stellar Atmospheres" in 1925. She was first person to earn
+                            astronomy PhD from Radcliffe College (Harvard's women's institution). Thesis proposed stars
+                            are 73% hydrogen, 25% helium, 2% heavier elements. This contradicted prevailing belief.
+                            Astronomers thought stars resembled Earth chemically. Henry Norris Russell at Princeton
+                            reviewed thesis. He called hydrogen abundance "almost certainly not real." Russell forced
+                            Payne to add disclaimer calling her main result erroneous. She downplayed discovery to get
+                            degree. But privately she knew she was correct. Data was overwhelming.
                         </p>
                     </div>
 
-                    <div class="context-card">
-                        <img src="../../assets/icons/vindication-icon.png" alt="Scientific vindication" class="context-icon">
+                    <div class="context-card" data-image="scientific-vindication">
+                        <img src="../../assets/icons/vindication-icon.png" alt="Scientific vindication"
+                            class="context-icon">
                         <h3 class="context-card-title">1929: Russell's Confirmation</h3>
                         <p class="context-card-text">
-                            Russell continued analyzing spectra. By 1929, his own calculations confirmed Payne's hydrogen abundance. He published paper crediting her but claiming independent discovery. Payne received little recognition initially. She worked at Harvard for decades as technical assistant despite revolutionary contributions. Not until 1956 did Harvard promote her to full professor. She was first woman to achieve this rank. Her 1925 thesis is now considered most brilliant PhD thesis in astronomy. It established that hydrogen and helium dominate universe. This fundamental fact underlies all modern astrophysics.
+                            Russell continued analyzing spectra. By 1929, his own calculations confirmed Payne's
+                            hydrogen abundance. He published paper crediting her but claiming independent discovery.
+                            Payne received little recognition initially. She worked at Harvard for decades as technical
+                            assistant despite revolutionary contributions. Not until 1956 did Harvard promote her to
+                            full professor. She was first woman to achieve this rank. Her 1925 thesis is now considered
+                            most brilliant PhD thesis in astronomy. It established that hydrogen and helium dominate
+                            universe. This fundamental fact underlies all modern astrophysics.
                         </p>
                     </div>
                 </div>
@@ -972,23 +1130,30 @@
                     <div class="star-controls-hint">Drag to rotate · Scroll to zoom · Hover for details</div>
                     <div class="star-controls">
                         <span class="control-label">Speed</span>
-                        <input type="range" min="0.1" max="2" step="0.1" value="1" class="speed-slider" id="speed-control">
+                        <input type="range" min="0.1" max="2" step="0.1" value="1" class="speed-slider"
+                            id="speed-control">
                         <button class="pause-button" id="pause-button">Pause</button>
                     </div>
                 </div>
                 <div class="star-explanation">
                     <h2 class="star-title">Understanding Stellar Composition</h2>
                     <p class="star-text">
-                        <strong>Star interior</strong> (yellow sphere) represents fusion core. Temperature reaches 15 million Kelvin. Pressure is 250 billion atmospheres. Nuclear fusion converts hydrogen into helium.
+                        <strong>Star interior</strong> (yellow sphere) represents fusion core. Temperature reaches 15
+                        million Kelvin. Pressure is 250 billion atmospheres. Nuclear fusion converts hydrogen into
+                        helium.
                     </p>
                     <p class="star-text">
-                        <strong>Hydrogen atoms</strong> (white particles, 73%) are primary fuel. Four hydrogen nuclei (protons) fuse through proton-proton chain. This releases energy keeping star hot and luminous.
+                        <strong>Hydrogen atoms</strong> (white particles, 73%) are primary fuel. Four hydrogen nuclei
+                        (protons) fuse through proton-proton chain. This releases energy keeping star hot and luminous.
                     </p>
                     <p class="star-text">
-                        <strong>Helium atoms</strong> (pink particles, 25%) are fusion product. Each helium nucleus contains two protons and two neutrons. Helium accumulates in core over billions of years.
+                        <strong>Helium atoms</strong> (pink particles, 25%) are fusion product. Each helium nucleus
+                        contains two protons and two neutrons. Helium accumulates in core over billions of years.
                     </p>
                     <p class="star-text">
-                        <strong>Payne's discovery</strong> showed stars are fundamentally different from Earth. Earth is silicate and iron. Stars are hydrogen and helium plasma. This composition determines stellar evolution, nuclear reactions, and ultimate fate.
+                        <strong>Payne's discovery</strong> showed stars are fundamentally different from Earth. Earth is
+                        silicate and iron. Stars are hydrogen and helium plasma. This composition determines stellar
+                        evolution, nuclear reactions, and ultimate fate.
                     </p>
                 </div>
             </div>
@@ -1000,24 +1165,37 @@
                     <div class="context-number">02 — The Science</div>
                     <h2 class="science-title">What Is Stellar Spectroscopy?</h2>
                     <p class="science-intro">
-                        Stellar spectroscopy analyzes starlight split into spectrum. Atoms absorb specific wavelengths creating dark absorption lines. Line pattern reveals chemical composition. Payne discovered temperature controls line strength more than abundance. This insight unlocked stellar composition.
+                        Stellar spectroscopy analyzes starlight split into spectrum. Atoms absorb specific wavelengths
+                        creating dark absorption lines. Line pattern reveals chemical composition. Payne discovered
+                        temperature controls line strength more than abundance. This insight unlocked stellar
+                        composition.
                     </p>
                 </div>
 
                 <div class="science-subsection">
                     <h3>The Saha Ionization Equation</h3>
                     <p>
-                        Meghnad Saha published ionization equation in 1920. It predicts fraction of atoms ionized at given temperature and pressure. Ionization removes electrons from atoms. Ionized atoms produce different spectral lines than neutral atoms. Temperature strongly affects ionization state.
+                        Meghnad Saha published ionization equation in 1920. It predicts fraction of atoms ionized at
+                        given temperature and pressure. Ionization removes electrons from atoms. Ionized atoms produce
+                        different spectral lines than neutral atoms. Temperature strongly affects ionization state.
                     </p>
                     <p>
-                        Payne realized previous astronomers misinterpreted spectra. They assumed strong absorption lines meant high abundance. But Saha equation showed temperature matters more. Hydrogen has strong Balmer absorption lines only at 10,000K surface temperature. Cooler or hotter stars ionize hydrogen differently. Lines weaken. This made hydrogen appear rare when actually abundant.
+                        Payne realized previous astronomers misinterpreted spectra. They assumed strong absorption lines
+                        meant high abundance. But Saha equation showed temperature matters more. Hydrogen has strong
+                        Balmer absorption lines only at 10,000K surface temperature. Cooler or hotter stars ionize
+                        hydrogen differently. Lines weaken. This made hydrogen appear rare when actually abundant.
                     </p>
                     <p>
-                        Payne calculated expected line strengths for different elements at various temperatures. She applied Saha equation to thousands of stellar spectra. Only hydrogen and helium abundance explained observations. Other elements were million times less abundant. Stars are not Earth-like. They are hydrogen-helium plasma with trace metals.
+                        Payne calculated expected line strengths for different elements at various temperatures. She
+                        applied Saha equation to thousands of stellar spectra. Only hydrogen and helium abundance
+                        explained observations. Other elements were million times less abundant. Stars are not
+                        Earth-like. They are hydrogen-helium plasma with trace metals.
                     </p>
                     <div class="science-highlight-box">
                         <p>
-                            <strong>Verified composition:</strong> Sun is 73.46% hydrogen, 24.85% helium, 1.69% heavier elements by mass. Hydrogen absorption lines (Balmer series): H-alpha 656.3nm, H-beta 486.1nm, H-gamma 434.0nm. Temperature 5,778K at photosphere.
+                            <strong>Verified composition:</strong> Sun is 73.46% hydrogen, 24.85% helium, 1.69% heavier
+                            elements by mass. Hydrogen absorption lines (Balmer series): H-alpha 656.3nm, H-beta
+                            486.1nm, H-gamma 434.0nm. Temperature 5,778K at photosphere.
                         </p>
                     </div>
                 </div>
@@ -1025,23 +1203,40 @@
                 <div class="science-subsection">
                     <h3>Why Astronomers Resisted</h3>
                     <p>
-                        In 1920s, astronomers believed stars evolved from hot to cool. They thought stars formed from condensing nebulae similar to solar system. This implied Earth-like composition. Strong iron lines in spectra supported this view. Meteorites contained iron. Logic suggested stars did too.
+                        In 1920s, astronomers believed stars evolved from hot to cool. They thought stars formed from
+                        condensing nebulae similar to solar system. This implied Earth-like composition. Strong iron
+                        lines in spectra supported this view. Meteorites contained iron. Logic suggested stars did too.
                     </p>
                     <p>
-                        Payne's hydrogen dominance seemed impossible. If stars were mostly hydrogen, where did heavier elements come from? Nuclear physics was primitive. Fusion was theoretical speculation. Astronomers did not understand stars generate energy through nuclear reactions. They thought stars contracted gravitationally, releasing heat.
+                        Payne's hydrogen dominance seemed impossible. If stars were mostly hydrogen, where did heavier
+                        elements come from? Nuclear physics was primitive. Fusion was theoretical speculation.
+                        Astronomers did not understand stars generate energy through nuclear reactions. They thought
+                        stars contracted gravitationally, releasing heat.
                     </p>
                     <p>
-                        Henry Norris Russell was preeminent stellar astronomer. He reviewed Payne's thesis. Her conclusions contradicted his beliefs. He dismissed hydrogen abundance as artifact of ionization effects. He forced her to downplay findings. Russell's authority silenced her. Not until he independently confirmed hydrogen abundance four years later did scientific community accept Payne's discovery.
+                        Henry Norris Russell was preeminent stellar astronomer. He reviewed Payne's thesis. Her
+                        conclusions contradicted his beliefs. He dismissed hydrogen abundance as artifact of ionization
+                        effects. He forced her to downplay findings. Russell's authority silenced her. Not until he
+                        independently confirmed hydrogen abundance four years later did scientific community accept
+                        Payne's discovery.
                     </p>
                 </div>
 
                 <div class="science-subsection">
                     <h3>Nuclear Fusion Confirmed</h3>
                     <p>
-                        In 1938, Hans Bethe explained stellar energy source. Stars fuse hydrogen into helium through proton-proton chain or CNO cycle. This releases energy according to Einstein's E=mc². Fusion requires extreme temperature and pressure found in stellar cores. Payne's hydrogen abundance finally made sense. Stars are fusion reactors converting hydrogen to helium over billions of years.
+                        In 1938, Hans Bethe explained stellar energy source. Stars fuse hydrogen into helium through
+                        proton-proton chain or CNO cycle. This releases energy according to Einstein's E=mc². Fusion
+                        requires extreme temperature and pressure found in stellar cores. Payne's hydrogen abundance
+                        finally made sense. Stars are fusion reactors converting hydrogen to helium over billions of
+                        years.
                     </p>
                     <p>
-                        Modern spectroscopy confirms Payne's results precisely. Sun is 73% hydrogen, 25% helium by mass. Stars throughout universe show similar composition. Only small variations exist. Payne discovered fundamental fact about cosmos. Hydrogen and helium dominate universe because they formed in Big Bang nucleosynthesis. Heavier elements synthesized later in stars. Her work laid foundation for understanding stellar evolution and cosmic chemical history.
+                        Modern spectroscopy confirms Payne's results precisely. Sun is 73% hydrogen, 25% helium by mass.
+                        Stars throughout universe show similar composition. Only small variations exist. Payne
+                        discovered fundamental fact about cosmos. Hydrogen and helium dominate universe because they
+                        formed in Big Bang nucleosynthesis. Heavier elements synthesized later in stars. Her work laid
+                        foundation for understanding stellar evolution and cosmic chemical history.
                     </p>
                 </div>
             </div>
@@ -1056,13 +1251,23 @@
                 <div></div>
                 <div class="content-text">
                     <p>
-                        Payne's mother Emma opposed university education initially. She feared Cecilia would become unmarriageable. But Cecilia won scholarship to Cambridge. Her mother relented. At Newnham College, Cecilia studied natural sciences. She attended Arthur Eddington's lecture on 1919 solar eclipse. Einstein's relativity was confirmed. Cecilia decided astronomy was her calling.
+                        Payne's mother Emma opposed university education initially. She feared Cecilia would become
+                        unmarriageable. But Cecilia won scholarship to Cambridge. Her mother relented. At Newnham
+                        College, Cecilia studied natural sciences. She attended Arthur Eddington's lecture on 1919 solar
+                        eclipse. Einstein's relativity was confirmed. Cecilia decided astronomy was her calling.
                     </p>
                     <p>
-                        Cambridge refused to grant degrees to women. Payne could attend lectures and take exams. But university would not award diploma. Career prospects in Britain were nonexistent. Women could not hold faculty positions. Eddington recognized her talent. He recommended her to Harlow Shapley at Harvard.
+                        Cambridge refused to grant degrees to women. Payne could attend lectures and take exams. But
+                        university would not award diploma. Career prospects in Britain were nonexistent. Women could
+                        not hold faculty positions. Eddington recognized her talent. He recommended her to Harlow
+                        Shapley at Harvard.
                     </p>
                     <p>
-                        Shapley offered fellowship in 1923. Payne sailed to America alone at age 23. She never returned to live in Britain. At Harvard, she joined team of "computers" - women who analyzed astronomical data. These women received low pay and no recognition. But they did groundbreaking work. Payne seized opportunity. She pursued PhD while analyzing spectra. Her thesis revolutionized astrophysics.
+                        Shapley offered fellowship in 1923. Payne sailed to America alone at age 23. She never returned
+                        to live in Britain. At Harvard, she joined team of "computers" - women who analyzed astronomical
+                        data. These women received low pay and no recognition. But they did groundbreaking work. Payne
+                        seized opportunity. She pursued PhD while analyzing spectra. Her thesis revolutionized
+                        astrophysics.
                     </p>
                 </div>
             </div>
@@ -1079,7 +1284,9 @@
                     <div class="timeline-content">
                         <h3>PhD Thesis Revolution</h3>
                         <p>
-                            Completed "Stellar Atmospheres" thesis. First astronomy PhD from Radcliffe. Proved stars are 73% hydrogen, 25% helium. Described as most brilliant thesis in astronomy. Russell forced disclaimer calling it erroneous.
+                            Completed "Stellar Atmospheres" thesis. First astronomy PhD from Radcliffe. Proved stars are
+                            73% hydrogen, 25% helium. Described as most brilliant thesis in astronomy. Russell forced
+                            disclaimer calling it erroneous.
                         </p>
                     </div>
                 </div>
@@ -1089,7 +1296,9 @@
                     <div class="timeline-content">
                         <h3>Russell Confirms Independently</h3>
                         <p>
-                            Russell published paper confirming hydrogen abundance. Credited Payne but claimed independent discovery. Scientific community finally accepted stellar composition. Hydrogen dominance became established fact.
+                            Russell published paper confirming hydrogen abundance. Credited Payne but claimed
+                            independent discovery. Scientific community finally accepted stellar composition. Hydrogen
+                            dominance became established fact.
                         </p>
                     </div>
                 </div>
@@ -1099,7 +1308,9 @@
                     <div class="timeline-content">
                         <h3>Marriage and Continued Research</h3>
                         <p>
-                            Married Russian astronomer Sergei Gaposchkin. Took name Payne-Gaposchkin. Had three children while continuing research. Studied variable stars and stellar populations. Published extensively despite lack of formal position.
+                            Married Russian astronomer Sergei Gaposchkin. Took name Payne-Gaposchkin. Had three children
+                            while continuing research. Studied variable stars and stellar populations. Published
+                            extensively despite lack of formal position.
                         </p>
                     </div>
                 </div>
@@ -1109,7 +1320,8 @@
                     <div class="timeline-content">
                         <h3>Harvard Professorship Finally</h3>
                         <p>
-                            Promoted to full professor at Harvard. First woman to achieve this rank in Faculty of Arts and Sciences. Thirty-one years after PhD. Recognition came late but was eventually awarded.
+                            Promoted to full professor at Harvard. First woman to achieve this rank in Faculty of Arts
+                            and Sciences. Thirty-one years after PhD. Recognition came late but was eventually awarded.
                         </p>
                     </div>
                 </div>
@@ -1119,7 +1331,9 @@
                     <div class="timeline-content">
                         <h3>Henry Norris Russell Prize</h3>
                         <p>
-                            Received prize from American Astronomical Society. Ironic honor named after man who initially dismissed her work. She gave acceptance speech acknowledging journey. "Reward of young scientist is emotional thrill of being first to see something."
+                            Received prize from American Astronomical Society. Ironic honor named after man who
+                            initially dismissed her work. She gave acceptance speech acknowledging journey. "Reward of
+                            young scientist is emotional thrill of being first to see something."
                         </p>
                     </div>
                 </div>
@@ -1129,7 +1343,9 @@
                     <div class="timeline-content">
                         <h3>Death at 79</h3>
                         <p>
-                            Died December 7, 1979, in Cambridge, Massachusetts. Worked until final months. Published over 150 papers. Trained generation of astronomers. Legacy: fundamental understanding that universe is hydrogen and helium. Her 1925 thesis remains cornerstone of astrophysics.
+                            Died December 7, 1979, in Cambridge, Massachusetts. Worked until final months. Published
+                            over 150 papers. Trained generation of astronomers. Legacy: fundamental understanding that
+                            universe is hydrogen and helium. Her 1925 thesis remains cornerstone of astrophysics.
                         </p>
                     </div>
                 </div>
@@ -1142,56 +1358,73 @@
                     <div class="context-number">05 — Modern Impact</div>
                     <h2 class="modern-title">How One Thesis Changed Astronomy</h2>
                     <p class="modern-subtitle">
-                        Payne's discovery that stars are hydrogen and helium became foundational to astrophysics. Nuclear fusion theory depends on hydrogen fuel. Stellar evolution models require hydrogen-helium composition. Cosmology traces universe's chemical history from primordial hydrogen. Her work underpins all modern astronomy.
+                        Payne's discovery that stars are hydrogen and helium became foundational to astrophysics.
+                        Nuclear fusion theory depends on hydrogen fuel. Stellar evolution models require hydrogen-helium
+                        composition. Cosmology traces universe's chemical history from primordial hydrogen. Her work
+                        underpins all modern astronomy.
                     </p>
                 </div>
-                
+
                 <div class="impact-grid">
-                    <div class="impact-card">
-                        <img src="../../assets/icons/stellar-physics-icon.png" alt="Stellar physics" class="impact-icon">
+                    <div class="impact-card" data-image="stellar-physics">
+                        <img src="../../assets/icons/stellar-physics-icon.png" alt="Stellar physics"
+                            class="impact-icon">
                         <h3 class="impact-title">Stellar Physics Foundation</h3>
                         <p class="impact-description">
-                            Understanding that stars are hydrogen-helium plasma enabled development of stellar structure models. Nuclear fusion theory explains energy generation. Stellar evolution from hydrogen burning to helium flash to supernova all depends on Payne's composition discovery.
+                            Understanding that stars are hydrogen-helium plasma enabled development of stellar structure
+                            models. Nuclear fusion theory explains energy generation. Stellar evolution from hydrogen
+                            burning to helium flash to supernova all depends on Payne's composition discovery.
                         </p>
                     </div>
 
-                    <div class="impact-card">
+                    <div class="impact-card" data-image="cosmology">
                         <img src="../../assets/icons/cosmology-icon.png" alt="Cosmology" class="impact-icon">
                         <h3 class="impact-title">Big Bang Cosmology</h3>
                         <p class="impact-description">
-                            Primordial hydrogen and helium formed in Big Bang nucleosynthesis. Payne's stellar composition measurements confirmed cosmological predictions. Ratio of hydrogen to helium constrains early universe physics. Her work links stellar observations to cosmic origins.
+                            Primordial hydrogen and helium formed in Big Bang nucleosynthesis. Payne's stellar
+                            composition measurements confirmed cosmological predictions. Ratio of hydrogen to helium
+                            constrains early universe physics. Her work links stellar observations to cosmic origins.
                         </p>
                     </div>
 
-                    <div class="impact-card">
+                    <div class="impact-card" data-image="spectroscopy">
                         <img src="../../assets/icons/spectroscopy-icon.png" alt="Spectroscopy" class="impact-icon">
                         <h3 class="impact-title">Spectroscopic Analysis</h3>
                         <p class="impact-description">
-                            Payne's application of Saha ionization equation became standard technique. Modern spectroscopy of stars, galaxies, exoplanet atmospheres all uses her methods. Every chemical abundance measurement owes debt to her pioneering work.
+                            Payne's application of Saha ionization equation became standard technique. Modern
+                            spectroscopy of stars, galaxies, exoplanet atmospheres all uses her methods. Every chemical
+                            abundance measurement owes debt to her pioneering work.
                         </p>
                     </div>
 
-                    <div class="impact-card">
+                    <div class="impact-card" data-image="nuclear-fusion">
                         <img src="../../assets/icons/nuclear-fusion-icon.png" alt="Nuclear fusion" class="impact-icon">
                         <h3 class="impact-title">Nuclear Fusion Understanding</h3>
                         <p class="impact-description">
-                            Knowing stars are hydrogen enabled Bethe's 1938 fusion theory. Understanding that hydrogen fuses to helium explained stellar energy. This knowledge informs fusion power research today. Payne's composition discovery was prerequisite for fusion physics.
+                            Knowing stars are hydrogen enabled Bethe's 1938 fusion theory. Understanding that hydrogen
+                            fuses to helium explained stellar energy. This knowledge informs fusion power research
+                            today. Payne's composition discovery was prerequisite for fusion physics.
                         </p>
                     </div>
 
-                    <div class="impact-card">
-                        <img src="../../assets/icons/women-astronomy-icon.png" alt="Women in astronomy" class="impact-icon">
+                    <div class="impact-card" data-image="women-in-astronomy">
+                        <img src="../../assets/icons/women-astronomy-icon.png" alt="Women in astronomy"
+                            class="impact-icon">
                         <h3 class="impact-title">Women in Astronomy</h3>
                         <p class="impact-description">
-                            First woman to earn astronomy PhD from Harvard. First female full professor at Harvard. Paved way for women in astrophysics. Despite initial dismissal of her work, she persevered. Inspiration for generations of female scientists.
+                            First woman to earn astronomy PhD from Harvard. First female full professor at Harvard.
+                            Paved way for women in astrophysics. Despite initial dismissal of her work, she persevered.
+                            Inspiration for generations of female scientists.
                         </p>
                     </div>
 
-                    <div class="impact-card">
+                    <div class="impact-card" data-image="thesis-legacy">
                         <img src="../../assets/icons/thesis-legacy-icon.png" alt="Thesis legacy" class="impact-icon">
                         <h3 class="impact-title">Most Brilliant Thesis</h3>
                         <p class="impact-description">
-                            Astronomers call her 1925 thesis the most brilliant PhD thesis ever written in astronomy. It single-handedly established stellar composition. Revolutionized field in one document. Standard against which all astronomical theses are measured.
+                            Astronomers call her 1925 thesis the most brilliant PhD thesis ever written in astronomy. It
+                            single-handedly established stellar composition. Revolutionized field in one document.
+                            Standard against which all astronomical theses are measured.
                         </p>
                     </div>
                 </div>
@@ -1201,7 +1434,8 @@
         <section class="content-section">
             <div class="quote-section">
                 <p class="quote-text">
-                    The reward of the young scientist is the emotional thrill of being the first person in the history of the world to see something or to understand something.
+                    The reward of the young scientist is the emotional thrill of being the first person in the history
+                    of the world to see something or to understand something.
                 </p>
                 <div class="quote-attribution">Cecilia Payne-Gaposchkin</div>
             </div>
@@ -1215,333 +1449,334 @@
     </div>
 
     <script>
-    // ===== VERIFIED DATA FROM AUTHORITATIVE SOURCES =====
-    // Stars: 73% hydrogen, 25% helium, 2% metals by mass
-    // Sun: 5,778K photosphere, 15 million K core
-    // Balmer series: H-alpha 656nm, H-beta 486nm, H-gamma 434nm
-    // Payne thesis 1925, Russell confirmed 1929
-    // Nobel Prize never awarded (oversight)
+        // ===== VERIFIED DATA FROM AUTHORITATIVE SOURCES =====
+        // Stars: 73% hydrogen, 25% helium, 2% metals by mass
+        // Sun: 5,778K photosphere, 15 million K core
+        // Balmer series: H-alpha 656nm, H-beta 486nm, H-gamma 434nm
+        // Payne thesis 1925, Russell confirmed 1929
+        // Nobel Prize never awarded (oversight)
 
-    const cursor = document.getElementById('cursor');
-    let mouseX = 0, mouseY = 0;
+        const cursor = document.getElementById('cursor');
+        let mouseX = 0, mouseY = 0;
 
-    document.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-    });
-
-    function animateCursor() {
-        cursor.style.left = mouseX - 10 + 'px';
-        cursor.style.top = mouseY - 10 + 'px';
-        requestAnimationFrame(animateCursor);
-    }
-    animateCursor();
-
-    const hoverElements = document.querySelectorAll('a, button, .impact-card, .context-card, .timeline-content');
-    hoverElements.forEach(el => {
-        el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
-        el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
-    });
-
-    // ===== BACKGROUND CANVAS =====
-    const bgCanvas = document.getElementById('bg-canvas');
-    const bgCtx = bgCanvas.getContext('2d');
-
-    function resizeCanvas() {
-        bgCanvas.width = window.innerWidth;
-        bgCanvas.height = window.innerHeight;
-    }
-
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    const bgStars = [];
-    const bgStarCount = 100;
-
-    for (let i = 0; i < bgStarCount; i++) {
-        bgStars.push({
-            x: Math.random() * bgCanvas.width,
-            y: Math.random() * bgCanvas.height,
-            size: Math.random() * 2 + 0.5,
-            opacity: Math.random() * 0.5 + 0.3,
-            twinkle: Math.random() * Math.PI * 2
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
         });
-    }
 
-    function animateBgStars() {
-        bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
-        
-        bgStars.forEach(star => {
-            star.twinkle += 0.02;
-            const brightness = 0.5 + 0.5 * Math.sin(star.twinkle);
-            
-            bgCtx.globalAlpha = star.opacity * brightness;
-            bgCtx.fillStyle = '#ffd700';
-            bgCtx.beginPath();
-            bgCtx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-            bgCtx.fill();
-        });
-        
-        requestAnimationFrame(animateBgStars);
-    }
-    
-    animateBgStars();
-
-    // ===== ANIMATION CONTROLS =====
-    let animationSpeed = 1.0;
-    let isPaused = false;
-
-    const speedControl = document.getElementById('speed-control');
-    const pauseButton = document.getElementById('pause-button');
-
-    speedControl.addEventListener('input', (e) => {
-        animationSpeed = parseFloat(e.target.value);
-    });
-
-    pauseButton.addEventListener('click', () => {
-        isPaused = !isPaused;
-        pauseButton.textContent = isPaused ? 'Resume' : 'Pause';
-        pauseButton.classList.toggle('paused');
-    });
-
-    // ===== 3D STAR VISUALIZATION =====
-    const starCanvas = document.getElementById('star-3d-canvas');
-    const starScene = new THREE.Scene();
-    const starCamera = new THREE.PerspectiveCamera(
-        60,
-        starCanvas.clientWidth / starCanvas.clientHeight,
-        0.1,
-        1000
-    );
-    const starRenderer = new THREE.WebGLRenderer({ 
-        canvas: starCanvas, 
-        antialias: true, 
-        alpha: true 
-    });
-    
-    starRenderer.setSize(starCanvas.clientWidth, starCanvas.clientHeight);
-    starRenderer.setClearColor(0x000000, 0);
-    starCamera.position.set(0, 5, 25);
-
-    const controls = new THREE.OrbitControls(starCamera, starRenderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.enableZoom = true;
-    controls.minDistance = 10;
-    controls.maxDistance = 50;
-    controls.autoRotate = true;
-    controls.autoRotateSpeed = 0.2;
-
-    const interactiveObjects = [];
-
-    // ===== STAR CORE =====
-    const coreGeometry = new THREE.SphereGeometry(6, 32, 32);
-    const coreMaterial = new THREE.MeshPhongMaterial({ 
-        color: 0xffd700,
-        emissive: 0xffaa00,
-        emissiveIntensity: 0.8,
-        transparent: true,
-        opacity: 0.9
-    });
-    const starCore = new THREE.Mesh(coreGeometry, coreMaterial);
-    starCore.userData = {
-        type: 'core',
-        name: 'Stellar Core',
-        symbol: 'Fusion Zone',
-        detail: 'Temperature 15 million K, pressure 250 billion atm, hydrogen fusing to helium'
-    };
-    starScene.add(starCore);
-    interactiveObjects.push(starCore);
-
-    // ===== HYDROGEN PARTICLES (73%) =====
-    const hydrogenCount = 150;
-    const hydrogenGeometry = new THREE.SphereGeometry(0.3, 8, 8);
-    const hydrogenMaterial = new THREE.MeshPhongMaterial({ 
-        color: 0xe8f4f8,
-        emissive: 0xaaccdd,
-        emissiveIntensity: 0.3
-    });
-
-    for (let i = 0; i < hydrogenCount; i++) {
-        const hydrogen = new THREE.Mesh(hydrogenGeometry, hydrogenMaterial);
-        const radius = 8 + Math.random() * 8;
-        const theta = Math.random() * Math.PI * 2;
-        const phi = Math.acos(2 * Math.random() - 1);
-        
-        hydrogen.position.x = radius * Math.sin(phi) * Math.cos(theta);
-        hydrogen.position.y = radius * Math.sin(phi) * Math.sin(theta);
-        hydrogen.position.z = radius * Math.cos(phi);
-        
-        hydrogen.userData = {
-            type: 'hydrogen',
-            name: 'Hydrogen (H)',
-            symbol: '¹H',
-            detail: '73% of stellar mass, primary fusion fuel, 1 proton nucleus',
-            orbitSpeed: 0.001 + Math.random() * 0.002,
-            orbitRadius: radius,
-            angle: Math.random() * Math.PI * 2
-        };
-        
-        starScene.add(hydrogen);
-        interactiveObjects.push(hydrogen);
-    }
-
-    // ===== HELIUM PARTICLES (25%) =====
-    const heliumCount = 50;
-    const heliumGeometry = new THREE.SphereGeometry(0.35, 8, 8);
-    const heliumMaterial = new THREE.MeshPhongMaterial({ 
-        color: 0xff69b4,
-        emissive: 0xff1493,
-        emissiveIntensity: 0.3
-    });
-
-    for (let i = 0; i < heliumCount; i++) {
-        const helium = new THREE.Mesh(heliumGeometry, heliumMaterial);
-        const radius = 8 + Math.random() * 8;
-        const theta = Math.random() * Math.PI * 2;
-        const phi = Math.acos(2 * Math.random() - 1);
-        
-        helium.position.x = radius * Math.sin(phi) * Math.cos(theta);
-        helium.position.y = radius * Math.sin(phi) * Math.sin(theta);
-        helium.position.z = radius * Math.cos(phi);
-        
-        helium.userData = {
-            type: 'helium',
-            name: 'Helium (He)',
-            symbol: '⁴He',
-            detail: '25% of stellar mass, fusion product, 2 protons + 2 neutrons nucleus',
-            orbitSpeed: 0.001 + Math.random() * 0.002,
-            orbitRadius: radius,
-            angle: Math.random() * Math.PI * 2
-        };
-        
-        starScene.add(helium);
-        interactiveObjects.push(helium);
-    }
-
-    // ===== LIGHTING =====
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-    starScene.add(ambientLight);
-
-    const light1 = new THREE.PointLight(0xffd700, 2, 60);
-    light1.position.set(15, 15, 15);
-    starScene.add(light1);
-
-    const light2 = new THREE.PointLight(0xff69b4, 1, 60);
-    light2.position.set(-15, -15, 15);
-    starScene.add(light2);
-
-    // ===== TOOLTIP =====
-    const tooltip = document.createElement('div');
-    tooltip.className = 'star-tooltip';
-    document.body.appendChild(tooltip);
-
-    const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
-    let hoveredObject = null;
-
-    starCanvas.addEventListener('mousemove', (event) => {
-        const rect = starCanvas.getBoundingClientRect();
-        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-
-        raycaster.setFromCamera(mouse, starCamera);
-        const intersects = raycaster.intersectObjects(interactiveObjects);
-
-        if (intersects.length > 0) {
-            const object = intersects[0].object;
-            const data = object.userData;
-            
-            if (hoveredObject !== object) {
-                hoveredObject = object;
-                
-                let tooltipHTML = `<strong>${data.name}</strong>`;
-                if (data.symbol) {
-                    tooltipHTML += `<span class="tooltip-detail">Symbol: ${data.symbol}</span>`;
-                }
-                tooltipHTML += `<span class="tooltip-detail">${data.detail}</span>`;
-                
-                tooltip.innerHTML = tooltipHTML;
-            }
-            
-            tooltip.style.left = (event.clientX + 15) + 'px';
-            tooltip.style.top = (event.clientY + 15) + 'px';
-            tooltip.classList.add('visible');
-            
-            starCanvas.style.cursor = 'pointer';
-            controls.autoRotate = false;
-        } else {
-            hoveredObject = null;
-            tooltip.classList.remove('visible');
-            starCanvas.style.cursor = 'grab';
-            controls.autoRotate = true;
+        function animateCursor() {
+            cursor.style.left = mouseX - 10 + 'px';
+            cursor.style.top = mouseY - 10 + 'px';
+            requestAnimationFrame(animateCursor);
         }
-    });
+        animateCursor();
 
-    starCanvas.addEventListener('mouseleave', () => {
-        tooltip.classList.remove('visible');
-        hoveredObject = null;
-        controls.autoRotate = true;
-    });
+        const hoverElements = document.querySelectorAll('a, button, .impact-card, .context-card, .timeline-content');
+        hoverElements.forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        });
 
-    // ===== ANIMATION =====
-    let time = 0;
+        // ===== BACKGROUND CANVAS =====
+        const bgCanvas = document.getElementById('bg-canvas');
+        const bgCtx = bgCanvas.getContext('2d');
 
-    function animateStar() {
-        requestAnimationFrame(animateStar);
-        
-        if (!isPaused) {
-            time += 0.01 * animationSpeed;
-            
-            // Orbit particles
-            interactiveObjects.forEach(obj => {
-                if (obj.userData.orbitSpeed) {
-                    obj.userData.angle += obj.userData.orbitSpeed * animationSpeed;
-                    const radius = obj.userData.orbitRadius;
-                    obj.position.x = radius * Math.cos(obj.userData.angle);
-                    obj.position.z = radius * Math.sin(obj.userData.angle);
-                }
+        function resizeCanvas() {
+            bgCanvas.width = window.innerWidth;
+            bgCanvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const bgStars = [];
+        const bgStarCount = 100;
+
+        for (let i = 0; i < bgStarCount; i++) {
+            bgStars.push({
+                x: Math.random() * bgCanvas.width,
+                y: Math.random() * bgCanvas.height,
+                size: Math.random() * 2 + 0.5,
+                opacity: Math.random() * 0.5 + 0.3,
+                twinkle: Math.random() * Math.PI * 2
             });
         }
 
-        controls.update();
-        starRenderer.render(starScene, starCamera);
-    }
+        function animateBgStars() {
+            bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
 
-    animateStar();
+            bgStars.forEach(star => {
+                star.twinkle += 0.02;
+                const brightness = 0.5 + 0.5 * Math.sin(star.twinkle);
 
-    window.addEventListener('resize', () => {
-        starCamera.aspect = starCanvas.clientWidth / starCanvas.clientHeight;
-        starCamera.updateProjectionMatrix();
+                bgCtx.globalAlpha = star.opacity * brightness;
+                bgCtx.fillStyle = '#ffd700';
+                bgCtx.beginPath();
+                bgCtx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                bgCtx.fill();
+            });
+
+            requestAnimationFrame(animateBgStars);
+        }
+
+        animateBgStars();
+
+        // ===== ANIMATION CONTROLS =====
+        let animationSpeed = 1.0;
+        let isPaused = false;
+
+        const speedControl = document.getElementById('speed-control');
+        const pauseButton = document.getElementById('pause-button');
+
+        speedControl.addEventListener('input', (e) => {
+            animationSpeed = parseFloat(e.target.value);
+        });
+
+        pauseButton.addEventListener('click', () => {
+            isPaused = !isPaused;
+            pauseButton.textContent = isPaused ? 'Resume' : 'Pause';
+            pauseButton.classList.toggle('paused');
+        });
+
+        // ===== 3D STAR VISUALIZATION =====
+        const starCanvas = document.getElementById('star-3d-canvas');
+        const starScene = new THREE.Scene();
+        const starCamera = new THREE.PerspectiveCamera(
+            60,
+            starCanvas.clientWidth / starCanvas.clientHeight,
+            0.1,
+            1000
+        );
+        const starRenderer = new THREE.WebGLRenderer({
+            canvas: starCanvas,
+            antialias: true,
+            alpha: true
+        });
+
         starRenderer.setSize(starCanvas.clientWidth, starCanvas.clientHeight);
-    });
+        starRenderer.setClearColor(0x000000, 0);
+        starCamera.position.set(0, 5, 25);
 
-    // ===== SCROLL ANIMATIONS =====
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
+        const controls = new THREE.OrbitControls(starCamera, starRenderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.enableZoom = true;
+        controls.minDistance = 10;
+        controls.maxDistance = 50;
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 0.2;
 
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
+        const interactiveObjects = [];
+
+        // ===== STAR CORE =====
+        const coreGeometry = new THREE.SphereGeometry(6, 32, 32);
+        const coreMaterial = new THREE.MeshPhongMaterial({
+            color: 0xffd700,
+            emissive: 0xffaa00,
+            emissiveIntensity: 0.8,
+            transparent: true,
+            opacity: 0.9
+        });
+        const starCore = new THREE.Mesh(coreGeometry, coreMaterial);
+        starCore.userData = {
+            type: 'core',
+            name: 'Stellar Core',
+            symbol: 'Fusion Zone',
+            detail: 'Temperature 15 million K, pressure 250 billion atm, hydrogen fusing to helium'
+        };
+        starScene.add(starCore);
+        interactiveObjects.push(starCore);
+
+        // ===== HYDROGEN PARTICLES (73%) =====
+        const hydrogenCount = 150;
+        const hydrogenGeometry = new THREE.SphereGeometry(0.3, 8, 8);
+        const hydrogenMaterial = new THREE.MeshPhongMaterial({
+            color: 0xe8f4f8,
+            emissive: 0xaaccdd,
+            emissiveIntensity: 0.3
+        });
+
+        for (let i = 0; i < hydrogenCount; i++) {
+            const hydrogen = new THREE.Mesh(hydrogenGeometry, hydrogenMaterial);
+            const radius = 8 + Math.random() * 8;
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos(2 * Math.random() - 1);
+
+            hydrogen.position.x = radius * Math.sin(phi) * Math.cos(theta);
+            hydrogen.position.y = radius * Math.sin(phi) * Math.sin(theta);
+            hydrogen.position.z = radius * Math.cos(phi);
+
+            hydrogen.userData = {
+                type: 'hydrogen',
+                name: 'Hydrogen (H)',
+                symbol: '¹H',
+                detail: '73% of stellar mass, primary fusion fuel, 1 proton nucleus',
+                orbitSpeed: 0.001 + Math.random() * 0.002,
+                orbitRadius: radius,
+                angle: Math.random() * Math.PI * 2
+            };
+
+            starScene.add(hydrogen);
+            interactiveObjects.push(hydrogen);
+        }
+
+        // ===== HELIUM PARTICLES (25%) =====
+        const heliumCount = 50;
+        const heliumGeometry = new THREE.SphereGeometry(0.35, 8, 8);
+        const heliumMaterial = new THREE.MeshPhongMaterial({
+            color: 0xff69b4,
+            emissive: 0xff1493,
+            emissiveIntensity: 0.3
+        });
+
+        for (let i = 0; i < heliumCount; i++) {
+            const helium = new THREE.Mesh(heliumGeometry, heliumMaterial);
+            const radius = 8 + Math.random() * 8;
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos(2 * Math.random() - 1);
+
+            helium.position.x = radius * Math.sin(phi) * Math.cos(theta);
+            helium.position.y = radius * Math.sin(phi) * Math.sin(theta);
+            helium.position.z = radius * Math.cos(phi);
+
+            helium.userData = {
+                type: 'helium',
+                name: 'Helium (He)',
+                symbol: '⁴He',
+                detail: '25% of stellar mass, fusion product, 2 protons + 2 neutrons nucleus',
+                orbitSpeed: 0.001 + Math.random() * 0.002,
+                orbitRadius: radius,
+                angle: Math.random() * Math.PI * 2
+            };
+
+            starScene.add(helium);
+            interactiveObjects.push(helium);
+        }
+
+        // ===== LIGHTING =====
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        starScene.add(ambientLight);
+
+        const light1 = new THREE.PointLight(0xffd700, 2, 60);
+        light1.position.set(15, 15, 15);
+        starScene.add(light1);
+
+        const light2 = new THREE.PointLight(0xff69b4, 1, 60);
+        light2.position.set(-15, -15, 15);
+        starScene.add(light2);
+
+        // ===== TOOLTIP =====
+        const tooltip = document.createElement('div');
+        tooltip.className = 'star-tooltip';
+        document.body.appendChild(tooltip);
+
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        let hoveredObject = null;
+
+        starCanvas.addEventListener('mousemove', (event) => {
+            const rect = starCanvas.getBoundingClientRect();
+            mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, starCamera);
+            const intersects = raycaster.intersectObjects(interactiveObjects);
+
+            if (intersects.length > 0) {
+                const object = intersects[0].object;
+                const data = object.userData;
+
+                if (hoveredObject !== object) {
+                    hoveredObject = object;
+
+                    let tooltipHTML = `<strong>${data.name}</strong>`;
+                    if (data.symbol) {
+                        tooltipHTML += `<span class="tooltip-detail">Symbol: ${data.symbol}</span>`;
+                    }
+                    tooltipHTML += `<span class="tooltip-detail">${data.detail}</span>`;
+
+                    tooltip.innerHTML = tooltipHTML;
+                }
+
+                tooltip.style.left = (event.clientX + 15) + 'px';
+                tooltip.style.top = (event.clientY + 15) + 'px';
+                tooltip.classList.add('visible');
+
+                starCanvas.style.cursor = 'pointer';
+                controls.autoRotate = false;
+            } else {
+                hoveredObject = null;
+                tooltip.classList.remove('visible');
+                starCanvas.style.cursor = 'grab';
+                controls.autoRotate = true;
             }
         });
-    }, observerOptions);
 
-    document.querySelectorAll('.timeline-item, .impact-card, .context-card').forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(30px)';
-        el.style.transition = 'all 0.6s ease';
-        observer.observe(el);
-    });
+        starCanvas.addEventListener('mouseleave', () => {
+            tooltip.classList.remove('visible');
+            hoveredObject = null;
+            controls.autoRotate = true;
+        });
 
-    console.log('Cecilia Payne page loaded.');
-    console.log('Stars: 73% hydrogen, 25% helium, 2% metals');
-    console.log('Discovery 1925, confirmed 1929 by Russell');
-    console.log('Data verified from: AAS, Wikipedia, AMNH, Harvard');
+        // ===== ANIMATION =====
+        let time = 0;
+
+        function animateStar() {
+            requestAnimationFrame(animateStar);
+
+            if (!isPaused) {
+                time += 0.01 * animationSpeed;
+
+                // Orbit particles
+                interactiveObjects.forEach(obj => {
+                    if (obj.userData.orbitSpeed) {
+                        obj.userData.angle += obj.userData.orbitSpeed * animationSpeed;
+                        const radius = obj.userData.orbitRadius;
+                        obj.position.x = radius * Math.cos(obj.userData.angle);
+                        obj.position.z = radius * Math.sin(obj.userData.angle);
+                    }
+                });
+            }
+
+            controls.update();
+            starRenderer.render(starScene, starCamera);
+        }
+
+        animateStar();
+
+        window.addEventListener('resize', () => {
+            starCamera.aspect = starCanvas.clientWidth / starCanvas.clientHeight;
+            starCamera.updateProjectionMatrix();
+            starRenderer.setSize(starCanvas.clientWidth, starCanvas.clientHeight);
+        });
+
+        // ===== SCROLL ANIMATIONS =====
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.timeline-item, .impact-card, .context-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.6s ease';
+            observer.observe(el);
+        });
+
+        console.log('Cecilia Payne page loaded.');
+        console.log('Stars: 73% hydrogen, 25% helium, 2% metals');
+        console.log('Discovery 1925, confirmed 1929 by Russell');
+        console.log('Data verified from: AAS, Wikipedia, AMNH, Harvard');
     </script>
 </body>
+
 </html>
